@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050805">
+
+    <title>Ben 10 Beyond</title>
+
+    <link rel="icon" type="image/png" href="/img/icone.png">
+    <link rel="stylesheet" href="/estilo.css">
+
+    <!-- Visualizador de modelos 3D -->
+    <script type="module"
+        src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js">
+    </script>
+</head>
+
+<body class="body-home">
+
+    <!-- MENU -->
+    <header class="header">
+
+        <a class="marca" href="index.html">
+            <img src="/img/icone.png" alt="">
+            <span>BEN 10 BEYOND</span>
+        </a>
+
+        <nav class="menu-basico" aria-label="Menu principal">
+            <a href="index.html" aria-current="page">HOME</a>
+            <a href="criar_fichas.html">CRIAR FICHAS</a>
+            <a href="fichas.html">FICHAS</a>
+            <a href="sobre.html">SOBRE</a>
+        </nav>
+
+        <div class="omnitrix-placeholder"
+             aria-label="Espaço reservado para o menu 3D do Omnitrix">
+
+            <span class="omnitrix-placeholder__simbolo">✳</span>
+            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- HERO VIDEO -->
+        <section class="video-hero" aria-label="Abertura de Ben 10">
+
+            <video
+                class="video-hero__video"
+                id="video-abertura"
+                autoplay
+                muted
+                loop
+                playsinline>
+
+                <source src="/vid/abertura.mp4" type="video/mp4">
+
+                Seu navegador não suporta vídeo HTML5.
+
+            </video>
+
+            <div class="video-hero__indicacao">
+                <span>ROLE PARA EXPLORAR</span>
+                <span class="video-hero__seta">↓</span>
+            </div>
+
+        </section>
+
+
+        <!-- HERO 1: BEN 10 BEYOND -->
+        <section class="hero-beyond">
+
+            <div class="hero-beyond__conteudo">
+
+                <h1>Ben 10 Beyond</h1>
+
+                <p class="hero-beyond__descricao">
+
+                    O RPG oficial de Ben 10 é um jogo de mesa
+                    de fantasia científica criado pela
+
+                    <a href="https://d20culture.com.br/#d20-midia"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        D20 Culture
+                    </a>
+
+                    em parceria com a
+
+                    <a href="https://wbdforbrands.com.br/portfolio/"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        Warner Bros. Discovery
+                    </a>.
+
+                    Crie seu personagem, descubra seus poderes
+                    e construa sua própria aventura.
+
+                </p>
+
+                <a class="botao-criar" href="criar_fichas.html">
+                    Crie sua ficha
+                    <span>↗</span>
+                </a>
+
+            </div>
+
+
+            <div class="hero-beyond__modelo">
+
+                <model-viewer
+                    src="/modelos_3d/GameCase2.glb"
+                    alt="Case de jogo Ben 10 Beyond em 3D"
+                    camera-controls
+                    auto-rotate
+                    auto-rotate-delay="0"
+                    rotation-per-second="18deg"
+                    shadow-intensity="1"
+                    exposure="1"
+                    environment-image="neutral"
+                    interaction-prompt="auto">
+
+                </model-viewer>
+
+                <span class="modelo-legenda">
+                    INTERAJA COM O MODELO
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- HERO 2: MAN OF ACTION -->
+        <section class="man_of_action">
+
+            <!-- Canvas exclusivo das bolhas do fundo -->
+            <canvas id="bolhas-fundo" aria-hidden="true"></canvas>
+
+            <!-- Conteúdo da direita -->
+            <div class="man_conteudo">
+
+                <h2>
+                    "Created the mega hit Ben 10, a three
+                    billion dollar boys' action empire
+                    that has been called the most
+                    successful superhero launch of
+                    the past decade."
+                </h2>
+
+                <h3>Man of Action</h3>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- VOLTAR AO TOPO -->
+    <a class="voltar-topo"
+       href="#"
+       aria-label="Voltar ao topo">
+        ↑
+    </a>
+
+
+    <!-- Canvas do rastro de bolhas do mouse -->
+    <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
+
+
+    <script src="/script.js"></script>
+
+</body>
+</html>
