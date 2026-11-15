@@ -420,3 +420,49 @@ if (canvasFundo) {
 
     window.addEventListener('resize', ajustarCanvasFundo);
 }
+
+/* =========================
+   EFEITO FADE NA ROLAGEM
+========================= */
+const secoesSobre = document.querySelectorAll('.sobre-secao');
+
+function atualizarFadeSobre() {
+    const alturaJanela = window.innerHeight;
+
+    secoesSobre.forEach((secao, index) => {
+        const texto = secao.querySelector('.fade-text');
+        const imagem = secao.querySelector('.fade-image');
+
+        // Mantém a última seção sempre visível no final da página
+        if (index === secoesSobre.length - 1) {
+            if (texto) texto.style.opacity = 1;
+            if (imagem) imagem.style.opacity = 1;
+            return;
+        }
+
+        const rect = secao.getBoundingClientRect();
+        const distancia = Math.max(1, secao.offsetHeight - alturaJanela);
+        let progresso = -rect.top / distancia;
+        progresso = Math.max(0, Math.min(1, progresso));
+
+        // 1. Texto desaparece primeiro
+        if (texto) {
+            let opacidadeTexto = 1 - (progresso / 0.40);
+            opacidadeTexto = Math.max(0, Math.min(1, opacidadeTexto));
+            texto.style.opacity = opacidadeTexto;
+        }
+
+        // 2. Imagem permanece mais tempo e desaparece depois
+        if (imagem) {
+            let opacidadeImagem = 1 - ((progresso - 0.55) / 0.35);
+            opacidadeImagem = Math.max(0, Math.min(1, opacidadeImagem));
+            imagem.style.opacity = opacidadeImagem;
+        }
+    });
+}
+
+window.addEventListener('scroll', atualizarFadeSobre, { passive: true });
+window.addEventListener('resize', atualizarFadeSobre);
+window.addEventListener('load', atualizarFadeSobre);
+
+atualizarFadeSobre();

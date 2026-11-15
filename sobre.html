@@ -1,11 +1,121 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre</title>
+    <meta name="theme-color" content="#050805">
+
+    <title>Sobre — Ben 10 Beyond</title>
+
+    <link rel="icon" type="image/png" href="img/icone.png">
+    <link rel="stylesheet" href="estilo.css">
 </head>
-<body>
-    Sobre
+
+<body class="body-sobre">
+
+    <!-- MENU (idêntico ao da Home) -->
+    <header class="header">
+
+        <a class="marca" href="index.html">
+            <img src="img/icone.png" alt="">
+            <span>BEN 10 BEYOND</span>
+        </a>
+
+        <nav class="menu-basico" aria-label="Menu principal">
+            <a href="index.html">HOME</a>
+            <a href="criar_fichas.html">CRIAR FICHAS</a>
+            <a href="fichas.html">FICHAS</a>
+            <a href="sobre.html" aria-current="page">SOBRE</a>
+        </nav>
+
+        <div class="omnitrix-placeholder"
+             aria-label="Espaço reservado para o menu 3D do Omnitrix">
+
+            <span class="omnitrix-placeholder__simbolo">✳</span>
+            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
+
+        </div>
+
+    </header>
+
+
+    <main class="sobre-main">
+
+<!-- SEÇÃO 1 -->
+        <section class="sobre-secao">
+
+            <div class="sobre-cabecalho">
+                <h1>Sobre</h1>
+            </div>
+
+            <div class="sobre-conteudo">
+
+                <div class="sobre-imagem fade-image">
+                    <img src="img/d20_logo.png" alt="Logo da D20">
+                </div>
+
+                <div class="sobre-texto fade-text">
+                    <h2>D20 CULTURE</h2>
+                    <p>
+                        A D20 Culture é uma empresa brasileira dedicada à criação
+                        e ao desenvolvimento de experiências no universo geek.
+                        Com atuação no mercado de jogos e entretenimento, 
+                        a empresa transforma grandes universos em novas experiências,
+                        conectando histórias, criatividade e jogadores. Neste projeto,
+                        assume o desenvolvimento do RPG de mesa de Ben 10, levando esse
+                        universo para uma nova forma de aventura e exploração.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SEÇÃO 2 (Invertida) -->
+        <section class="sobre-secao">
+
+            <div class="sobre-conteudo sobre-conteudo--invertido">
+
+                <div class="sobre-imagem fade-image">
+                    <img src="img/ManOfAction.jpg" alt="Logo Man of Action"> 
+                </div>
+
+                <div class="sobre-texto fade-text">
+                    <h2>MAN OF ACTION</h2>
+                    <p>
+                        Man of Action Entertainment é o coletivo criativo responsável
+                        pela criação de Ben 10, formado pelos quadrinistas e roteiristas
+                        Joe Casey, Joe Kelly, Duncan Rouleau e Steven T. Seagle. Desde 
+                        sua fundação, em 2000, o grupo desenvolve histórias e personagens 
+                        que conquistaram públicos ao redor do mundo. Sua participação neste 
+                        projeto conecta o RPG às origens e à identidade criativa do universo de Ben 10.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- VOLTAR AO TOPO -->
+    <a class="voltar-topo"
+       href="#"
+       aria-label="Voltar ao topo">
+        ↑
+    </a>
+
+
+    <!-- Canvas do rastro de bolhas do mouse -->
+    <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
+
+
+    <!-- Script principal (bolhas do mouse) -->
+    <script src="script.js"></script>
+
+
 </body>
 </html>
