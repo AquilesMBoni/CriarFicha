@@ -18,7 +18,7 @@ O projeto busca oferecer uma interface intuitiva e temática, permitindo que os 
 - **Origem e Espécies:** exploração de planetas, espécies alienígenas, atributos e caminhos evolutivos.
 - **Ficha 3D:** visualização das fichas em um formato tridimensional.
 - **Biblioteca de Fichas:** organização das fichas criadas, com opções de importação e exportação.
-- **Sobre:** apresentação do projeto e das pessoas envolvidas na criação do universo de Ben 10.
+- **Sobre:** apresentação do projeto e das pessoas envolvidas na criação do universo de Ben 10 Beyond.
 
 *As funcionalidades poderão ser implementadas gradualmente durante o desenvolvimento.*
 
