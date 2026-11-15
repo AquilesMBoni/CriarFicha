@@ -1,11 +1,179 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Fichas</title>
+    <meta name="theme-color" content="#050805">
+
+    <title>Criar Ficha — Ben 10 Beyond</title>
+
+    <link rel="icon" type="image/png" href="img/icone.png">
+    <link rel="stylesheet" href="estilo.css">
+
+    <!-- Já deixamos o model-viewer carregado para os planetas 3D da Etapa 3 -->
+    <script type="module"
+        src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js">
+    </script>
 </head>
-<body>
-    Criar Fichas
+
+<body class="body-criar">
+
+    <!-- MENU (idêntico ao restante do site) -->
+    <header class="header">
+
+        <a class="marca" href="index.html">
+            <img src="img/icone.png" alt="">
+            <span>BEN 10 BEYOND</span>
+        </a>
+
+        <nav class="menu-basico" aria-label="Menu principal">
+            <a href="index.html">HOME</a>
+            <a href="criar_fichas.html" aria-current="page">CRIAR FICHAS</a>
+            <a href="fichas.html">FICHAS</a>
+            <a href="sobre.html">SOBRE</a>
+        </nav>
+
+        <div class="omnitrix-placeholder"
+             aria-label="Espaço reservado para o menu 3D do Omnitrix">
+
+            <span class="omnitrix-placeholder__simbolo">✳</span>
+            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
+
+        </div>
+
+    </header>
+
+
+    <!-- FUNDO TECNOLÓGICO INTERATIVO -->
+    <canvas id="canvas-tech" aria-hidden="true"></canvas>
+
+    <main class="criar-main">
+
+        <div class="criar-cabecalho" id="criar-cabecalho">
+            <h1>Criar Ficha</h1>
+            <p>ESCOLHA AS ETAPAS ABAIXO PARA CONSTRUIR SEU PERSONAGEM</p>
+        </div>
+
+
+        <!-- GRADE DE CARTÕES ESTILO HUD / NETFLIX -->
+        <section class="cartoes-grade" id="cartoes-grade" aria-label="Etapas da ficha">
+
+            <!-- CARTÃO 1: TIER -->
+            <article class="cartao-etapa" data-etapa="tier" tabindex="0" role="button">
+                <div class="cartao-etapa__brilho"></div>
+                <span class="cartao-hud-marcas cartao-hud-marcas--topo" aria-hidden="true"></span>
+                <span class="cartao-hud-marcas cartao-hud-marcas--base" aria-hidden="true"></span>
+
+                <div class="cartao-etapa__conteudo">
+                    <span class="cartao-etapa__numero">01</span>
+                    <div class="cartao-etapa__icone">⚡</div>
+                    <h2>Tier</h2>
+                    <p>ESCOLHA O SEU NÍVEL, COM BENEFÍCIOS E RECOMPENSAS EM SUA JORNADA.</p>
+                    <span class="cartao-etapa__acao">CLIQUE PARA INICIAR &gt;</span>
+                </div>
+            </article>
+
+            <!-- CARTÃO 2: ORIGEM, ARQUÉTIPO E ATRIBUTO -->
+            <article class="cartao-etapa" data-etapa="origem" tabindex="0" role="button">
+                <div class="cartao-etapa__brilho"></div>
+                <span class="cartao-hud-marcas cartao-hud-marcas--topo" aria-hidden="true"></span>
+                <span class="cartao-hud-marcas cartao-hud-marcas--base" aria-hidden="true"></span>
+
+                <div class="cartao-etapa__conteudo">
+                    <span class="cartao-etapa__numero">02</span>
+                    <div class="cartao-etapa__icone">🪐</div>
+                    <h2>Origem &amp; Arquétipo</h2>
+                    <p>EXPLORE SUA LINHAGEM, ESCOLHA SEU ARQUÉTIPO E DESCUBRA SEU CAMINHO EVOLUTIVO.</p>
+                    <span class="cartao-etapa__acao">CLIQUE PARA INICIAR &gt;</span>
+                </div>
+            </article>
+
+            <!-- CARTÃO 3: CONHECIMENTO -->
+            <article class="cartao-etapa" data-etapa="conhecimento" tabindex="0" role="button">
+                <div class="cartao-etapa__brilho"></div>
+                <span class="cartao-hud-marcas cartao-hud-marcas--topo" aria-hidden="true"></span>
+                <span class="cartao-hud-marcas cartao-hud-marcas--base" aria-hidden="true"></span>
+
+                <div class="cartao-etapa__conteudo">
+                    <span class="cartao-etapa__numero">03</span>
+                    <div class="cartao-etapa__icone">🧬</div>
+                    <h2>Conhecimento</h2>
+                    <p>EXPANDA SEUS CONHECIMENTOS E DEFINA HABILIDADES, ATRIBUTOS E HISTÓRIA.</p>
+                    <span class="cartao-etapa__acao">INICIAR &gt;</span>
+                </div>
+            </article>
+
+            <!-- CARTÃO 4: DETALHES FINAIS -->
+            <article class="cartao-etapa" data-etapa="detalhes" tabindex="0" role="button">
+                <div class="cartao-etapa__brilho"></div>
+                <span class="cartao-hud-marcas cartao-hud-marcas--topo" aria-hidden="true"></span>
+                <span class="cartao-hud-marcas cartao-hud-marcas--base" aria-hidden="true"></span>
+
+                <div class="cartao-etapa__conteudo">
+                    <span class="cartao-etapa__numero">04</span>
+                    <div class="cartao-etapa__icone">📋</div>
+                    <h2>Detalhes Finais</h2>
+                    <p>INSIRA SEU NOME, FRAQUEZAS, EQUIPES E OUTROS DETALHES IMPORTANTES.</p>
+                    <span class="cartao-etapa__acao">INICIAR &gt;</span>
+                </div>
+            </article>
+
+        </section>
+
+
+        <!-- ABA EXPANDIDA CENTRALIZADA (mantém igual ao anterior) -->
+        <section class="aba-expandida" id="aba-expandida" aria-hidden="true">
+
+            <div class="aba-expandida__topo">
+                <button type="button" class="botao-voltar-hub" id="botao-voltar-hub">
+                    ← VOLTAR AOS MÓDULOS
+                </button>
+                <span class="aba-expandida__status" id="aba-status">MÓDULO ATIVO</span>
+            </div>
+
+            <div class="aba-conteudo" data-conteudo="tier">
+                <div class="placeholder-etapa">
+                    <h2>01 // Linha do Tempo de Tier</h2>
+                    <p>Espaço pronto para construirmos a linha do tempo vertical com os Tiers E, D, C, B, A e S na próxima etapa.</p>
+                </div>
+            </div>
+
+            <div class="aba-conteudo" data-conteudo="origem">
+                <div class="placeholder-etapa">
+                    <h2>02 // Mapa Galáctico &amp; Linha Evolutiva</h2>
+                    <p>Espaço pronto para a galáxia interativa, viagem espacial, planeta 3D e árvores evolutivas.</p>
+                </div>
+            </div>
+
+            <div class="aba-conteudo" data-conteudo="conhecimento">
+                <div class="placeholder-etapa">
+                    <span class="selo-oficial">AGUARDANDO REGRAS OFICIAIS</span>
+                    <h2>03 // Conhecimento</h2>
+                    <p>Esta etapa será implementada assim que o sistema oficial de perícias e conhecimentos for lançado.</p>
+                </div>
+            </div>
+
+            <div class="aba-conteudo" data-conteudo="detalhes">
+                <div class="placeholder-etapa">
+                    <span class="selo-oficial">AGUARDANDO REGRAS OFICIAIS</span>
+                    <h2>04 // Detalhes Finais</h2>
+                    <p>Campos de nome, fraquezas, histórico e exportação da ficha entrarão aqui na etapa final.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- VOLTAR AO TOPO -->
+    <a class="voltar-topo" href="#" aria-label="Voltar ao topo">↑</a>
+
+    <!-- Canvas do rastro de bolhas do mouse -->
+    <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
+
+    <script src="script.js"></script>
+    <script src="criar_fichas.js"></script>
+
 </body>
 </html>

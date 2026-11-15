@@ -612,6 +612,396 @@ a {
     margin-top: 18px;
 }
 
+/* =========================
+   PÁGINA CRIAR FICHAS (HUB)
+========================= */
+
+.body-criar {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(57, 169, 0, 0.24), transparent 58%),
+        #030603;
+}
+
+#canvas-tech {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.criar-main {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    padding: 130px 6vw 80px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.criar-cabecalho {
+    text-align: center;
+    margin-bottom: 42px;
+    transition: opacity .35s ease, transform .35s ease;
+}
+
+.criar-cabecalho.oculto {
+    opacity: 0;
+    transform: translateY(-16px);
+    pointer-events: none;
+    position: absolute;
+}
+
+.criar-cabecalho h1 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(44px, 5.4vw, 76px);
+    line-height: 1;
+    text-shadow:
+        0 0 24px rgba(185, 255, 53, .45),
+        0 4px 12px rgba(0, 0, 0, .9);
+}
+
+.criar-cabecalho p {
+    margin-top: 12px;
+    color: #e4efd9;
+    font-size: clamp(12px, 1.05vw, 15px);
+    font-weight: bold;
+    letter-spacing: .08em;
+}
+
+/* Grade de Cartões estilo HUD */
+.cartoes-grade {
+    width: 100%;
+    max-width: 1260px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    perspective: 1200px;
+}
+
+.cartoes-grade.oculto {
+    display: none;
+}
+
+.cartao-etapa {
+    position: relative;
+    min-height: 410px;
+    padding: 30px 24px 26px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border: 1.5px solid rgba(185, 255, 53, .42);
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+
+    background:
+        linear-gradient(180deg, rgba(12, 24, 9, .86), rgba(4, 8, 4, .94));
+    backdrop-filter: blur(4px);
+    box-shadow:
+        0 14px 36px rgba(0, 0, 0, .75),
+        inset 0 0 22px rgba(138, 203, 56, .08);
+
+    transform-style: preserve-3d;
+    transition:
+        border-color .25s ease,
+        box-shadow .25s ease,
+        opacity .3s ease;
+    will-change: transform;
+}
+
+/* Moldura interna fina estilo HUD */
+.cartao-etapa::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(185, 255, 53, .22);
+    border-radius: 12px;
+    pointer-events: none;
+    transition: border-color .25s ease;
+}
+
+.cartao-etapa:hover,
+.cartao-etapa:focus-visible {
+    border-color: var(--verde-claro);
+    box-shadow:
+        0 20px 48px rgba(0, 0, 0, .88),
+        0 0 32px rgba(185, 255, 53, .38),
+        inset 0 0 26px rgba(185, 255, 53, .16);
+    outline: none;
+}
+
+.cartao-etapa:hover::before {
+    border-color: rgba(185, 255, 53, .55);
+}
+
+/* Barrinhas inclinadas (///) no topo e na base dos cards */
+.cartao-hud-marcas {
+    position: absolute;
+    right: 26px;
+    width: 34px;
+    height: 6px;
+    pointer-events: none;
+    opacity: .75;
+    background: repeating-linear-gradient(
+        -60deg,
+        var(--verde-claro) 0 4px,
+        transparent 4px 8px
+    );
+}
+
+.cartao-hud-marcas--topo {
+    top: 5px;
+}
+
+.cartao-hud-marcas--base {
+    bottom: 5px;
+    transform: scaleX(-1);
+}
+
+/* Reflexo que acompanha o mouse dentro do cartão */
+.cartao-etapa__brilho {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .25s ease;
+    background: radial-gradient(
+        circle at var(--mx, 50%) var(--my, 50%),
+        rgba(185, 255, 53, .26),
+        transparent 62%
+    );
+}
+
+.cartao-etapa:hover .cartao-etapa__brilho {
+    opacity: 1;
+}
+
+.cartao-etapa__conteudo {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transform: translateZ(24px);
+}
+
+.cartao-etapa__numero {
+    color: rgba(185, 255, 53, .7);
+    font-family: var(--fonte-texto);
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: .08em;
+}
+
+/* Ícone circular brilhante */
+.cartao-etapa__icone {
+    margin: 22px 0 24px;
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+
+    border: 2px solid rgba(185, 255, 53, .65);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(185, 255, 53, .18), rgba(5, 10, 5, .9));
+    box-shadow:
+        0 0 16px rgba(185, 255, 53, .28),
+        inset 0 0 10px rgba(185, 255, 53, .2);
+    font-size: 22px;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.cartao-etapa:hover .cartao-etapa__icone {
+    transform: scale(1.08);
+    box-shadow:
+        0 0 24px rgba(185, 255, 53, .55),
+        inset 0 0 14px rgba(185, 255, 53, .35);
+}
+
+.cartao-etapa h2 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(23px, 2vw, 29px);
+    line-height: 1.12;
+    text-shadow: 0 0 14px rgba(185, 255, 53, .22);
+}
+
+.cartao-etapa p {
+    margin-top: 16px;
+    color: #d6e4ca;
+    font-size: 12.5px;
+    font-weight: bold;
+    line-height: 1.65;
+    letter-spacing: .04em;
+}
+
+.cartao-etapa__acao {
+    margin-top: auto;
+    padding-top: 26px;
+    color: var(--verde-claro);
+    font-size: 11.5px;
+    font-weight: bold;
+    letter-spacing: .12em;
+}
+
+/* Clone animado que viaja até o centro antes de expandir */
+.cartao-clone-voando {
+    position: fixed;
+    z-index: 50;
+    margin: 0;
+    pointer-events: none;
+    transition:
+        top .48s cubic-bezier(.22, 1, .36, 1),
+        left .48s cubic-bezier(.22, 1, .36, 1),
+        width .48s cubic-bezier(.22, 1, .36, 1),
+        height .48s cubic-bezier(.22, 1, .36, 1),
+        border-radius .48s ease,
+        box-shadow .48s ease;
+}
+
+/* Aba Expandida Centralizada */
+.aba-expandida {
+    display: none;
+    width: 100%;
+    max-width: 1260px;
+    min-height: 72vh;
+    padding: 32px 36px;
+
+    border: 2px solid var(--verde-claro);
+    border-radius: 24px;
+    background: rgba(5, 11, 5, .94);
+    backdrop-filter: blur(10px);
+    box-shadow:
+        0 0 55px rgba(185, 255, 53, .28),
+        inset 0 0 30px rgba(138, 203, 56, .1);
+
+    animation: expandirAba .38s cubic-bezier(.22, 1, .36, 1);
+}
+
+.aba-expandida.ativa {
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes expandirAba {
+    from {
+        opacity: 0;
+        transform: scale(.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.aba-expandida__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(185, 255, 53, .25);
+}
+
+.botao-voltar-hub {
+    padding: 10px 20px;
+    border: 1.5px solid var(--verde-claro);
+    border-radius: 12px;
+    background: rgba(185, 255, 53, .1);
+    color: var(--verde-claro);
+    font-family: var(--fonte-texto);
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: .1em;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+}
+
+.botao-voltar-hub:hover {
+    background: var(--verde-claro);
+    color: #050805;
+    transform: translateX(-3px);
+}
+
+.aba-expandida__status {
+    color: rgba(185, 255, 53, .8);
+    font-size: 12px;
+    letter-spacing: .16em;
+}
+
+.aba-conteudo {
+    display: none;
+    flex: 1;
+    padding-top: 28px;
+}
+
+.aba-conteudo.ativo {
+    display: block;
+}
+
+.placeholder-etapa {
+    min-height: 48vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+}
+
+.placeholder-etapa h2 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(26px, 3vw, 40px);
+}
+
+.placeholder-etapa p {
+    max-width: 560px;
+    color: #d6e4ca;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.selo-oficial {
+    padding: 6px 14px;
+    border: 1px solid rgba(185, 255, 53, .5);
+    border-radius: 999px;
+    color: var(--verde-claro);
+    font-size: 11px;
+    letter-spacing: .14em;
+}
+
+/* Responsividade Criar Ficha */
+@media (max-width: 1024px) {
+    .cartoes-grade {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cartoes-grade {
+        grid-template-columns: 1fr;
+    }
+
+    .cartao-etapa {
+        min-height: 280px;
+    }
+
+    .aba-expandida {
+        padding: 22px 18px;
+    }
+}
+
 
 /* =========================
    RESPONSIVIDADE
