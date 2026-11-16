@@ -246,60 +246,74 @@
                             <span class="planeta-setor-tag" id="planeta-setor-tag">SISTEMA LOCAL</span>
                         </div>
 
-                        <div class="planeta-grade-superior">
-                            <section class="planeta-lado-esquerdo">
-                                <div class="planeta-titulo-box">
-                                    <span class="hud-micro-tag">MUNDO NATAL</span>
-                                    <h2 id="planeta-nome">Terra (Earth)</h2>
-                                </div>
-
-                                <div class="planeta-3d-palco" id="planeta-3d-palco" aria-label="Visualização do planeta"></div>
-
-                                <div class="planeta-info-inferior">
-                                    <span class="hud-micro-tag">DADOS PLANETÁRIOS &amp; LOCALIZAÇÃO</span>
-                                    <p id="planeta-descricao"></p>
-                                </div>
-                            </section>
-
-                            <section class="planeta-lado-direito">
-                                <div class="especie-cabecalho">
-                                    <span class="hud-micro-tag">AMOSTRA GENÉTICA</span>
-                                    <h2 id="especie-nome">Humano (Human)</h2>
-                                    <div class="especie-ben-nome" id="especie-ben-nome">
-                                        DESIGNAÇÃO OMNITRIX // FORMA BASE
+                        <!-- SESSÃO 01: MUNDO NATAL & AMOSTRA GENÉTICA -->
+                        <div class="dossie-sessao" data-sessao="01">
+                            <div class="planeta-grade-superior">
+                                <section class="planeta-lado-esquerdo">
+                                    <div class="planeta-titulo-box">
+                                        <span class="hud-micro-tag">MUNDO NATAL</span>
+                                        <h2 id="planeta-nome">Terra (Earth)</h2>
                                     </div>
-                                </div>
 
-                                <p class="especie-descricao" id="especie-descricao"></p>
+                                    <div class="planeta-3d-palco" id="planeta-3d-palco" aria-label="Visualização do planeta"></div>
 
-                                <div class="especie-imagem-wrapper">
-                                    <div class="especie-imagem-card" id="especie-imagem-card"
-                                        tabindex="0" role="button" aria-label="Ampliar imagem ou projeção da espécie">
-                                        <div class="especie-imagem-brilho"></div>
-                                        <div class="especie-imagem-conteudo" id="especie-imagem-conteudo"></div>
-                                        <span class="especie-imagem-dica">⌕ CLIQUE PARA TELA CHEIA</span>
+                                    <div class="planeta-info-inferior">
+                                        <span class="hud-micro-tag">DADOS PLANETÁRIOS &amp; LOCALIZAÇÃO</span>
+                                        <p id="planeta-descricao"></p>
                                     </div>
-                                </div>
-                            </section>
+                                </section>
+
+                                <section class="planeta-lado-direito">
+                                    <div class="especie-cabecalho">
+                                        <span class="hud-micro-tag">AMOSTRA GENÉTICA</span>
+                                        <h2 id="especie-nome">Humano (Human)</h2>
+                                        <div class="especie-ben-nome" id="especie-ben-nome">
+                                            DESIGNAÇÃO OMNITRIX // FORMA BASE
+                                        </div>
+                                    </div>
+
+                                    <p class="especie-descricao" id="especie-descricao"></p>
+
+                                    <div class="especie-imagem-wrapper">
+                                        <div class="especie-imagem-card" id="especie-imagem-card"
+                                            tabindex="0" role="button" aria-label="Ampliar imagem ou projeção da espécie">
+                                            <div class="especie-imagem-brilho"></div>
+                                            <div class="especie-imagem-conteudo" id="especie-imagem-conteudo"></div>
+                                            <span class="especie-imagem-dica">⌕ CLIQUE PARA TELA CHEIA</span>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
                         </div>
 
-                        <div class="origem-parte-inferior">
+                        <!-- DIVISOR DE CIRCUITO 01 // 02 -->
+                        <div class="circuito-divisor" aria-hidden="true">
+                            <canvas class="canvas-circuito-divisor"></canvas>
+                            <span class="circuito-divisor__tag">MÓDULO 02 // BIOLOGIA &amp; PERFIL TÁTICO</span>
+                        </div>
+
+                        <!-- SESSÃO 02: TRAÇOS BIOLÓGICOS, ARQUÉTIPO & ATRIBUTOS BASE -->
+                        <div class="dossie-sessao" data-sessao="02">
                             <div class="raca-atributos-grid">
                                 <section class="raca-info-box">
                                     <span class="hud-micro-tag">TRAÇOS BIOLÓGICOS &amp; ARQUÉTIPO</span>
+                                    <p class="arquetipo-intro">
+                                        Escolha como você atua em meio a crises.
+                                    </p>
 
                                     <div class="arquetipo-seletor">
-                                        <label for="select-arquetipo">Arquétipo Inicial:</label>
+                                        <label for="select-arquetipo">Arquétipo Tático de Herói:</label>
                                         <select id="select-arquetipo">
-                                            <option value="Combatente">Combatente (Linha de Frente)</option>
-                                            <option value="Estrategista">Estrategista (Tático &amp; Técnico)</option>
-                                            <option value="Explorador">Explorador (Mobilidade &amp; Reconhecimento)</option>
-                                            <option value="Versátil">Versátil (Adaptação Geral)</option>
+                                            <option value="O Combatente">O Combatente (Linha de Frente)</option>
+                                            <option value="O Tecnocérebro">O Tecnocérebro (Tecnologia Alienígena)</option>
+                                            <option value="O Investigador">O Investigador (Casos Complexos)</option>
+                                            <option value="O Fora da Lei">O Fora da Lei (Operações nas Sombras)</option>
+                                            <option value="O Prodígio">O Prodígio (Improviso sob Pressão)</option>
                                         </select>
                                     </div>
 
                                     <p class="raca-info-texto" id="raca-info-texto">
-                                        Selecione um arquétipo para consultar sua proposta inicial.
+                                        Selecione um arquétipo para consultar como você opera em missões.
                                     </p>
                                 </section>
 
@@ -311,7 +325,16 @@
                                     <div class="atributos-lista" id="atributos-lista"></div>
                                 </section>
                             </div>
+                        </div>
 
+                        <!-- DIVISOR DE CIRCUITO 02 // 03 -->
+                        <div class="circuito-divisor" aria-hidden="true">
+                            <canvas class="canvas-circuito-divisor"></canvas>
+                            <span class="circuito-divisor__tag">MÓDULO 03 // PROGRESSÃO GENÉTICA</span>
+                        </div>
+
+                        <!-- SESSÃO 03: CAMINHOS EVOLUTIVOS -->
+                        <div class="dossie-sessao" data-sessao="03">
                             <section class="evolutivo-secao">
                                 <div class="evolutivo-cabecalho">
                                     <span class="hud-micro-tag">LINHA EVOLUTIVA</span>
@@ -332,14 +355,14 @@
                                     </aside>
                                 </div>
                             </section>
+                        </div>
 
-                            <div class="origem-rodape-acoes">
-                                <p class="origem-feedback" id="origem-feedback" role="status" aria-live="polite"></p>
-                                <button type="button" class="tier-botao-selecionar" id="btn-confirmar-origem"
-                                        style="--tier-cor: #b9ff35;" disabled>
-                                    CONFIRMAR ORIGEM &amp; ARQUÉTIPO NA FICHA
-                                </button>
-                            </div>
+                        <div class="origem-rodape-acoes">
+                            <p class="origem-feedback" id="origem-feedback" role="status" aria-live="polite"></p>
+                            <button type="button" class="tier-botao-selecionar" id="btn-confirmar-origem"
+                                    style="--tier-cor: #b9ff35;" disabled>
+                                CONFIRMAR ORIGEM &amp; ARQUÉTIPO NA FICHA
+                            </button>
                         </div>
                     </section>
                 </div>

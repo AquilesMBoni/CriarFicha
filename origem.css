@@ -255,6 +255,37 @@
     to { transform: rotate(360deg); }
 }
 
+/* Marcador quando usa imagem PNG do planeta */
+.planeta-marcador__orbe--imagem {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+.planeta-marcador__orbe--imagem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--planeta-cor, #b9ff35) 65%, transparent));
+    transition: filter .22s ease;
+}
+
+.planeta-marcador:hover .planeta-marcador__orbe--imagem,
+.planeta-marcador:focus-visible .planeta-marcador__orbe--imagem,
+.planeta-marcador.selecionado .planeta-marcador__orbe--imagem {
+    box-shadow: none;
+}
+
+.planeta-marcador:hover .planeta-marcador__orbe--imagem img,
+.planeta-marcador:focus-visible .planeta-marcador__orbe--imagem img,
+.planeta-marcador.selecionado .planeta-marcador__orbe--imagem img {
+    filter: drop-shadow(0 0 14px var(--planeta-cor, #b9ff35));
+}
+
 .planeta-marcador__etiqueta {
     display: flex;
     flex-direction: column;
@@ -323,6 +354,62 @@
     flex-direction: column;
     gap: 24px;
     animation: chegadaHiperespaco .55s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+/* =========================================================
+   SEPARAÇÕES ENTRE AS 3 SESSÕES (TRILHAS DE CIRCUITO)
+========================================================= */
+.dossie-sessao {
+    position: relative;
+    width: 100%;
+}
+
+.circuito-divisor {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 84px;
+    margin: 6px 0;
+    overflow: hidden;
+    border-top: 1px solid rgba(185, 255, 53, .16);
+    border-bottom: 1px solid rgba(185, 255, 53, .16);
+    border-radius: 14px;
+    background:
+        radial-gradient(ellipse at center, rgba(185, 255, 53, .08), rgba(2, 6, 3, .88) 70%);
+}
+
+.canvas-circuito-divisor {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+}
+
+.circuito-divisor__tag {
+    position: relative;
+    z-index: 2;
+    padding: 6px 14px;
+    border: 1px solid rgba(185, 255, 53, .52);
+    border-radius: 999px;
+    background: rgba(3, 9, 4, .92);
+    color: var(--verde-claro, #b9ff35);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    box-shadow: 0 0 18px rgba(185, 255, 53, .18);
+    backdrop-filter: blur(6px);
+}
+
+.arquetipo-intro {
+    margin-top: 8px;
+    color: #9fb894;
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 11px;
+    line-height: 1.5;
 }
 
 @keyframes chegadaHiperespaco {

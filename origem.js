@@ -23,8 +23,9 @@
             y: 0.60,
             descricaoEspecie: 'Os humanos são uma espécie inteligente nativa da Terra, caracterizada por grande diversidade física, cultural e comportamental. Apesar de não possuírem habilidades sobrenaturais naturais em geral, demonstram capacidade de adaptação, criatividade e desenvolvimento tecnológico.',
             descricaoPlaneta: 'A Terra é um planeta rochoso localizado no Sistema Solar, com grande diversidade de ambientes naturais, incluindo oceanos, florestas, desertos, montanhas e regiões polares. É o mundo natal da humanidade e abriga diversas formas de vida.',
-            modelo3D: null,
-            imagemEspecie: null
+            imagemPlaneta: 'img/planetas/terra.png',
+            modelo3D: 'modelos_3d/Terra.glb',
+            imagemEspecie: 'img/racas/Humano.png'
         },
         {
             id: 'kylmyys',
@@ -40,8 +41,9 @@
             y: 0.29,
             descricaoEspecie: 'Os Necrofrigianos são seres humanoides de aparência semelhante a mariposas, com quatro asas e características fantasmagóricas. Possuem capacidade de voar, atravessar matéria sólida e produzir temperaturas extremamente baixas. Também conseguem sobreviver em ambientes espaciais muito frios.',
             descricaoPlaneta: 'Kylmyys é associado aos Necrofrigianos e apresenta condições extremamente frias, compatíveis com as características biológicas da espécie.',
-            modelo3D: null,
-            imagemEspecie: null
+            imagemPlaneta: 'img/planetas/kylmyys.png',
+            modelo3D: 'modelos_3d/Kylmyys.glb',
+            imagemEspecie: 'img/racas/Necrofigiano.png'
         },
         {
             id: 'khoros',
@@ -57,8 +59,9 @@
             y: 0.68,
             descricaoEspecie: 'Os Tetramandos são seres humanoides de grande porte, conhecidos por sua estrutura muscular e por possuírem quatro braços. São extremamente fortes e resistentes, apresentando grande capacidade física para combate e atividades que exigem força.',
             descricaoPlaneta: 'Khoros é o planeta natal dos Tetramandos. É conhecido por abrigar ambientes hostis e criaturas selvagens, sendo associado a uma cultura que valoriza força e capacidade de combate.',
-            modelo3D: null,
-            imagemEspecie: null
+            imagemPlaneta: 'img/planetas/khoros.png',
+            modelo3D: 'modelos_3d/Korros.glb',
+            imagemEspecie: 'img/racas/Tetramando.png'
         },
         {
             id: 'pyros',
@@ -74,8 +77,9 @@
             y: 0.38,
             descricaoEspecie: 'Os Pyronitas são seres de natureza ígnea, constituídos por rochas vulcânicas e envoltos em chamas. São capazes de gerar, controlar e projetar fogo, além de absorver e manipular calor. Seu organismo é adaptado a temperaturas extremamente elevadas.',
             descricaoPlaneta: 'Pyros é o mundo natal dos Pyronitas. É um ambiente de natureza extremamente quente, associado a atividades vulcânicas e condições de temperatura elevadíssimas.',
-            modelo3D: null,
-            imagemEspecie: null
+            imagemPlaneta: 'img/planetas/pyros.png',
+            modelo3D: 'modelos_3d/Pyros.glb',
+            imagemEspecie: 'img/racas/Pyronita.png'
         },
         {
             id: 'cocoricoide',
@@ -91,6 +95,7 @@
             y: 0.72,
             descricaoEspecie: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
             descricaoPlaneta: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            imagemPlaneta: null,
             modelo3D: null,
             imagemEspecie: null
         },
@@ -109,16 +114,18 @@
             secreto: true,
             descricaoEspecie: 'ACESSO RESTRITO. Os dados desta espécie ainda não estão disponíveis.',
             descricaoPlaneta: 'LOCALIZAÇÃO DESCONHECIDA. Informações classificadas.',
+            imagemPlaneta: null,
             modelo3D: null,
             imagemEspecie: null
         }
     ];
 
     const descricoesArquetipos = {
-        Combatente: 'O Combatente prioriza o confronto direto, a presença na linha de frente e a proteção de aliados. Esta descrição é conceitual e não aplica bônus numéricos.',
-        Estrategista: 'O Estrategista prioriza análise, planejamento, tecnologia e leitura do campo de batalha. Esta descrição é conceitual e não aplica bônus numéricos.',
-        Explorador: 'O Explorador prioriza mobilidade, reconhecimento, infiltração e descoberta de novos ambientes. Esta descrição é conceitual e não aplica bônus numéricos.',
-        'Versátil': 'O Versátil busca adaptação a diferentes cenários, alternando entre funções conforme as necessidades do grupo. Esta descrição é conceitual e não aplica bônus numéricos.'
+        'O Combatente': 'Lidere a linha de frente. O Combatente encara o perigo diretamente, abre caminho no calor da batalha e protege seus aliados quando a crise aperta.',
+        'O Tecnocérebro': 'Invada e domine tecnologia alienígena. O Tecnocérebro analisa dispositivos desconhecidos, contorna sistemas de segurança e transforma equipamentos complexos em vantagem tática.',
+        'O Investigador': 'Resolva casos complexos. O Investigador conecta pistas ocultas, decifra mistérios e descobre o que realmente está por trás de cada ocorrência antes que seja tarde.',
+        'O Fora da Lei': 'Opere a partir das sombras. O Fora da Lei age com furtividade, astúcia e mobilidade, infiltrando-se sem ser detectado e atacando de ângulos inesperados.',
+        'O Prodígio': 'Improvise sob pressão. O Prodígio adapta-se a qualquer imprevisto no último segundo, encontrando soluções criativas quando os planos originais falham.'
     };
 
     const caminhosEvolutivos = [
@@ -339,13 +346,35 @@
                 botao.dataset.planeta = planeta.id;
                 botao.style.setProperty('--planeta-cor', planeta.cor);
                 botao.setAttribute('aria-label', `Abrir dossiê: ${planeta.planeta} — ${planeta.especie}`);
-                botao.innerHTML = `
-                    <span class="planeta-marcador__orbe" aria-hidden="true"></span>
-                    <span class="planeta-marcador__etiqueta">
-                        <strong>${escaparHTML(planeta.planeta)}</strong>
-                        <small>${escaparHTML(planeta.codigo)}</small>
-                    </span>
+
+                const orbe = document.createElement('span');
+                orbe.className = 'planeta-marcador__orbe';
+                orbe.setAttribute('aria-hidden', 'true');
+
+                if (planeta.imagemPlaneta) {
+                    orbe.classList.add('planeta-marcador__orbe--imagem');
+                    const img = document.createElement('img');
+                    img.src = planeta.imagemPlaneta;
+                    img.alt = '';
+                    img.draggable = false;
+
+                    /* Se a imagem ainda não existir na pasta, volta para a bolinha brilhante */
+                    img.addEventListener('error', () => {
+                        orbe.classList.remove('planeta-marcador__orbe--imagem');
+                        img.remove();
+                    }, { once: true });
+
+                    orbe.appendChild(img);
+                }
+
+                const etiqueta = document.createElement('span');
+                etiqueta.className = 'planeta-marcador__etiqueta';
+                etiqueta.innerHTML = `
+                    <strong>${escaparHTML(planeta.planeta)}</strong>
+                    <small>${escaparHTML(planeta.codigo)}</small>
                 `;
+
+                botao.append(orbe, etiqueta);
 
                 botao.addEventListener('pointerenter', () => atualizarCoordenada(planeta));
                 botao.addEventListener('focus', () => atualizarCoordenada(planeta));
@@ -944,7 +973,7 @@
         function atualizarTextoArquetipo() {
             if (!elementos.seletorArquetipo || !elementos.textoArquetipo) return;
             const arquetipo = elementos.seletorArquetipo.value;
-            elementos.textoArquetipo.textContent = descricoesArquetipos[arquetipo] || descricoesArquetipos.Versátil;
+            elementos.textoArquetipo.textContent = descricoesArquetipos[arquetipo] || descricoesArquetipos['O Combatente'];
         }
 
         elementos.seletorArquetipo?.addEventListener('change', () => {
@@ -1226,6 +1255,168 @@
             observadorVisibilidade.observe(galaxiaTela, { attributes: true, attributeFilter: ['class'] });
             observadorVisibilidade.observe(planetaTela, { attributes: true, attributeFilter: ['class'] });
         }
+
+        /* -----------------------------------------------------
+           DIVISORES DE CIRCUITO ENTRE AS SESSÕES DO DOSSIÊ
+        ----------------------------------------------------- */
+        function iniciarDivisoresCircuito() {
+            const canvases = Array.from(planetaTela.querySelectorAll('.canvas-circuito-divisor'));
+            if (!canvases.length) return;
+
+            const instancias = canvases.map((cv, idx) => {
+                const ctx = cv.getContext('2d');
+                const trilhas = [];
+                const pontos = [];
+
+                function montarGeometria(w, h) {
+                    trilhas.length = 0;
+                    pontos.length = 0;
+                    const passo = 22;
+
+                    for (let x = passo; x < w; x += passo) {
+                        for (let y = 14; y < h; y += passo) {
+                            pontos.push({ x, y });
+                        }
+                    }
+
+                    const qtdTrilhas = Math.max(8, Math.floor(w / 95));
+                    for (let i = 0; i < qtdTrilhas; i++) {
+                        const esquerda = i % 2 === 0;
+                        const yBase = 16 + ((i * 19 + idx * 11) % Math.max(24, h - 32));
+                        const trecho1 = 60 + ((i * 47) % Math.max(90, Math.floor(w * 0.28)));
+                        const diag = (i % 3 === 0 ? 18 : -18);
+                        const y2 = Math.max(12, Math.min(h - 12, yBase + diag));
+                        const trecho2 = 45 + ((i * 31) % 110);
+
+                        const pts = esquerda
+                            ? [
+                                { x: 0, y: yBase },
+                                { x: trecho1, y: yBase },
+                                { x: trecho1 + Math.abs(diag), y: y2 },
+                                { x: trecho1 + Math.abs(diag) + trecho2, y: y2 }
+                            ]
+                            : [
+                                { x: w, y: yBase },
+                                { x: w - trecho1, y: yBase },
+                                { x: w - trecho1 - Math.abs(diag), y: y2 },
+                                { x: w - trecho1 - Math.abs(diag) - trecho2, y: y2 }
+                            ];
+
+                        trilhas.push({
+                            pts,
+                            fase: (i * 0.23 + idx * 0.4) % 1,
+                            vel: 0.22 + (i % 4) * 0.05,
+                            anel: i % 2 === 0
+                        });
+                    }
+                }
+
+                function redimensionar() {
+                    const ret = cv.parentElement.getBoundingClientRect();
+                    const w = Math.max(1, Math.round(ret.width));
+                    const h = Math.max(1, Math.round(ret.height));
+                    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                    cv.width = w * dpr;
+                    cv.height = h * dpr;
+                    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                    montarGeometria(w, h);
+                }
+
+                return { cv, ctx, trilhas, pontos, redimensionar };
+            });
+
+            function desenharDivisores(tempo) {
+                if (!planetaTela.classList.contains('oculto')) {
+                    const t = tempo * 0.001;
+
+                    instancias.forEach(inst => {
+                        const w = inst.cv.clientWidth;
+                        const h = inst.cv.clientHeight;
+                        if (!w || !h) return;
+                        if (!inst.trilhas.length) inst.redimensionar();
+
+                        const { ctx, trilhas, pontos } = inst;
+                        ctx.clearRect(0, 0, w, h);
+
+                        /* Grade de micro-pontos */
+                        ctx.fillStyle = 'rgba(185, 255, 53, 0.22)';
+                        for (let i = 0; i < pontos.length; i++) {
+                            ctx.fillRect(pontos[i].x, pontos[i].y, 1.5, 1.5);
+                        }
+
+                        /* Trilhas em 45° com nós e pulso luminoso */
+                        trilhas.forEach(tr => {
+                            ctx.save();
+                            ctx.strokeStyle = 'rgba(140, 235, 45, 0.42)';
+                            ctx.shadowColor = '#9dff2e';
+                            ctx.shadowBlur = 8;
+                            ctx.lineWidth = 2;
+                            ctx.lineCap = 'round';
+                            ctx.lineJoin = 'round';
+
+                            ctx.beginPath();
+                            ctx.moveTo(tr.pts[0].x, tr.pts[0].y);
+                            for (let p = 1; p < tr.pts.length; p++) {
+                                ctx.lineTo(tr.pts[p].x, tr.pts[p].y);
+                            }
+                            ctx.stroke();
+
+                            /* Nó na ponta da trilha */
+                            const fim = tr.pts[tr.pts.length - 1];
+                            ctx.beginPath();
+                            ctx.arc(fim.x, fim.y, 3.6, 0, Math.PI * 2);
+                            if (tr.anel) {
+                                ctx.fillStyle = '#050a05';
+                                ctx.fill();
+                                ctx.strokeStyle = '#b9ff35';
+                                ctx.lineWidth = 1.8;
+                                ctx.stroke();
+                            } else {
+                                ctx.fillStyle = '#b9ff35';
+                                ctx.fill();
+                            }
+
+                            /* Pulso de energia correndo na trilha */
+                            if (!movimentoReduzido) {
+                                const prog = (t * tr.vel + tr.fase) % 1;
+                                const segTotal = tr.pts.length - 1;
+                                const posSeg = prog * segTotal;
+                                const sIdx = Math.min(segTotal - 1, Math.floor(posSeg));
+                                const local = posSeg - sIdx;
+                                const a = tr.pts[sIdx];
+                                const b = tr.pts[sIdx + 1];
+                                const px = a.x + (b.x - a.x) * local;
+                                const py = a.y + (b.y - a.y) * local;
+
+                                ctx.fillStyle = '#eaffb8';
+                                ctx.shadowBlur = 12;
+                                ctx.beginPath();
+                                ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+                                ctx.fill();
+                            }
+                            ctx.restore();
+                        });
+                    });
+                }
+
+                if (!movimentoReduzido) {
+                    requestAnimationFrame(desenharDivisores);
+                }
+            }
+
+            window.addEventListener('resize', () => instancias.forEach(i => i.redimensionar()));
+            const obs = new MutationObserver(() => {
+                if (!planetaTela.classList.contains('oculto')) {
+                    instancias.forEach(i => i.redimensionar());
+                }
+            });
+            obs.observe(planetaTela, { attributes: true, attributeFilter: ['class'] });
+
+            instancias.forEach(i => i.redimensionar());
+            requestAnimationFrame(desenharDivisores);
+        }
+
+        iniciarDivisoresCircuito();
 
         sincronizarVisibilidade();
     }
