@@ -1,0 +1,1316 @@
+/* =========================================================
+   BEN 10 BEYOND — ETAPA 02: ORIGEM E GALÁXIA
+   Arquivo complementar: carregue depois de estilo.css
+========================================================= */
+
+.origem-container {
+    --planeta-destaque: var(--verde-claro, #b9ff35);
+    width: 100%;
+    min-height: 62vh;
+    color: #fff;
+}
+
+.origem-container *,
+.especie-modal-fullscreen * {
+    box-sizing: border-box;
+}
+
+.oculto {
+    display: none !important;
+}
+
+/* =========================================================
+   1. MAPA GALÁCTICO
+========================================================= */
+.galaxia-tela {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: clamp(520px, 70vh, 820px);
+    min-height: 520px;
+    overflow: hidden;
+    border: 1px solid rgba(185, 255, 53, .48);
+    border-radius: 22px;
+    background:
+        radial-gradient(ellipse at 50% 48%, rgba(22, 46, 24, .54), transparent 48%),
+        radial-gradient(circle at 50% 50%, #071009 0%, #020503 68%, #010201 100%);
+    box-shadow:
+        inset 0 0 70px rgba(0, 0, 0, .86),
+        0 0 30px rgba(185, 255, 53, .13);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.galaxia-tela:active,
+.galaxia-tela.arrastando {
+    cursor: grabbing;
+}
+
+.galaxia-tela::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        linear-gradient(90deg, rgba(0, 0, 0, .28), transparent 18%, transparent 82%, rgba(0, 0, 0, .28)),
+        linear-gradient(180deg, rgba(0, 0, 0, .42), transparent 24%, transparent 76%, rgba(0, 0, 0, .48));
+}
+
+#canvas-galaxia {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.galaxia-hud-topo,
+.galaxia-hud-rodape {
+    position: absolute;
+    z-index: 5;
+    left: 22px;
+    right: 22px;
+}
+
+.galaxia-hud-topo {
+    top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+    pointer-events: none;
+}
+
+.galaxia-coord {
+    display: inline-flex;
+    align-items: center;
+    min-height: 29px;
+    max-width: 100%;
+    padding: 6px 13px;
+    border: 1px solid rgba(185, 255, 53, .58);
+    border-radius: 999px;
+    background: rgba(2, 8, 4, .86);
+    color: var(--verde-claro, #b9ff35);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .13em;
+    line-height: 1.3;
+    box-shadow: 0 0 16px rgba(185, 255, 53, .2);
+    backdrop-filter: blur(8px);
+}
+
+.galaxia-hud-topo p {
+    max-width: min(650px, 90%);
+    color: #d7e7d0;
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 12px;
+    line-height: 1.5;
+    text-shadow: 0 2px 8px #000;
+}
+
+.galaxia-hud-rodape {
+    bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.galaxia-hud-rodape > span {
+    color: rgba(185, 255, 53, .84);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    line-height: 1.5;
+    text-shadow: 0 2px 8px #000;
+}
+
+.galaxia-controles {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    pointer-events: auto;
+}
+
+.galaxia-btn-reset {
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid rgba(185, 255, 53, .48);
+    border-radius: 9px;
+    background: rgba(3, 10, 5, .9);
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.galaxia-btn-reset:hover,
+.galaxia-btn-reset:focus-visible {
+    border-color: var(--verde-claro, #b9ff35);
+    background: var(--verde-claro, #b9ff35);
+    color: #050805;
+    outline: none;
+}
+
+.galaxia-btn-zoom {
+    width: 34px;
+    padding-inline: 0;
+    font-size: 17px;
+    line-height: 1;
+}
+
+/* Camada dos marcadores: o JS calcula left/top considerando pan e zoom. */
+.galaxia-planetas-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.planeta-marcador {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    min-width: 76px;
+    padding: 8px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+    transform-origin: center;
+    transition: filter .2s ease, opacity .2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.planeta-marcador:hover,
+.planeta-marcador:focus-visible,
+.planeta-marcador.selecionado {
+    z-index: 6;
+    filter: brightness(1.2);
+    outline: none;
+}
+
+.planeta-marcador__orbe {
+    position: relative;
+    display: block;
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    border: 1px solid rgba(255, 255, 255, .85);
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #fff 0 5%, var(--planeta-cor, #b9ff35) 35%, #071008 100%);
+    box-shadow:
+        0 0 13px var(--planeta-cor, #b9ff35),
+        0 0 27px color-mix(in srgb, var(--planeta-cor, #b9ff35) 58%, transparent);
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.planeta-marcador__orbe::before,
+.planeta-marcador__orbe::after {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border: 1px dashed var(--planeta-cor, #b9ff35);
+    border-radius: 50%;
+    opacity: .7;
+    animation: orbitaMarcador 10s linear infinite;
+}
+
+.planeta-marcador__orbe::after {
+    inset: -12px;
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--planeta-cor, #b9ff35) 45%, transparent);
+    opacity: .32;
+    animation-duration: 16s;
+    animation-direction: reverse;
+}
+
+.planeta-marcador:hover .planeta-marcador__orbe,
+.planeta-marcador:focus-visible .planeta-marcador__orbe,
+.planeta-marcador.selecionado .planeta-marcador__orbe {
+    transform: scale(1.28);
+    box-shadow:
+        0 0 18px var(--planeta-cor, #b9ff35),
+        0 0 42px color-mix(in srgb, var(--planeta-cor, #b9ff35) 70%, transparent);
+}
+
+@keyframes orbitaMarcador {
+    to { transform: rotate(360deg); }
+}
+
+.planeta-marcador__etiqueta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    max-width: 170px;
+    padding: 6px 10px;
+    border: 1px solid color-mix(in srgb, var(--planeta-cor, #b9ff35) 62%, transparent);
+    border-radius: 8px;
+    background: rgba(2, 7, 4, .88);
+    box-shadow: 0 5px 14px rgba(0, 0, 0, .55);
+    backdrop-filter: blur(7px);
+    white-space: nowrap;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.planeta-marcador:hover .planeta-marcador__etiqueta,
+.planeta-marcador:focus-visible .planeta-marcador__etiqueta,
+.planeta-marcador.selecionado .planeta-marcador__etiqueta {
+    border-color: var(--planeta-cor, #b9ff35);
+    background: rgba(5, 14, 7, .96);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--planeta-cor, #b9ff35) 35%, transparent);
+}
+
+.planeta-marcador__etiqueta strong {
+    max-width: 150px;
+    overflow: hidden;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .055em;
+    text-overflow: ellipsis;
+}
+
+.planeta-marcador__etiqueta small {
+    color: var(--planeta-cor, #b9ff35);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+
+.planeta-marcador--segredo .planeta-marcador__orbe {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #fff, #d946ef 35%, #08020b 76%);
+    box-shadow: 0 0 17px #d946ef, 0 0 34px rgba(217, 70, 239, .62);
+    animation: glitchSegredo 1.35s steps(2, end) infinite;
+}
+
+.planeta-marcador--segredo .planeta-marcador__orbe::before {
+    border-color: #e879f9;
+}
+
+@keyframes glitchSegredo {
+    0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+    45% { filter: hue-rotate(48deg) brightness(1.35); }
+    55% { transform: translateX(2px); }
+}
+
+/* =========================================================
+   2. DOSSIÊ DO PLANETA E DA ESPÉCIE
+========================================================= */
+.planeta-tela {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    animation: chegadaHiperespaco .55s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes chegadaHiperespaco {
+    from { opacity: 0; transform: translateY(12px) scale(.985); filter: brightness(1.4); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: brightness(1); }
+}
+
+.planeta-barra-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.botao-voltar-galaxia {
+    min-height: 40px;
+    padding: 9px 17px;
+    border: 1px solid var(--verde-claro, #b9ff35);
+    border-radius: 11px;
+    background: rgba(185, 255, 53, .1);
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.botao-voltar-galaxia:hover,
+.botao-voltar-galaxia:focus-visible {
+    transform: translateX(-3px);
+    background: var(--verde-claro, #b9ff35);
+    color: #050805;
+    outline: none;
+}
+
+.planeta-setor-tag,
+.hud-micro-tag {
+    display: inline-block;
+    color: var(--verde-claro, #b9ff35);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .15em;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.planeta-setor-tag {
+    padding: 6px 11px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 46%, transparent);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .24);
+}
+
+.planeta-grade-superior {
+    display: grid;
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+    align-items: stretch;
+    gap: 22px;
+}
+
+.planeta-lado-esquerdo,
+.planeta-lado-direito {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: clamp(18px, 2.2vw, 26px);
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 36%, transparent);
+    border-radius: 19px;
+    background: linear-gradient(155deg, rgba(12, 24, 11, .93), rgba(3, 7, 4, .97));
+    box-shadow: inset 0 0 25px rgba(185, 255, 53, .035), 0 12px 32px rgba(0, 0, 0, .2);
+}
+
+.planeta-titulo-box h2,
+.especie-cabecalho h2 {
+    margin-top: 5px;
+    color: var(--planeta-destaque);
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: clamp(25px, 2.6vw, 38px);
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+    text-shadow: 0 0 19px color-mix(in srgb, var(--planeta-destaque) 32%, transparent);
+}
+
+.planeta-3d-palco {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 270px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 28%, transparent);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--planeta-destaque) 15%, transparent), transparent 47%),
+        radial-gradient(ellipse at center, rgba(16, 31, 18, .55), rgba(2, 5, 3, .98) 72%);
+}
+
+.planeta-3d-palco::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .32;
+    background-image: radial-gradient(rgba(255, 255, 255, .7) .7px, transparent .8px);
+    background-size: 33px 33px;
+}
+
+.planeta-3d-palco model-viewer {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 290px;
+    background: transparent;
+    --poster-color: transparent;
+}
+
+.planeta-esfera-provisoria {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: clamp(145px, 17vw, 190px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 50%;
+    box-shadow:
+        inset -29px -24px 42px rgba(0, 0, 0, .82),
+        inset 12px 10px 22px rgba(255, 255, 255, .24),
+        0 0 42px color-mix(in srgb, var(--planeta-destaque) 42%, transparent);
+    animation: flutuarPlaneta 5.5s ease-in-out infinite;
+}
+
+.planeta-esfera-provisoria::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    border-radius: 50%;
+    opacity: .46;
+    background: repeating-linear-gradient(145deg, rgba(255,255,255,.18) 0 5px, transparent 5px 19px);
+    animation: texturaPlaneta 24s linear infinite;
+}
+
+.planeta-esfera-provisoria::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.6), transparent 22%);
+}
+
+.planeta-esfera--terra {
+    background:
+        radial-gradient(ellipse at 62% 38%, #78c85b 0 12%, transparent 13%),
+        radial-gradient(ellipse at 34% 62%, #a2b75e 0 13%, transparent 14%),
+        radial-gradient(ellipse at 48% 43%, #3189bb 0 35%, #0a365f 70%);
+}
+
+.planeta-esfera--kylmyys {
+    background:
+        radial-gradient(ellipse at 66% 35%, #efffff 0 10%, transparent 11%),
+        radial-gradient(ellipse at 34% 68%, #a3e4ed 0 16%, transparent 17%),
+        repeating-linear-gradient(165deg, transparent 0 18px, rgba(238,255,255,.35) 19px 24px, transparent 25px 37px),
+        linear-gradient(140deg, #d4f7ff, #4f9cae 52%, #183d60);
+}
+
+.planeta-esfera--khoros {
+    background:
+        radial-gradient(ellipse at 30% 62%, #e3a65f 0 12%, transparent 13%),
+        radial-gradient(ellipse at 68% 32%, #8b5b3d 0 17%, transparent 18%),
+        repeating-linear-gradient(20deg, transparent 0 21px, rgba(255,220,160,.18) 22px 28px, transparent 29px 42px),
+        linear-gradient(145deg, #c77b4d, #713e35 58%, #251923);
+}
+
+.planeta-esfera--pyros {
+    background:
+        radial-gradient(ellipse at 62% 35%, #fff2a8 0 8%, transparent 9%),
+        radial-gradient(ellipse at 35% 62%, #f6b43e 0 15%, transparent 16%),
+        repeating-linear-gradient(120deg, transparent 0 18px, rgba(255,225,130,.28) 19px 23px, transparent 24px 35px),
+        linear-gradient(145deg, #ffb52f, #d64b1e 52%, #47151a);
+}
+
+.planeta-esfera--indefinido {
+    background:
+        radial-gradient(circle at 38% 36%, #d7d1a6, transparent 20%),
+        repeating-linear-gradient(25deg, rgba(219, 225, 174, .23) 0 7px, transparent 8px 25px),
+        linear-gradient(145deg, #7c8c54, #39452d 55%, #161f18);
+}
+
+.planeta-esfera--classificado {
+    background:
+        radial-gradient(circle at 50% 50%, #e879f9 0 4%, transparent 5%),
+        repeating-conic-gradient(from 30deg, #16091e 0 12deg, #4b1552 13deg 18deg, #100914 19deg 35deg);
+    box-shadow: inset -25px -20px 42px #000, 0 0 48px rgba(217, 70, 239, .6);
+}
+
+@keyframes flutuarPlaneta {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes texturaPlaneta {
+    from { transform: rotate(0deg) translateX(-3%); }
+    to { transform: rotate(360deg) translateX(-3%); }
+}
+
+.planeta-glb-badge {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 2;
+    padding: 4px 8px;
+    border: 1px solid rgba(185, 255, 53, .35);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .76);
+    color: rgba(185, 255, 53, .85);
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .1em;
+}
+
+.planeta-info-inferior p,
+.especie-descricao {
+    margin-top: 6px;
+    color: #d9e6d1;
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.especie-ben-nome {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 8px;
+    padding: 5px 11px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 48%, transparent);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .035);
+    color: #dcebd3;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    line-height: 1.4;
+}
+
+/* Cartão visual da espécie: mostra uma imagem configurada ou um holograma provisório. */
+.especie-imagem-wrapper {
+    margin-top: auto;
+    padding-top: 4px;
+    perspective: 1000px;
+}
+
+.especie-imagem-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 220px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 56%, transparent);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--planeta-destaque) 17%, transparent), transparent 58%),
+        linear-gradient(145deg, rgba(13, 26, 12, .95), rgba(2, 5, 3, .98));
+    cursor: zoom-in;
+    transform-style: preserve-3d;
+    transition: transform .16s ease, border-color .22s ease, box-shadow .22s ease;
+}
+
+.especie-imagem-card:hover,
+.especie-imagem-card:focus-visible {
+    border-color: var(--planeta-destaque);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .52), 0 0 24px color-mix(in srgb, var(--planeta-destaque) 24%, transparent);
+    outline: none;
+}
+
+.especie-imagem-brilho {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,.2), transparent 58%);
+    transition: opacity .2s ease;
+}
+
+.especie-imagem-card:hover .especie-imagem-brilho {
+    opacity: 1;
+}
+
+.especie-imagem-conteudo {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 220px;
+    padding: 18px;
+    transform: translateZ(18px);
+}
+
+.especie-imagem-conteudo img {
+    display: block;
+    max-width: 100%;
+    max-height: 210px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .85));
+}
+
+.especie-holograma-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    text-align: center;
+}
+
+.especie-holograma-placeholder__simbolo {
+    display: grid;
+    place-items: center;
+    width: 82px;
+    height: 82px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 58%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--planeta-destaque) 9%, transparent);
+    color: var(--planeta-destaque);
+    font-size: 35px;
+    text-shadow: 0 0 20px var(--planeta-destaque);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--planeta-destaque) 22%, transparent), inset 0 0 22px rgba(255,255,255,.04);
+}
+
+.especie-holograma-placeholder strong {
+    color: #f2f7ee;
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: 16px;
+    letter-spacing: .04em;
+}
+
+.especie-holograma-placeholder small {
+    color: color-mix(in srgb, var(--planeta-destaque) 78%, #fff);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .14em;
+}
+
+.especie-imagem-dica {
+    position: absolute;
+    right: 10px;
+    bottom: 9px;
+    z-index: 3;
+    padding: 4px 9px;
+    border: 1px solid rgba(185, 255, 53, .34);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .76);
+    color: var(--verde-claro, #b9ff35);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    pointer-events: none;
+}
+
+/* =========================================================
+   3. ARQUÉTIPO E ATRIBUTOS
+========================================================= */
+.origem-parte-inferior {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.raca-atributos-grid {
+    display: grid;
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+    gap: 22px;
+}
+
+.raca-info-box,
+.atributos-box,
+.evolutivo-secao {
+    min-width: 0;
+    padding: clamp(18px, 2.2vw, 25px);
+    border: 1px solid rgba(185, 255, 53, .3);
+    border-radius: 18px;
+    background: linear-gradient(155deg, rgba(10, 21, 9, .94), rgba(3, 7, 4, .97));
+    box-shadow: inset 0 0 22px rgba(185, 255, 53, .025);
+}
+
+.arquetipo-seletor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 13px 0 15px;
+}
+
+.arquetipo-seletor label {
+    color: #e8f2e1;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .05em;
+}
+
+.arquetipo-seletor select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 13px;
+    border: 1px solid rgba(185, 255, 53, .5);
+    border-radius: 10px;
+    background: #050b05;
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.arquetipo-seletor select:focus-visible {
+    outline: 2px solid var(--verde-claro, #b9ff35);
+    outline-offset: 2px;
+}
+
+.raca-info-texto {
+    color: #d4e2cb;
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.atributos-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.atributos-limite-tag {
+    padding: 5px 9px;
+    border: 1px solid rgba(185, 255, 53, .55);
+    border-radius: 999px;
+    background: rgba(185, 255, 53, .1);
+    color: var(--verde-claro, #b9ff35);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .09em;
+}
+
+.atributos-lista {
+    min-height: 100px;
+    display: grid;
+    align-content: center;
+}
+
+.atributos-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    gap: 7px;
+    padding: 16px;
+    border: 1px dashed rgba(185, 255, 53, .28);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, .2);
+    text-align: center;
+}
+
+.atributos-vazio strong {
+    color: var(--verde-claro, #b9ff35);
+    font-size: 9px;
+    letter-spacing: .12em;
+}
+
+.atributos-vazio span {
+    max-width: 460px;
+    color: #aebfa5;
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+/* =========================================================
+   4. CAMINHOS EVOLUTIVOS — CONTEÚDO PROVISÓRIO
+========================================================= */
+.evolutivo-cabecalho h3 {
+    margin-top: 5px;
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: clamp(22px, 2.2vw, 31px);
+}
+
+.evolutivo-cabecalho p {
+    max-width: 800px;
+    margin-top: 7px;
+    color: #cbdcc1;
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.evolutivo-banners {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+    margin-top: 17px;
+}
+
+.evo-banner-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-height: 112px;
+    padding: 16px;
+    border: 1px solid rgba(185, 255, 53, .3);
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(16, 31, 13, .96), rgba(3, 7, 4, .98));
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.evo-banner-btn:hover,
+.evo-banner-btn:focus-visible,
+.evo-banner-btn.ativo {
+    transform: translateY(-3px);
+    border-color: var(--verde-claro, #b9ff35);
+    background: linear-gradient(145deg, rgba(29, 57, 17, .96), rgba(4, 9, 4, .98));
+    box-shadow: 0 0 22px rgba(185, 255, 53, .17);
+    outline: none;
+}
+
+.evo-banner-btn small {
+    color: var(--verde-claro, #b9ff35);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .13em;
+}
+
+.evo-banner-btn strong {
+    color: #f4f8f1;
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: 16px;
+}
+
+.evo-banner-btn span {
+    color: #afc2a5;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+.evolutivo-painel-interativo {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+    align-items: stretch;
+    gap: 17px;
+    margin-top: 17px;
+    padding: 17px;
+    border: 1px solid rgba(185, 255, 53, .22);
+    border-radius: 15px;
+    background: rgba(1, 4, 2, .62);
+}
+
+.evolutivo-arvore {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    min-width: 0;
+    padding: 8px 8px 8px 24px;
+}
+
+.evolutivo-arvore::before {
+    content: "";
+    position: absolute;
+    top: 23px;
+    bottom: 23px;
+    left: 9px;
+    width: 2px;
+    border-radius: 99px;
+    background: linear-gradient(180deg, var(--verde-claro, #b9ff35), rgba(185, 255, 53, .12));
+    box-shadow: 0 0 10px rgba(185, 255, 53, .35);
+}
+
+.evo-no-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 62px;
+    padding: 11px 13px;
+    border: 1px solid rgba(185, 255, 53, .27);
+    border-radius: 11px;
+    background: rgba(10, 20, 9, .92);
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.evo-no-item::before {
+    content: "";
+    position: absolute;
+    left: -21px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--verde-claro, #b9ff35);
+    border-radius: 50%;
+    background: #050805;
+    box-shadow: 0 0 9px rgba(185, 255, 53, .65);
+    transform: translateY(-50%);
+}
+
+.evo-no-item:hover,
+.evo-no-item:focus-visible,
+.evo-no-item.ativo {
+    transform: translateX(4px);
+    border-color: var(--verde-claro, #b9ff35);
+    background: rgba(26, 48, 16, .92);
+    outline: none;
+}
+
+.evo-no-item:hover::before,
+.evo-no-item.ativo::before {
+    background: var(--verde-claro, #b9ff35);
+}
+
+.evo-no-nivel {
+    display: grid;
+    place-items: center;
+    width: 31px;
+    height: 31px;
+    flex: 0 0 31px;
+    border: 1px solid var(--verde-claro, #b9ff35);
+    border-radius: 50%;
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: 12px;
+}
+
+.evo-no-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.evo-no-info strong {
+    overflow-wrap: anywhere;
+    color: #fff;
+    font-size: 11px;
+}
+
+.evo-no-info small {
+    color: #a9c69a;
+    font-size: 8px;
+    letter-spacing: .1em;
+}
+
+.evolutivo-detalhe-direita {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 220px;
+    padding: 20px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 35%, transparent);
+    border-radius: 13px;
+    background: linear-gradient(145deg, rgba(14, 27, 11, .94), rgba(3, 7, 4, .98));
+}
+
+.evolutivo-detalhe-direita h4 {
+    margin: 8px 0 10px;
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: clamp(18px, 2vw, 23px);
+    line-height: 1.2;
+}
+
+.evolutivo-detalhe-direita p {
+    color: #d4e1cc;
+    font-family: var(--fonte-texto, Arial, sans-serif);
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.evo-detalhe-bonus {
+    margin-top: 16px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--verde-claro, #b9ff35);
+    border-radius: 0 8px 8px 0;
+    background: rgba(185, 255, 53, .08);
+    color: var(--verde-claro, #b9ff35);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   5. CONFIRMAÇÃO E MODAL
+========================================================= */
+.origem-rodape-acoes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.origem-rodape-acoes .tier-botao-selecionar {
+    margin-top: 0;
+}
+
+.origem-rodape-acoes .tier-botao-selecionar:disabled {
+    opacity: .42;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.origem-feedback {
+    min-height: 16px;
+    color: var(--verde-claro, #b9ff35);
+    font-size: 10px;
+    text-align: right;
+}
+
+.especie-modal-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 45px 25px 25px;
+    background: rgba(1, 4, 2, .96);
+    backdrop-filter: blur(12px);
+    animation: revelarModalEspecie .22s ease both;
+}
+
+@keyframes revelarModalEspecie {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.especie-modal-fechar {
+    position: absolute;
+    top: 20px;
+    right: 22px;
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    border: 1px solid var(--verde-claro, #b9ff35);
+    border-radius: 50%;
+    background: rgba(7, 16, 7, .94);
+    color: var(--verde-claro, #b9ff35);
+    font-size: 20px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.especie-modal-fechar:hover,
+.especie-modal-fechar:focus-visible {
+    background: var(--verde-claro, #b9ff35);
+    color: #050805;
+    outline: none;
+}
+
+.especie-modal-palco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(88vw, 1050px);
+    height: min(76vh, 760px);
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 35%, transparent);
+    border-radius: 18px;
+    background: radial-gradient(circle at center, rgba(185, 255, 53, .06), rgba(0, 0, 0, .3));
+}
+
+.especie-modal-palco img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 28px rgba(0, 0, 0, .8));
+}
+
+.especie-modal-palco .especie-holograma-placeholder__simbolo {
+    width: 130px;
+    height: 130px;
+    font-size: 58px;
+}
+
+.especie-modal-palco .especie-holograma-placeholder strong {
+    font-size: clamp(18px, 3vw, 30px);
+}
+
+.especie-modal-palco .especie-holograma-placeholder small {
+    font-size: 10px;
+}
+
+.especie-modal-legenda {
+    max-width: 90vw;
+    color: var(--verde-claro, #b9ff35);
+    font-family: var(--fonte-titulo, sans-serif);
+    font-size: clamp(17px, 2.3vw, 25px);
+    letter-spacing: .05em;
+    text-align: center;
+}
+
+/* =========================================================
+   6. RESPONSIVIDADE
+========================================================= */
+@media (max-width: 900px) {
+    .planeta-grade-superior,
+    .raca-atributos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .planeta-3d-palco {
+        min-height: 245px;
+    }
+
+    .planeta-esfera-provisoria {
+        width: 165px;
+    }
+}
+
+@media (max-width: 700px) {
+    .galaxia-tela {
+        height: 68vh;
+        min-height: 510px;
+        border-radius: 15px;
+    }
+
+    .galaxia-hud-topo,
+    .galaxia-hud-rodape {
+        left: 12px;
+        right: 12px;
+    }
+
+    .galaxia-hud-topo {
+        top: 12px;
+    }
+
+    .galaxia-hud-topo p {
+        max-width: 100%;
+        font-size: 10px;
+    }
+
+    .galaxia-hud-rodape {
+        bottom: 10px;
+        align-items: flex-end;
+    }
+
+    .galaxia-hud-rodape > span {
+        max-width: 120px;
+        font-size: 7px;
+    }
+
+    .galaxia-controles {
+        gap: 5px;
+    }
+
+    .galaxia-btn-reset {
+        min-height: 32px;
+        padding: 6px 8px;
+        font-size: 8px;
+    }
+
+    .galaxia-btn-zoom {
+        width: 30px;
+        padding: 0;
+        font-size: 15px;
+    }
+
+    .planeta-marcador {
+        min-width: 60px;
+        padding: 5px;
+        gap: 7px;
+    }
+
+    .planeta-marcador__etiqueta {
+        padding: 5px 7px;
+    }
+
+    .planeta-marcador__etiqueta strong {
+        max-width: 112px;
+        font-size: 8px;
+    }
+
+    .planeta-marcador__etiqueta small {
+        font-size: 7px;
+    }
+
+    .evolutivo-banners {
+        grid-template-columns: 1fr;
+    }
+
+    .evo-banner-btn {
+        min-height: auto;
+    }
+
+    .evolutivo-painel-interativo {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    .evolutivo-detalhe-direita {
+        min-height: 170px;
+    }
+
+    .origem-rodape-acoes {
+        align-items: stretch;
+    }
+
+    .origem-feedback {
+        text-align: left;
+    }
+
+    .origem-rodape-acoes .tier-botao-selecionar {
+        width: 100%;
+        padding-inline: 12px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 420px) {
+    .galaxia-hud-rodape {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .galaxia-hud-rodape > span {
+        max-width: none;
+    }
+
+    .galaxia-controles {
+        align-self: flex-end;
+    }
+
+    .planeta-barra-topo {
+        align-items: flex-start;
+    }
+
+    .planeta-setor-tag {
+        max-width: 100%;
+        font-size: 7px;
+    }
+
+    .planeta-lado-esquerdo,
+    .planeta-lado-direito,
+    .raca-info-box,
+    .atributos-box,
+    .evolutivo-secao {
+        padding: 15px;
+    }
+
+    .especie-modal-fullscreen {
+        padding-inline: 12px;
+    }
+
+    .especie-modal-palco {
+        width: 96vw;
+        padding: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .planeta-marcador__orbe::before,
+    .planeta-marcador__orbe::after,
+    .planeta-marcador--segredo .planeta-marcador__orbe,
+    .planeta-esfera-provisoria,
+    .planeta-esfera-provisoria::before {
+        animation: none !important;
+    }
+
+    .planeta-tela,
+    .especie-modal-fullscreen {
+        animation: none !important;
+    }
+}

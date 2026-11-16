@@ -1,0 +1,2287 @@
+<!-- CONTEÚDO: ORIGEM, ARQUÉTIPO E ATRIBUTOS (Etapa 3.3) -->
+            <div class="aba-conteudo" data-conteudo="origem">
+                <div class="origem-container" id="origem-container">
+
+                    <!-- TELA 1: MAPA DA GALÁXIA -->
+                    <div class="galaxia-tela" id="galaxia-tela">
+                        <canvas id="canvas-galaxia"></canvas>
+
+                        <div class="galaxia-hud-topo">
+                            <span class="galaxia-coord" id="galaxia-coord">SETOR GALÁCTICO // SELECIONE UM PLANETA</span>
+                            <p>Passe o mouse para escanear e clique em um planeta para iniciar o salto hiperespacial</p>
+                        </div>
+
+                        <!-- Marcadores interativos dos 6 planetas (posicionados via JS) -->
+                        <div class="galaxia-planetas-layer" id="galaxia-planetas-layer"></div>
+                    </div>
+
+                    <!-- TELA 2: DOSSIÊ DO PLANETA E ESPÉCIE (Após a viagem) -->
+                    <div class="planeta-tela oculto" id="planeta-tela">
+
+                        <div class="planeta-barra-topo">
+                            <button type="button" class="botao-voltar-galaxia" id="botao-voltar-galaxia">
+                                ✦ VOLTAR À GALÁXIA
+                            </button>
+                            <span class="planeta-setor-tag" id="planeta-setor-tag">SISTEMA LOCAL</span>
+                        </div>
+
+                        <!-- GRADE SUPERIOR: ESQUERDA (PLANETA 3D) | DIREITA (ESPÉCIE) -->
+                        <div class="planeta-grade-superior">
+
+                            <!-- LADO ESQUERDO -->
+                            <div class="planeta-lado-esquerdo">
+                                <div class="planeta-titulo-box">
+                                    <span class="hud-micro-tag">MUNDO NATAL</span>
+                                    <h2 id="planeta-nome">Terra (Earth)</h2>
+                                </div>
+
+                                <div class="planeta-3d-palco" id="planeta-3d-palco">
+                                    <!-- Preenchido via JS com <model-viewer> (se houver .glb) ou esfera 3D provisória -->
+                                </div>
+
+                                <div class="planeta-info-inferior">
+                                    <span class="hud-micro-tag">DADOS PLANETÁRIOS &amp; LOCALIZAÇÃO</span>
+                                    <p id="planeta-descricao"></p>
+                                </div>
+                            </div>
+
+                            <!-- LADO DIREITO -->
+                            <div class="planeta-lado-direito">
+                                <div class="especie-cabecalho">
+                                    <span class="hud-micro-tag">AMOSTRA GENÉTICA</span>
+                                    <h2 id="especie-nome">Humano (Human)</h2>
+                                    <div class="especie-ben-nome" id="especie-ben-nome">
+                                        DESIGNACÃO OMNITRIX // FORMA BASE
+                                    </div>
+                                </div>
+
+                                <p class="especie-descricao" id="especie-descricao"></p>
+
+                                <!-- Imagem da espécie com inclinação 3D e clique para tela cheia -->
+                                <div class="especie-imagem-wrapper">
+                                    <div class="especie-imagem-card" id="especie-imagem-card" tabindex="0" role="button" aria-label="Ampliar imagem da espécie">
+                                        <div class="especie-imagem-brilho"></div>
+                                        <div class="especie-imagem-conteudo" id="especie-imagem-conteudo"></div>
+                                        <span class="especie-imagem-dica">🔍 CLIQUE PARA TELA CHEIA</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- PARTE INFERIOR: INFORMAÇÕES DA RAÇA, ATRIBUTOS E 3 CAMINHOS EVOLUTIVOS -->
+                        <div class="origem-parte-inferior">
+
+                            <!-- Bloco: Informações da Raça & Atributos -->
+                            <div class="raca-atributos-grid">
+                                <div class="raca-info-box">
+                                    <span class="hud-micro-tag">TRAÇOS BIOLÓGICOS &amp; ARQUÉTIPO</span>
+                                    <div class="arquetipo-seletor">
+                                        <label for="select-arquetipo">Arquétipo Inicial:</label>
+                                        <select id="select-arquetipo">
+                                            <option value="Combatente">Combatente (Linha de Frente)</option>
+                                            <option value="Estrategista">Estrategista (Tático &amp; Técnico)</option>
+                                            <option value="Explorador">Explorador (Mobilidade &amp; Reconhecimento)</option>
+                                            <option value="Versátil">Versátil (Adaptação Geral)</option>
+                                        </select>
+                                    </div>
+                                    <p class="raca-info-texto" id="raca-info-texto">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    </p>
+                                </div>
+
+                                <div class="atributos-box">
+                                    <div class="atributos-topo">
+                                        <span class="hud-micro-tag">ATRIBUTOS BASE DA ESPÉCIE</span>
+                                        <span class="atributos-limite-tag" id="atributos-limite-tag">LIMITE TIER: +6</span>
+                                    </div>
+                                    <div class="atributos-lista" id="atributos-lista"></div>
+                                </div>
+                            </div>
+
+                            <!-- Bloco: 3 Banners de Caminhos Evolutivos -->
+                            <div class="evolutivo-secao">
+                                <div class="evolutivo-cabecalho">
+                                    <span class="hud-micro-tag">LINHA EVOLUTIVA</span>
+                                    <h3>Caminhos Evolutivos</h3>
+                                    <p>Selecione um dos três banners abaixo para abrir a árvore de evolução e passe o mouse nos nós para ver os detalhes</p>
+                                </div>
+
+                                <!-- 3 Banners -->
+                                <div class="evolutivo-banners" id="evolutivo-banners"></div>
+
+                                <!-- Área interativa: Árvore à esquerda + Descrição no hover à direita -->
+                                <div class="evolutivo-painel-interativo" id="evolutivo-painel-interativo">
+                                    <div class="evolutivo-arvore" id="evolutivo-arvore"></div>
+
+                                    <aside class="evolutivo-detalhe-direita" id="evolutivo-detalhe-direita">
+                                        <span class="hud-micro-tag" id="evo-detalhe-tag">INSPEÇÃO DE NÓ</span>
+                                        <h4 id="evo-detalhe-titulo">Passe o mouse sobre um estágio</h4>
+                                        <p id="evo-detalhe-texto">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Passe o cursor sobre qualquer etapa do caminho evolutivo ao lado para visualizar o que ela oferece.
+                                        </p>
+                                        <div class="evo-detalhe-bonus" id="evo-detalhe-bonus">
+                                            BENEFÍCIO: Lorem ipsum dolor sit amet
+                                        </div>
+                                    </aside>
+                                </div>
+                            </div>
+
+                            <!-- Botão Confirmar Origem -->
+                            <div class="origem-rodape-acoes">
+                                <button type="button" class="tier-botao-selecionar" id="btn-confirmar-origem" style="--tier-cor: #b9ff35;">
+                                    CONFIRMAR ORIGEM &amp; ARQUÉTIPO NA FICHA
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+Vamos continuar, vamos fazer essa galáxia. IMPORTANTE: No quickplay, foi dito que teriam as seguintes raças: Humano, Tetramando, Necrofiggiano, Pyronita, Cocoricóide (A espécie não tem nome, nem informações oficiais), e um que está em segredo.
+
+
+
+Aqui uns textos que preparei:
+
+
+
+Humano:
+
+Nome do planeta: Terra (Earth)
+
+Nome da espécie: Humano (Human)
+
+
+
+Descrição da espécie
+
+Os humanos são uma espécie inteligente nativa da Terra, caracterizada por grande diversidade física, cultural e comportamental. Apesar de não possuírem habilidades sobrenaturais naturais em geral, demonstram capacidade de adaptação, criatividade e desenvolvimento tecnológico.
+
+Descrição do planeta
+
+A Terra é um planeta rochoso localizado no Sistema Solar, com grande diversidade de ambientes naturais, incluindo oceanos, florestas, desertos, montanhas e regiões polares. É o mundo natal da humanidade e abriga diversas formas de vida.
+
+
+
+Necrofigiano:
+
+Nome do planeta: Kylmyys
+
+Nome da espécie: Necrofrigiano (Necrofriggian)
+
+
+
+Descrição da espécie
+
+Os Necrofrigianos são seres humanoides de aparência semelhante a mariposas, com quatro asas e características fantasmagóricas. Possuem capacidade de voar, atravessar matéria sólida e produzir temperaturas extremamente baixas. Também conseguem sobreviver em ambientes espaciais muito frios.
+
+Descrição do planeta
+
+Kylmyys é associado aos Necrofrigianos e apresenta condições extremamente frias, compatíveis com as características biológicas da espécie.
+
+
+
+Tetramando:
+
+Nome do planeta: Khoros
+
+Nome da espécie: Tetramando (Tetramand)
+
+
+
+Descrição da espécie
+
+Os Tetramandos são seres humanoides de grande porte, conhecidos por sua estrutura muscular e por possuírem quatro braços. São extremamente fortes e resistentes, apresentando grande capacidade física para combate e atividades que exigem força.
+
+Descrição do planeta
+
+Khoros é o planeta natal dos Tetramandos. É conhecido por abrigar ambientes hostis e criaturas selvagens, sendo associado a uma cultura que valoriza força e capacidade de combate.
+
+
+
+Pyronita:
+
+Nome do planeta: Pyros
+
+Nome da espécie: Pyronita (Pyronite)
+
+Descrição da espécie
+
+Os Pyronitas são seres de natureza ígnea, constituídos por rochas vulcânicas e envoltos em chamas. São capazes de gerar, controlar e projetar fogo, além de absorver e manipular calor. Seu organismo é adaptado a temperaturas extremamente elevadas.
+
+Descrição do planeta
+
+Pyros é o mundo natal dos Pyronitas. É um ambiente de natureza extremamente quente, associado a atividades vulcânicas e condições de temperatura elevadíssimas.
+
+
+
+Cocóricoide
+
+
+
+Nome do planeta: Não definido
+
+Nome da espécie: Cocóricoide
+
+
+
+Descrição da espécie
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Descrição do planeta
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+
+
+(Segredo)
+
+
+
+Nome do planeta: CLASSIFICADO
+
+Nome da espécie: CLASSIFICADO
+
+
+
+Descrição da espécie
+
+ACESSO RESTRITO. Os dados desta espécie ainda não estão disponíveis.
+
+Descrição do planeta
+
+LOCALIZAÇÃO DESCONHECIDA. Informações classificadas.
+
+
+
+Não tenho uma lista de caminhos evolutivos, então deixe com Lorem Impson essa parte.
+
+
+
+Já tinha essa parte pronta, precisaria do CSS e JS dessa parte:
+
+
+
+
+
+<!-- CONTEÚDO: ORIGEM, ARQUÉTIPO E ATRIBUTOS (Etapa 3.3) -->
+            <div class="aba-conteudo" data-conteudo="origem">
+                <div class="origem-container" id="origem-container">
+
+                    <!-- TELA 1: MAPA DA GALÁXIA -->
+                    <div class="galaxia-tela" id="galaxia-tela">
+                        <canvas id="canvas-galaxia"></canvas>
+
+                        <div class="galaxia-hud-topo">
+                            <span class="galaxia-coord" id="galaxia-coord">SETOR GALÁCTICO // SELECIONE UM PLANETA</span>
+                            <p>Arraste para explorar, passe o mouse para escanear e clique em um planeta para iniciar o salto hiperespacial</p>
+                        </div>
+
+                        <!-- Marcadores interativos dos 6 planetas (posicionados via JS) -->
+                        <div class="galaxia-planetas-layer" id="galaxia-planetas-layer"></div>
+
+                        <div class="galaxia-hud-rodape">
+                            <span>SISTEMAS DETECTADOS: 05 CONHECIDOS // 01 CLASSIFICADO</span>
+                            <button type="button" class="galaxia-btn-reset" id="galaxia-btn-reset">CENTRALIZAR ÓRBITA</button>
+                        </div>
+                    </div>
+
+                    <!-- TELA 2: DOSSIÊ DO PLANETA E ESPÉCIE (Após a viagem) -->
+                    <div class="planeta-tela oculto" id="planeta-tela">
+
+                        <div class="planeta-barra-topo">
+                            <button type="button" class="botao-voltar-galaxia" id="botao-voltar-galaxia">
+                                ✦ VOLTAR À GALÁXIA
+                            </button>
+                            <span class="planeta-setor-tag" id="planeta-setor-tag">SISTEMA LOCAL</span>
+                        </div>
+
+                        <!-- GRADE SUPERIOR: ESQUERDA (PLANETA 3D) | DIREITA (ESPÉCIE) -->
+                        <div class="planeta-grade-superior">
+
+                            <!-- LADO ESQUERDO -->
+                            <div class="planeta-lado-esquerdo">
+                                <div class="planeta-titulo-box">
+                                    <span class="hud-micro-tag">MUNDO NATAL</span>
+                                    <h2 id="planeta-nome">Terra (Earth)</h2>
+                                </div>
+
+                                <div class="planeta-3d-palco" id="planeta-3d-palco">
+                                    <!-- Preenchido via JS com <model-viewer> (se houver .glb) ou esfera 3D provisória -->
+                                </div>
+
+                                <div class="planeta-info-inferior">
+                                    <span class="hud-micro-tag">DADOS PLANETÁRIOS &amp; LOCALIZAÇÃO</span>
+                                    <p id="planeta-descricao"></p>
+                                </div>
+                            </div>
+
+                            <!-- LADO DIREITO -->
+                            <div class="planeta-lado-direito">
+                                <div class="especie-cabecalho">
+                                    <span class="hud-micro-tag">AMOSTRA GENÉTICA</span>
+                                    <h2 id="especie-nome">Humano (Human)</h2>
+                                    <div class="especie-ben-nome" id="especie-ben-nome">
+                                        DESIGNAÇÃO OMNITRIX // FORMA BASE
+                                    </div>
+                                </div>
+
+                                <p class="especie-descricao" id="especie-descricao"></p>
+
+                                <!-- Imagem da espécie com inclinação 3D e clique para tela cheia -->
+                                <div class="especie-imagem-wrapper">
+                                    <div class="especie-imagem-card" id="especie-imagem-card" tabindex="0" role="button" aria-label="Ampliar imagem da espécie">
+                                        <div class="especie-imagem-brilho"></div>
+                                        <div class="especie-imagem-conteudo" id="especie-imagem-conteudo"></div>
+                                        <span class="especie-imagem-dica">🔍 CLIQUE PARA TELA CHEIA</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- PARTE INFERIOR: INFORMAÇÕES DA RAÇA, ATRIBUTOS E 3 CAMINHOS EVOLUTIVOS -->
+                        <div class="origem-parte-inferior">
+
+                            <!-- Bloco: Informações da Raça & Atributos -->
+                            <div class="raca-atributos-grid">
+                                <div class="raca-info-box">
+                                    <span class="hud-micro-tag">TRAÇOS BIOLÓGICOS &amp; ARQUÉTIPO</span>
+                                    <div class="arquetipo-seletor">
+                                        <label for="select-arquetipo">Arquétipo Inicial:</label>
+                                        <select id="select-arquetipo">
+                                            <option value="Combatente">Combatente (Linha de Frente)</option>
+                                            <option value="Estrategista">Estrategista (Tático &amp; Técnico)</option>
+                                            <option value="Explorador">Explorador (Mobilidade &amp; Reconhecimento)</option>
+                                            <option value="Versátil">Versátil (Adaptação Geral)</option>
+                                        </select>
+                                    </div>
+                                    <p class="raca-info-texto" id="raca-info-texto">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    </p>
+                                </div>
+
+                                <div class="atributos-box">
+                                    <div class="atributos-topo">
+                                        <span class="hud-micro-tag">ATRIBUTOS BASE DA ESPÉCIE</span>
+                                        <span class="atributos-limite-tag" id="atributos-limite-tag">LIMITE TIER: +6</span>
+                                    </div>
+                                    <div class="atributos-lista" id="atributos-lista"></div>
+                                </div>
+                            </div>
+
+                            <!-- Bloco: 3 Banners de Caminhos Evolutivos -->
+                            <div class="evolutivo-secao">
+                                <div class="evolutivo-cabecalho">
+                                    <span class="hud-micro-tag">LINHA EVOLUTIVA</span>
+                                    <h3>Caminhos Evolutivos</h3>
+                                    <p>Selecione um dos três banners abaixo para abrir a árvore de evolução e passe o mouse nos nós para ver os detalhes</p>
+                                </div>
+
+                                <!-- 3 Banners -->
+                                <div class="evolutivo-banners" id="evolutivo-banners"></div>
+
+                                <!-- Área interativa: Árvore à esquerda + Descrição no hover à direita -->
+                                <div class="evolutivo-painel-interativo" id="evolutivo-painel-interativo">
+                                    <div class="evolutivo-arvore" id="evolutivo-arvore"></div>
+
+                                    <aside class="evolutivo-detalhe-direita" id="evolutivo-detalhe-direita">
+                                        <span class="hud-micro-tag" id="evo-detalhe-tag">INSPEÇÃO DE NÓ</span>
+                                        <h4 id="evo-detalhe-titulo">Passe o mouse sobre um estágio</h4>
+
+                                        <!-- MODAL TELA CHEIA DA IMAGEM DA ESPÉCIE -->
+        <div class="especie-modal-fullscreen oculto" id="especie-modal-fullscreen" role="dialog" aria-modal="true" aria-label="Visualização ampliada da espécie">
+            <button type="button" class="especie-modal-fechar" id="especie-modal-fechar" aria-label="Fechar tela cheia">✕</button>
+            <div class="especie-modal-palco" id="especie-modal-palco"></div>
+            <p class="especie-modal-legenda" id="especie-modal-legenda"></p>
+        </div>
+
+
+
+        /* =================================================
+   MÓDULO 02: GALÁXIA, PLANETA 3D & LINHA EVOLUTIVA
+================================================= */
+
+.oculto {
+    display: none !important;
+}
+
+.origem-container {
+    width: 100%;
+    min-height: 62vh;
+}
+
+/* -------------------------
+   TELA 1: MAPA DA GALÁXIA
+------------------------- */
+
+.galaxia-tela {
+    position: relative;
+    width: 100%;
+    height: 66vh;
+    min-height: 500px;
+    border: 1.5px solid rgba(185, 255, 53, .45);
+    border-radius: 20px;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #081409 0%, #020403 75%, #000 100%);
+    box-shadow: inset 0 0 48px rgba(0, 0, 0, .9), 0 0 28px rgba(185, 255, 53, .14);
+    cursor: grab;
+    user-select: none;
+}
+
+.galaxia-tela:active {
+    cursor: grabbing;
+}
+
+#canvas-galaxia {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.galaxia-hud-topo {
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    right: 22px;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.galaxia-coord {
+    width: fit-content;
+    padding: 5px 14px;
+    border: 1px solid rgba(185, 255, 53, .55);
+    border-radius: 999px;
+    background: rgba(3, 8, 4, .82);
+    color: var(--verde-claro);
+    font-size: 11.5px;
+    font-weight: bold;
+    letter-spacing: .14em;
+    box-shadow: 0 0 14px rgba(185, 255, 53, .22);
+}
+
+.galaxia-hud-topo p {
+    color: #d6e4ca;
+    font-size: 12.5px;
+    text-shadow: 0 2px 8px #000;
+}
+
+.galaxia-hud-rodape {
+    position: absolute;
+    bottom: 16px;
+    left: 22px;
+    right: 22px;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.galaxia-hud-rodape span {
+    color: rgba(185, 255, 53, .75);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-shadow: 0 2px 6px #000;
+}
+
+.galaxia-btn-reset {
+    pointer-events: auto;
+    padding: 7px 14px;
+    border: 1px solid rgba(185, 255, 53, .5);
+    border-radius: 10px;
+    background: rgba(5, 12, 6, .85);
+    color: var(--verde-claro);
+    font-family: var(--fonte-texto);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .1em;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.galaxia-btn-reset:hover {
+    background: var(--verde-claro);
+    color: #050805;
+}
+
+/* Camada dos 6 marcadores planetários */
+.galaxia-planetas-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.planeta-marcador {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    transition: transform .25s ease, opacity .25s ease;
+}
+
+.planeta-marcador:hover,
+.planeta-marcador:focus-visible {
+    transform: translate(-50%, -50%) scale(1.14);
+    z-index: 6;
+    outline: none;
+}
+
+.planeta-marcador__orbe {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 30%, #ffffff, var(--planeta-cor, #b9ff35) 55%, #060a06 100%);
+    box-shadow:
+        0 0 14px var(--planeta-cor, #b9ff35),
+        0 0 28px color-mix(in srgb, var(--planeta-cor, #b9ff35) 55%, transparent);
+}
+
+/* Anel scanner holográfico ao redor do planeta */
+.planeta-marcador__orbe::before {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--planeta-cor, #b9ff35);
+    opacity: .72;
+    animation: girarScannerPlaneta 9s linear infinite;
+}
+
+@keyframes girarScannerPlaneta {
+    to { transform: rotate(360deg); }
+}
+
+.planeta-marcador__etiqueta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 10px;
+    border: 1px solid color-mix(in srgb, var(--planeta-cor, #b9ff35) 65%, transparent);
+    border-radius: 8px;
+    background: rgba(4, 9, 5, .88);
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.planeta-marcador:hover .planeta-marcador__etiqueta {
+    border-color: var(--planeta-cor, #b9ff35);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--planeta-cor, #b9ff35) 45%, transparent);
+}
+
+.planeta-marcador__etiqueta strong {
+    color: #ffffff;
+    font-size: 11.5px;
+    letter-spacing: .06em;
+}
+
+.planeta-marcador__etiqueta small {
+    color: var(--planeta-cor, #b9ff35);
+    font-size: 9.5px;
+    font-weight: bold;
+    letter-spacing: .1em;
+}
+
+/* Estilo especial para o planeta CLASSIFICADO (Segredo) */
+.planeta-marcador--segredo .planeta-marcador__orbe {
+    animation: pulsoGlitchSegredo 1.8s infinite alternate;
+}
+
+@keyframes pulsoGlitchSegredo {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    50% { filter: hue-rotate(40deg) brightness(1.3); }
+    100% { filter: hue-rotate(-30deg) brightness(.85); }
+}
+
+/* -------------------------
+   TELA 2: DOSSIÊ DO PLANETA
+------------------------- */
+
+.planeta-tela {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    animation: chegadaHiperespaco .55s cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes chegadaHiperespaco {
+    from {
+        opacity: 0;
+        transform: scale(1.06);
+        filter: brightness(1.7);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+.planeta-barra-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.botao-voltar-galaxia {
+    padding: 9px 18px;
+    border: 1.5px solid var(--verde-claro);
+    border-radius: 12px;
+    background: rgba(185, 255, 53, .12);
+    color: var(--verde-claro);
+    font-family: var(--fonte-texto);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .1em;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.botao-voltar-galaxia:hover {
+    background: var(--verde-claro);
+    color: #050805;
+    transform: translateX(-3px);
+}
+
+.planeta-setor-tag,
+.hud-micro-tag {
+    display: inline-block;
+    color: var(--verde-claro);
+    font-size: 10.5px;
+    font-weight: bold;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+/* Grade Superior: Esquerda (Planeta 3D) | Direita (Espécie) */
+.planeta-grade-superior {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+}
+
+.planeta-lado-esquerdo,
+.planeta-lado-direito {
+    padding: 24px;
+    border: 1.5px solid rgba(185, 255, 53, .35);
+    border-radius: 20px;
+    background: linear-gradient(165deg, rgba(11, 22, 10, .86), rgba(4, 8, 4, .95));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.planeta-titulo-box h2,
+.especie-cabecalho h2 {
+    margin-top: 4px;
+    color: var(--planeta-destaque, var(--verde-claro));
+    font-family: var(--fonte-titulo);
+    font-size: clamp(26px, 2.6vw, 38px);
+    line-height: 1.08;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--planeta-destaque, #b9ff35) 35%, transparent);
+}
+
+.especie-ben-nome {
+    margin-top: 6px;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque, #b9ff35) 55%, transparent);
+    background: rgba(255, 255, 255, .04);
+    color: #e4efd9;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .12em;
+}
+
+/* Palco 3D do Planeta */
+.planeta-3d-palco {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    border-radius: 16px;
+    border: 1px solid rgba(185, 255, 53, .22);
+    background: radial-gradient(circle at center, rgba(20, 40, 22, .45), rgba(2, 4, 2, .96));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.planeta-3d-palco model-viewer {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    --poster-color: transparent;
+}
+
+/* Esfera 3D Provisória (enquanto não houver arquivo .glb) */
+.planeta-esfera-provisoria {
+    position: relative;
+    width: 175px;
+    height: 175px;
+    border-radius: 50%;
+    box-shadow:
+        inset -28px -22px 42px rgba(0, 0, 0, .88),
+        inset 10px 10px 24px rgba(255, 255, 255, .28),
+        0 0 42px color-mix(in srgb, var(--planeta-destaque, #b9ff35) 45%, transparent);
+    animation: flutuarPlaneta 5s ease-in-out infinite;
+    overflow: hidden;
+}
+
+.planeta-esfera-provisoria::after {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: repeating-linear-gradient(
+        -22deg,
+        rgba(255, 255, 255, .14) 0px,
+        rgba(255, 255, 255, .14) 14px,
+        transparent 14px,
+        transparent 34px
+    );
+    border-radius: 50%;
+    animation: rotacaoTexturaPlaneta 16s linear infinite;
+}
+
+@keyframes flutuarPlaneta {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes rotacaoTexturaPlaneta {
+    from { transform: translateX(-25%); }
+    to { transform: translateX(25%); }
+}
+
+.planeta-glb-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .72);
+    border: 1px solid rgba(185, 255, 53, .35);
+    color: rgba(185, 255, 53, .8);
+    font-size: 9.5px;
+    letter-spacing: .12em;
+}
+
+.planeta-info-inferior p,
+.especie-descricao {
+    margin-top: 6px;
+    color: #dce9d1;
+    font-size: 14.5px;
+    line-height: 1.65;
+}
+
+/* Card de Imagem da Espécie com Tilt 3D */
+.especie-imagem-wrapper {
+    margin-top: auto;
+    perspective: 900px;
+}
+
+.especie-imagem-card {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    border: 1.5px solid color-mix(in srgb, var(--planeta-destaque, #b9ff35) 55%, transparent);
+    border-radius: 16px;
+    background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--planeta-destaque, #b9ff35) 16%, #071007), #030603);
+    overflow: hidden;
+    cursor: zoom-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+    transition: transform .15s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+.especie-imagem-card:hover {
+    border-color: var(--planeta-destaque, var(--verde-claro));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .7), 0 0 24px color-mix(in srgb, var(--planeta-destaque, #b9ff35) 30%, transparent);
+}
+
+.especie-imagem-brilho {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .2s ease;
+    background: radial-gradient(
+        circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255, 255, 255, .24),
+        transparent 60%
+    );
+}
+
+.especie-imagem-card:hover .especie-imagem-brilho {
+    opacity: 1;
+}
+
+.especie-imagem-conteudo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    transform: translateZ(20px);
+}
+
+.especie-imagem-conteudo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .85));
+}
+
+.especie-holograma-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.especie-holograma-placeholder span {
+    font-size: 46px;
+    filter: drop-shadow(0 0 14px var(--planeta-destaque, #b9ff35));
+}
+
+.especie-holograma-placeholder small {
+    color: rgba(228, 239, 217, .75);
+    font-size: 11px;
+    letter-spacing: .14em;
+}
+
+.especie-imagem-dica {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, .75);
+    border: 1px solid rgba(185, 255, 53, .4);
+    color: var(--verde-claro);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .1em;
+    pointer-events: none;
+}
+
+/* Modal Tela Cheia da Espécie */
+.especie-modal-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(2, 5, 2, .94);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    animation: expandirAba .25s ease;
+}
+
+.especie-modal-fechar {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid var(--verde-claro);
+    background: rgba(10, 20, 10, .9);
+    color: var(--verde-claro);
+    font-size: 20px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.especie-modal-fechar:hover {
+    background: var(--verde-claro);
+    color: #050805;
+}
+
+.especie-modal-palco {
+    max-width: 82vw;
+    max-height: 76vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.especie-modal-palco img {
+    max-width: 100%;
+    max-height: 74vh;
+    object-fit: contain;
+    border-radius: 16px;
+    box-shadow: 0 0 45px rgba(185, 255, 53, .28);
+}
+
+.especie-modal-legenda {
+    margin-top: 16px;
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 22px;
+    letter-spacing: .06em;
+}
+
+/* -------------------------
+   PARTE INFERIOR: ARQUÉTIPO, ATRIBUTOS E EVOLUÇÃO
+------------------------- */
+
+.origem-parte-inferior {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.raca-atributos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.raca-info-box,
+.atributos-box,
+.evolutivo-secao {
+    padding: 24px;
+    border: 1.5px solid rgba(185, 255, 53, .32);
+    border-radius: 20px;
+    background: rgba(7, 14, 7, .88);
+}
+
+.arquetipo-seletor {
+    margin: 14px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.arquetipo-seletor label {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: .06em;
+}
+
+.arquetipo-seletor select {
+    padding: 11px 14px;
+    border: 1.5px solid rgba(185, 255, 53, .55);
+    border-radius: 12px;
+    background: #040804;
+    color: var(--verde-claro);
+    font-family: var(--fonte-texto);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+}
+
+.arquetipo-seletor select:focus {
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 14px rgba(185, 255, 53, .3);
+}
+
+.raca-info-texto {
+    color: #d6e4ca;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.atributos-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.atributos-limite-tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--verde-claro);
+    background: rgba(185, 255, 53, .12);
+    color: var(--verde-claro);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .1em;
+}
+
+.atributos-lista {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.atributo-card {
+    padding: 12px 10px;
+    border: 1px solid rgba(185, 255, 53, .28);
+    border-radius: 12px;
+    background: rgba(3, 6, 3, .85);
+    text-align: center;
+}
+
+.atributo-card span {
+    display: block;
+    color: rgba(228, 239, 217, .75);
+    font-size: 10.5px;
+    font-weight: bold;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.atributo-card strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 22px;
+}
+
+/* -------------------------
+   3 BANNERS & ÁRVORE EVOLUTIVA
+------------------------- */
+
+.evolutivo-cabecalho h3 {
+    margin-top: 4px;
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.evolutivo-cabecalho p {
+    margin-top: 6px;
+    color: #d6e4ca;
+    font-size: 13.5px;
+}
+
+.evolutivo-banners {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.evo-banner-btn {
+    padding: 18px 16px;
+    border: 1.5px solid rgba(185, 255, 53, .35);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(14, 28, 12, .85), rgba(5, 10, 5, .95));
+    color: #ffffff;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.evo-banner-btn:hover {
+    transform: translateY(-3px);
+    border-color: var(--verde-claro);
+}
+
+.evo-banner-btn.ativo {
+    border-color: var(--verde-claro);
+    background: linear-gradient(180deg, rgba(45, 92, 22, .55), rgba(8, 16, 8, .96));
+    box-shadow: 0 0 24px rgba(185, 255, 53, .28);
+}
+
+.evo-banner-btn small {
+    color: var(--verde-claro);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .14em;
+}
+
+.evo-banner-btn strong {
+    font-family: var(--fonte-titulo);
+    font-size: 19px;
+    letter-spacing: .04em;
+}
+
+.evo-banner-btn span {
+    color: #c8d8bc;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+/* Painel Interativo: Árvore (Esquerda) + Inspeção no Hover (Direita) */
+.evolutivo-painel-interativo {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.evolutivo-arvore {
+    position: relative;
+    padding: 22px;
+    border: 1px solid rgba(185, 255, 53, .28);
+    border-radius: 16px;
+    background: rgba(3, 7, 4, .88);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.evo-no-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 16px;
+    border: 1.5px solid rgba(185, 255, 53, .32);
+    border-radius: 14px;
+    background: rgba(11, 22, 11, .85);
+    color: #ffffff;
+    cursor: pointer;
+    text-align: left;
+    transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.evo-no-item:hover,
+.evo-no-item.ativo {
+    transform: translateX(6px);
+    border-color: var(--verde-claro);
+    background: rgba(34, 68, 22, .65);
+    box-shadow: 0 0 18px rgba(185, 255, 53, .25);
+}
+
+.evo-no-nivel {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid var(--verde-claro);
+    background: #040804;
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 14px;
+    display: grid;
+    place-items: center;
+}
+
+.evo-no-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.evo-no-info strong {
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.evo-no-info small {
+    color: rgba(185, 255, 53, .8);
+    font-size: 11px;
+    letter-spacing: .08em;
+}
+
+.evolutivo-detalhe-direita {
+    padding: 24px;
+    border: 1.5px solid rgba(185, 255, 53, .45);
+    border-radius: 16px 16px 16px 0;
+    background: linear-gradient(160deg, rgba(14, 28, 12, .95), rgba(4, 8, 4, .98));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.evolutivo-detalhe-direita h4 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 23px;
+    line-height: 1.15;
+}
+
+.evolutivo-detalhe-direita p {
+    color: #dce9d1;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.evo-detalhe-bonus {
+    margin-top: 6px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--verde-claro);
+    background: rgba(185, 255, 53, .1);
+    color: var(--verde-claro);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .06em;
+}
+
+.origem-rodape-acoes {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.origem-rodape-acoes .tier-botao-selecionar {
+    margin-top: 0;
+}
+
+.origem-rodape-acoes .tier-botao-selecionar:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsividade Módulo 02 */
+@media (max-width: 960px) {
+    .planeta-grade-superior,
+    .raca-atributos-grid,
+    .evolutivo-painel-interativo {
+        grid-template-columns: 1fr;
+    }
+
+    .evolutivo-banners {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .galaxia-tela {
+        height: 58vh;
+        min-height: 420px;
+    }
+
+    .atributos-lista {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+
+
+
+/* =========================
+   MÓDULO 02: GALÁXIA, PLANETAS 3D E LINHA EVOLUTIVA
+========================= */
+
+.origem-container {
+    position: relative;
+    width: 100%;
+    min-height: 62vh;
+}
+
+.oculto {
+    display: none !important;
+}
+
+.hud-micro-tag {
+    display: inline-block;
+    color: var(--verde-claro);
+    font-size: 10.5px;
+    font-weight: bold;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    opacity: .88;
+    margin-bottom: 6px;
+}
+
+/* --- TELA 1: MAPA DA GALÁXIA --- */
+.galaxia-tela {
+    position: relative;
+    width: 100%;
+    height: 64vh;
+    min-height: 490px;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1.5px solid rgba(185, 255, 53, .38);
+    background: radial-gradient(circle at 50% 50%, #09170a 0%, #030603 78%);
+    box-shadow:
+        inset 0 0 50px rgba(0, 0, 0, .9),
+        0 0 30px rgba(138, 203, 56, .12);
+    cursor: grab;
+    user-select: none;
+}
+
+.galaxia-tela:active {
+    cursor: grabbing;
+}
+
+#canvas-galaxia {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.galaxia-hud-topo {
+    position: relative;
+    z-index: 4;
+    padding: 20px 24px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(3, 6, 3, .88), transparent);
+}
+
+.galaxia-coord {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid rgba(185, 255, 53, .5);
+    border-radius: 999px;
+    background: rgba(5, 12, 5, .78);
+    color: var(--verde-claro);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .15em;
+}
+
+.galaxia-hud-topo p {
+    margin-top: 8px;
+    color: #d6e4ca;
+    font-size: 13px;
+    letter-spacing: .04em;
+    text-shadow: 0 2px 8px #000;
+}
+
+.galaxia-planetas-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Marcador interativo de cada planeta na galáxia */
+.galaxia-planeta-btn {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    transition: transform .25s ease, opacity .3s ease;
+}
+
+.galaxia-tela.em-salto .galaxia-planeta-btn,
+.galaxia-tela.em-salto .galaxia-hud-topo {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.galaxia-planeta-orbe {
+    position: relative;
+    width: var(--planeta-tam, 24px);
+    height: var(--planeta-tam, 24px);
+    border-radius: 50%;
+    background: var(--planeta-grad);
+    box-shadow:
+        0 0 16px var(--planeta-cor),
+        inset -4px -4px 8px rgba(0, 0, 0, .65);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+/* Anel orbital de radar no marcador */
+.galaxia-planeta-orbe::before {
+    content: "";
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--planeta-cor);
+    opacity: .65;
+    animation: girarRadarPlaneta 10s linear infinite;
+}
+
+@keyframes girarRadarPlaneta {
+    to { transform: rotate(360deg); }
+}
+
+.galaxia-planeta-btn:hover .galaxia-planeta-orbe,
+.galaxia-planeta-btn:focus-visible .galaxia-planeta-orbe {
+    transform: scale(1.38);
+    box-shadow:
+        0 0 28px var(--planeta-cor),
+        0 0 50px var(--planeta-cor);
+}
+
+.galaxia-planeta-label {
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(185, 255, 53, .35);
+    background: rgba(4, 10, 4, .86);
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .08em;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .85);
+    transition: border-color .2s ease, color .2s ease, transform .2s ease;
+}
+
+.galaxia-planeta-label small {
+    display: block;
+    color: var(--planeta-cor);
+    font-size: 9.5px;
+    letter-spacing: .1em;
+}
+
+.galaxia-planeta-btn:hover .galaxia-planeta-label {
+    border-color: var(--planeta-cor);
+    transform: translateY(2px);
+}
+
+/* Estilo especial para planeta CLASSIFICADO */
+.galaxia-planeta-btn--segredo .galaxia-planeta-orbe {
+    animation: pulsoGlitchSegredo 2.2s infinite;
+}
+
+@keyframes pulsoGlitchSegredo {
+    0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+    50% { filter: hue-rotate(45deg) brightness(1.35); }
+}
+
+
+/* --- TELA 2: DOSSIÊ DO PLANETA & ESPÉCIE --- */
+.planeta-tela {
+    animation: surgirDossiePlaneta .5s cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes surgirDossiePlaneta {
+    from {
+        opacity: 0;
+        transform: scale(.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.planeta-barra-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.botao-voltar-galaxia {
+    padding: 9px 18px;
+    border: 1.5px solid var(--verde-claro);
+    border-radius: 999px;
+    background: rgba(185, 255, 53, .12);
+    color: var(--verde-claro);
+    font-family: var(--fonte-texto);
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: .12em;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.botao-voltar-galaxia:hover {
+    background: var(--verde-claro);
+    color: #050805;
+    transform: translateX(-3px);
+}
+
+.planeta-setor-tag {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(185, 255, 53, .45);
+    background: rgba(10, 22, 10, .8);
+    color: var(--verde-claro);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .14em;
+}
+
+/* Grade Superior: Esquerda (Planeta 3D) | Direita (Espécie) */
+.planeta-grade-superior {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.planeta-lado-esquerdo,
+.planeta-lado-direito {
+    padding: 24px;
+    border: 1.5px solid rgba(185, 255, 53, .35);
+    border-radius: 20px;
+    background: linear-gradient(165deg, rgba(11, 22, 10, .92), rgba(4, 8, 4, .96));
+    box-shadow: inset 0 0 24px rgba(138, 203, 56, .06);
+    display: flex;
+    flex-direction: column;
+}
+
+.planeta-titulo-box h2,
+.especie-cabecalho h2 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(26px, 2.5vw, 36px);
+    line-height: 1.1;
+    text-shadow: 0 0 18px rgba(185, 255, 53, .25);
+}
+
+.especie-ben-nome {
+    margin-top: 6px;
+    color: #9ec486;
+    font-size: 11.5px;
+    font-weight: bold;
+    letter-spacing: .14em;
+}
+
+/* Palco 3D do Planeta */
+.planeta-3d-palco {
+    position: relative;
+    width: 100%;
+    height: 270px;
+    margin: 16px 0;
+    border-radius: 16px;
+    border: 1px solid rgba(185, 255, 53, .2);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(185, 255, 53, .08), transparent 65%),
+        #020402;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.planeta-3d-palco model-viewer {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    --poster-color: transparent;
+}
+
+/* Esferas 3D Provisórias (enquanto não há arquivo .glb) */
+.esfera-provisoria-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.esfera-3d {
+    position: relative;
+    width: 164px;
+    height: 164px;
+    border-radius: 50%;
+    box-shadow:
+        inset -26px -22px 38px rgba(0, 0, 0, .88),
+        inset 10px 10px 22px rgba(255, 255, 255, .25),
+        0 0 38px var(--esfera-glow, rgba(185, 255, 53, .35));
+    animation: rotacaoPlanetaCss 18s linear infinite;
+}
+
+.esfera-3d::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 1px solid rgba(185, 255, 53, .25);
+    transform: rotateX(68deg) rotateY(-14deg);
+}
+
+@keyframes rotacaoPlanetaCss {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.esfera-3d--terra {
+    --esfera-glow: rgba(56, 189, 248, .42);
+    background:
+        radial-gradient(circle at 32% 30%, #6ee7b7 0%, #10b981 18%, transparent 28%),
+        radial-gradient(circle at 68% 58%, #34d399 0%, #059669 22%, transparent 32%),
+        radial-gradient(circle at 48% 72%, #a7f3d0 0%, transparent 18%),
+        linear-gradient(120deg, #0284c7, #1d4ed8, #0369a1);
+    background-size: 200% 100%;
+}
+
+.esfera-3d--kylmyys {
+    --esfera-glow: rgba(165, 243, 252, .5);
+    background:
+        radial-gradient(circle at 35% 30%, #ffffff 0%, #cffafe 25%, transparent 45%),
+        radial-gradient(circle at 70% 65%, #e0f2fe 0%, #38bdf8 30%, transparent 50%),
+        linear-gradient(135deg, #0ea5e9, #1e3a8a, #67e8f9);
+    background-size: 200% 100%;
+}
+
+.esfera-3d--khoros {
+    --esfera-glow: rgba(239, 68, 68, .45);
+    background:
+        radial-gradient(circle at 30% 35%, #fca5a5 0%, #dc2626 26%, transparent 44%),
+        radial-gradient(circle at 65% 60%, #991b1b 0%, #450a0a 35%, transparent 55%),
+        linear-gradient(135deg, #b91c1c, #7f1d1d, #ea580c);
+    background-size: 200% 100%;
+}
+
+.esfera-3d--pyros {
+    --esfera-glow: rgba(251, 146, 60, .6);
+    background:
+        radial-gradient(circle at 35% 30%, #fef08a 0%, #f97316 28%, transparent 46%),
+        radial-gradient(circle at 68% 65%, #ef4444 0%, #7c2d12 32%, transparent 52%),
+        linear-gradient(135deg, #ea580c, #431407, #facc15);
+    background-size: 200% 100%;
+}
+
+.esfera-3d--desconhecido {
+    --esfera-glow: rgba(250, 204, 21, .38);
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(250, 204, 21, .16) 0 4px,
+            transparent 4px 12px
+        ),
+        radial-gradient(circle at 40% 35%, #fde047 0%, #854d0e 45%, #1c1917 85%);
+}
+
+.esfera-3d--segredo {
+    --esfera-glow: rgba(255, 77, 77, .45);
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            rgba(255, 77, 77, .22) 0 6px,
+            rgba(5, 8, 5, .9) 6px 14px
+        ),
+        radial-gradient(circle at 50% 50%, #450a0a, #030603);
+}
+
+.esfera-provisoria-legenda {
+    color: rgba(185, 255, 53, .65);
+    font-size: 10px;
+    letter-spacing: .14em;
+}
+
+.planeta-info-inferior p,
+.especie-descricao {
+    color: #dce8d2;
+    font-size: 14.5px;
+    line-height: 1.65;
+}
+
+.especie-descricao {
+    margin-top: 14px;
+}
+
+/* Card da Imagem da Espécie com Tilt 3D */
+.especie-imagem-wrapper {
+    margin-top: auto;
+    padding-top: 18px;
+    perspective: 900px;
+}
+
+.especie-imagem-card {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(185, 255, 53, .45);
+    background: radial-gradient(circle at center, rgba(185, 255, 53, .14), rgba(3, 7, 3, .95));
+    overflow: hidden;
+    cursor: zoom-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .18s ease, border-color .25s ease, box-shadow .25s ease;
+    transform-style: preserve-3d;
+}
+
+.especie-imagem-card:hover {
+    border-color: var(--verde-claro);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .8), 0 0 24px rgba(185, 255, 53, .28);
+}
+
+.especie-imagem-brilho {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .2s ease;
+    background: radial-gradient(
+        circle at var(--ex, 50%) var(--ey, 50%),
+        rgba(185, 255, 53, .28),
+        transparent 60%
+    );
+}
+
+.especie-imagem-card:hover .especie-imagem-brilho {
+    opacity: 1;
+}
+
+.especie-imagem-conteudo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    text-align: center;
+}
+
+.especie-imagem-conteudo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .85));
+}
+
+.especie-silhueta-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--verde-claro);
+}
+
+.especie-silhueta-placeholder span {
+    font-size: 42px;
+    filter: drop-shadow(0 0 12px rgba(185, 255, 53, .5));
+}
+
+.especie-silhueta-placeholder strong {
+    font-family: var(--fonte-titulo);
+    font-size: 16px;
+    letter-spacing: .06em;
+}
+
+.especie-silhueta-placeholder small {
+    color: #9ec486;
+    font-size: 11px;
+    letter-spacing: .12em;
+}
+
+.especie-imagem-dica {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(3, 6, 3, .85);
+    border: 1px solid rgba(185, 255, 53, .4);
+    color: var(--verde-claro);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .1em;
+    pointer-events: none;
+}
+
+
+/* --- PARTE INFERIOR: ARQUÉTIPO, ATRIBUTOS E CAMINHOS EVOLUTIVOS --- */
+.origem-parte-inferior {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.raca-atributos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+}
+
+.raca-info-box,
+.atributos-box,
+.evolutivo-secao {
+    padding: 24px;
+    border: 1.5px solid rgba(185, 255, 53, .35);
+    border-radius: 20px;
+    background: linear-gradient(165deg, rgba(11, 22, 10, .92), rgba(4, 8, 4, .96));
+}
+
+.arquetipo-seletor {
+    margin: 10px 0 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.arquetipo-seletor label {
+    color: #e4efd9;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.arquetipo-seletor select {
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(185, 255, 53, .55);
+    background: #060d06;
+    color: var(--verde-claro);
+    font-family: var(--fonte-texto);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+}
+
+.arquetipo-seletor select:focus {
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 14px rgba(185, 255, 53, .28);
+}
+
+.raca-info-texto {
+    color: #d6e4ca;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+/* Atributos */
+.atributos-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.atributos-limite-tag {
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--verde-claro);
+    background: rgba(185, 255, 53, .14);
+    color: var(--verde-claro);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: .1em;
+}
+
+.atributos-lista {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.atributo-item {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(185, 255, 53, .25);
+    background: rgba(3, 6, 3, .8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.atributo-item__nome {
+    display: flex;
+    flex-direction: column;
+}
+
+.atributo-item__nome strong {
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: .06em;
+}
+
+.atributo-item__nome small {
+    color: #9ec486;
+    font-size: 10px;
+}
+
+.atributo-item__controles {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.atributo-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    border: 1px solid rgba(185, 255, 53, .5);
+    background: rgba(185, 255, 53, .12);
+    color: var(--verde-claro);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+
+.atributo-btn:hover:not(:disabled) {
+    background: var(--verde-claro);
+    color: #050805;
+}
+
+.atributo-btn:disabled {
+    opacity: .3;
+    cursor: not-allowed;
+}
+
+.atributo-valor {
+    min-width: 28px;
+    text-align: center;
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 18px;
+}
+
+
+/* --- SEÇÃO DE CAMINHOS EVOLUTIVOS --- */
+.evolutivo-cabecalho h3 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.evolutivo-cabecalho p {
+    margin-top: 6px;
+    color: #d6e4ca;
+    font-size: 13.5px;
+}
+
+.evolutivo-banners {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.evo-banner-btn {
+    padding: 18px 16px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(185, 255, 53, .32);
+    background: linear-gradient(160deg, rgba(14, 28, 12, .85), rgba(4, 8, 4, .95));
+    text-align: left;
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.evo-banner-btn:hover,
+.evo-banner-btn.ativo {
+    transform: translateY(-3px);
+    border-color: var(--verde-claro);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .75), 0 0 20px rgba(185, 255, 53, .25);
+}
+
+.evo-banner-btn.ativo {
+    background: linear-gradient(160deg, rgba(32, 68, 18, .92), rgba(7, 15, 6, .98));
+}
+
+.evo-banner-tag {
+    display: inline-block;
+    color: var(--verde-claro);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .14em;
+    margin-bottom: 6px;
+}
+
+.evo-banner-btn h4 {
+    color: #fff;
+    font-family: var(--fonte-titulo);
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.evo-banner-btn p {
+    color: #b7c9aa;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+/* Painel Interativo: Árvore à esquerda + Inspeção à direita */
+.evolutivo-painel-interativo {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(185, 255, 53, .25);
+    background: rgba(3, 6, 3, .82);
+}
+
+.evolutivo-arvore {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-left: 22px;
+}
+
+/* Linha conectora vertical da árvore */
+.evolutivo-arvore::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 16px;
+    bottom: 16px;
+    width: 3px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--verde-claro), rgba(185, 255, 53, .25));
+    box-shadow: 0 0 12px rgba(185, 255, 53, .45);
+}
+
+.evo-no-item {
+    position: relative;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(185, 255, 53, .3);
+    background: rgba(11, 22, 10, .85);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.evo-no-item::before {
+    content: "";
+    position: absolute;
+    left: -19px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #040804;
+    border: 2.5px solid var(--verde-claro);
+    box-shadow: 0 0 10px var(--verde-claro);
+}
+
+.evo-no-item:hover,
+.evo-no-item.ativo {
+    border-color: var(--verde-claro);
+    background: rgba(26, 54, 16, .92);
+    transform: translateX(4px);
+}
+
+.evo-no-item:hover::before,
+.evo-no-item.ativo::before {
+    background: var(--verde-claro);
+}
+
+.evo-no-estagio {
+    display: block;
+    color: var(--verde-claro);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: .14em;
+}
+
+.evo-no-titulo {
+    color: #fff;
+    font-family: var(--fonte-titulo);
+    font-size: 16px;
+    margin-top: 2px;
+}
+
+.evolutivo-detalhe-direita {
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(185, 255, 53, .35);
+    background: linear-gradient(160deg, rgba(13, 26, 11, .94), rgba(4, 8, 4, .98));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.evolutivo-detalhe-direita h4 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 21px;
+    margin-bottom: 10px;
+}
+
+.evolutivo-detalhe-direita p {
+    color: #dce8d2;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.evo-detalhe-bonus {
+
+
+
+
+
+
+    <!-- CONTEÚDO: ORIGEM, ARQUÉTIPO E ATRIBUTOS (Etapa 3.3) -->
+            <div class="aba-conteudo" data-conteudo="origem">
+                <div class="origem-container" id="origem-container">
+
+                    <!-- TELA 1: MAPA DA GALÁXIA -->
+                    <div class="galaxia-tela" id="galaxia-tela">
+                        <canvas id="canvas-galaxia"></canvas>
+
+                        <div class="galaxia-hud-topo">
+                            <span class="galaxia-coord" id="galaxia-coord">SETOR GALÁCTICO // SELECIONE UM PLANETA</span>
+                            <p>Arraste para explorar o setor, passe o mouse para escanear e clique em um mundo para iniciar o salto hiperespacial</p>
+                        </div>
+
+                        <!-- Marcadores interativos dos 6 planetas (posicionados via JS) -->
+                        <div class="galaxia-planetas-layer" id="galaxia-planetas-layer"></div>
+                    </div>
+
+                    <!-- TELA 2: DOSSIÊ DO PLANETA E ESPÉCIE (Após a viagem) -->
+                    <div class="planeta-tela oculto" id="planeta-tela">
+
+                        <div class="planeta-barra-topo">
+                            <button type="button" class="botao-voltar-galaxia" id="botao-voltar-galaxia">
+                                ✦ VOLTAR À GALÁXIA
+                            </button>
+                            <span class="planeta-setor-tag" id="planeta-setor-tag">SISTEMA LOCAL</span>
+                        </div>
+
+                        <!-- GRADE SUPERIOR: ESQUERDA (PLANETA 3D) | DIREITA (ESPÉCIE) -->
+                        <div class="planeta-grade-superior">
+
+                            <!-- LADO ESQUERDO -->
+                            <div class="planeta-lado-esquerdo">
+                                <div class="planeta-titulo-box">
+                                    <span class="hud-micro-tag">MUNDO NATAL</span>
+                                    <h2 id="planeta-nome">Terra (Earth)</h2>
+                                </div>
+
+                                <div class="planeta-3d-palco" id="planeta-3d-palco">
+                                    <!-- Preenchido via JS com <model-viewer> (se houver .glb) ou esfera 3D provisória -->
+                                </div>
+
+                                <div class="planeta-info-inferior">
+                                    <span class="hud-micro-tag">DADOS PLANETÁRIOS &amp; LOCALIZAÇÃO</span>
+                                    <p id="planeta-descricao"></p>
+                                </div>
+                            </div>
+
+                            <!-- LADO DIREITO -->
+                            <div class="planeta-lado-direito">
+                                <div class="especie-cabecalho">
+                                    <span class="hud-micro-tag">AMOSTRA GENÉTICA</span>
+                                    <h2 id="especie-nome">Humano (Human)</h2>
+                                    <div class="especie-ben-nome" id="especie-ben-nome">
+                                        DESIGNAÇÃO OMNITRIX // FORMA BASE
+                                    </div>
+                                </div>
+
+                                <p class="especie-descricao" id="especie-descricao"></p>
+
+                                <!-- Imagem da espécie com inclinação 3D e clique para tela cheia -->
+                                <div class="especie-imagem-wrapper">
+                                    <div class="especie-imagem-card" id="especie-imagem-card" tabindex="0" role="button" aria-label="Ampliar imagem da espécie">
+                                        <div class="especie-imagem-brilho"></div>
+                                        <div class="especie-imagem-conteudo" id="especie-imagem-conteudo"></div>
+                                        <span class="especie-imagem-dica">🔍 CLIQUE PARA TELA CHEIA</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- PARTE INFERIOR: INFORMAÇÕES DA RAÇA, ATRIBUTOS E 3 CAMINHOS EVOLUTIVOS -->
+                        <div class="origem-parte-inferior">
+
+                            <!-- Bloco: Informações da Raça & Atributos -->
+                            <div class="raca-atributos-grid">
+                                <div class="raca-info-box">
+                                    <span class="hud-micro-tag">TRAÇOS BIOLÓGICOS &amp; ARQUÉTIPO</span>
+                                    <div class="arquetipo-seletor">
+                                        <label for="select-arquetipo">Arquétipo Inicial:</label>
+                                        <select id="select-arquetipo">
+                                            <option value="Combatente">Combatente (Linha de Frente)</option>
+                                            <option value="Estrategista">Estrategista (Tático &amp; Técnico)</option>
+                                            <option value="Explorador">Explorador (Mobilidade &amp; Reconhecimento)</option>
+                                            <option value="Versátil">Versátil (Adaptação Geral)</option>
+                                        </select>
+                                    </div>
+                                    <p class="raca-info-texto" id="raca-info-texto">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    </p>
+                                </div>
+
+                                <div class="atributos-box">
+                                    <div class="atributos-topo">
+                                        <span class="hud-micro-tag">ATRIBUTOS BASE DA ESPÉCIE</span>
+                                        <span class="atributos-limite-tag" id="atributos-limite-tag">LIMITE TIER: +6</span>
+                                    </div>
+                                    <div class="atributos-lista" id="atributos-lista"></div>
+                                </div>
+                            </div>
+
+                            <!-- Bloco: 3 Banners de Caminhos Evolutivos -->
+                            <div class="evolutivo-secao">
+                                <div class="evolutivo-cabecalho">
+                                    <span class="hud-micro-tag">LINHA EVOLUTIVA</span>
+                                    <h3>Caminhos Evolutivos</h3>
+                                    <p>Selecione um dos três banners abaixo para abrir a árvore de evolução e passe o mouse nos nós para ver os detalhes</p>
+                                </div>
+
+                                <!-- 3 Banners -->
+                                <div class="evolutivo-banners" id="evolutivo-banners"></div>
+
+                                <!-- Área interativa: Árvore à esquerda + Descrição no hover à direita -->
+                                <div class="evolutivo-painel-interativo" id="evolutivo-painel-interativo">
+                                    <div class="evolutivo-arvore" id="evolutivo-arvore"></div>
+
+                                    <aside class="evolutivo-detalhe-direita" id="evolutivo-detalhe-direita">
+                                        <span class="hud-micro-tag" id="evo-detalhe-tag">INSPEÇÃO DE NÓ</span>
+                                        <h4 id="evo-detalhe-titulo">Passe o mouse sobre um estágio</h4>
+                                        <p id="evo-detalhe-texto">
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Passe o cursor sobre qualquer etapa do caminho evolutivo ao lado para visualizar o que ela oferece.
+                                        </p>
+                                        <div class="evo-detalhe-bonus" id="evo-detalhe-bonus">
+                                            BENEFÍCIO: Lorem ipsum dolor sit amet
+                                        </div>
+                                    </aside>
+                                </div>
+                            </div>
+
+                            <!-- Botão Confirmar Origem -->
+                            <div class="origem-rodape-acoes">
+                                <button type="button" class="tier-botao-selecionar" id="btn-confirmar-origem" style="--tier-cor: #b9ff35;">
+                                    CONFIRMAR ORIGEM &amp; ARQUÉTIPO NA FICHA
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- MODAL TELA CHEIA DA ESPÉCIE -->
+            <div class="modal-especie-fullscreen" id="modal-especie-fullscreen" aria-hidden="true">
+                <div class="modal-especie-caixa">
+                    <button type="button" class="modal-especie-fechar" id="modal-especie-fechar" aria-label="Fechar visualização">✕</button>
+                    <div class="modal-especie-corpo" id="modal-especie-corpo"></div>
+                    <p class="modal-especie-legenda" id="modal-especie-legenda"></p>
+                </div>
+            </div>

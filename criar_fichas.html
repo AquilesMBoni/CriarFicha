@@ -10,6 +10,7 @@
 
     <link rel="icon" type="image/png" href="img/icone.png">
     <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="origem.css">
 
     <!-- Já deixamos o model-viewer carregado para os planetas 3D da Etapa 3 -->
     <script type="module"
@@ -132,19 +133,226 @@
                 <span class="aba-expandida__status" id="aba-status">MÓDULO ATIVO</span>
             </div>
 
+            <!-- CONTEÚDO: TIER (Etapa 2) -->
             <div class="aba-conteudo" data-conteudo="tier">
-                <div class="placeholder-etapa">
-                    <h2>01 // Linha do Tempo de Tier</h2>
-                    <p>Espaço pronto para construirmos a linha do tempo vertical com os Tiers E, D, C, B, A e S na próxima etapa.</p>
+                <div class="tier-palco" id="tier-palco">
+
+                    <!-- Linha do Tempo Vertical (começa centralizada e desliza no hover) -->
+                    <div class="tier-timeline-wrapper" id="tier-timeline-wrapper">
+
+                        <div class="tier-topo-titulo">
+                            <span class="tier-topo-anel" aria-hidden="true"></span>
+                            <h2>TIER</h2>
+                        </div>
+
+                        <div class="tier-eixo" id="tier-eixo">
+                            <div class="tier-eixo__pulso" aria-hidden="true"></div>
+
+                            <!-- Lado Esquerdo: E, C, A | Lado Direito: D, B, S -->
+                            <button type="button" class="tier-item tier-item--esquerda" data-tier="E" style="--tier-cor: #94a3b8;">
+                                <span class="tier-item__texto">
+                                    <strong>TIER E</strong>
+                                    <small>EM BREVE</small>
+                                </span>
+                                <span class="tier-item__ramo"><i class="tier-item__no"></i></span>
+                            </button>
+
+                            <button type="button" class="tier-item tier-item--direita" data-tier="D" style="--tier-cor: #b9ff35;">
+                                <span class="tier-item__ramo"><i class="tier-item__no"></i></span>
+                                <span class="tier-item__texto">
+                                    <strong>TIER D</strong>
+                                    <small>ANO UM</small>
+                                </span>
+                            </button>
+
+                            <button type="button" class="tier-item tier-item--esquerda" data-tier="C" style="--tier-cor: #38bdf8;">
+                                <span class="tier-item__texto">
+                                    <strong>TIER C</strong>
+                                    <small>HERÓI LOCAL</small>
+                                </span>
+                                <span class="tier-item__ramo"><i class="tier-item__no"></i></span>
+                            </button>
+
+                            <button type="button" class="tier-item tier-item--direita" data-tier="B" style="--tier-cor: #c084fc;">
+                                <span class="tier-item__ramo"><i class="tier-item__no"></i></span>
+                                <span class="tier-item__texto">
+                                    <strong>TIER B</strong>
+                                    <small>EM BREVE</small>
+                                </span>
+                            </button>
+
+                            <button type="button" class="tier-item tier-item--esquerda" data-tier="A" style="--tier-cor: #fbbf24;">
+                                <span class="tier-item__texto">
+                                    <strong>TIER A</strong>
+                                    <small>EM BREVE</small>
+                                </span>
+                                <span class="tier-item__ramo"><i class="tier-item__no"></i></span>
+                            </button>
+
+                            <button type="button" class="tier-item tier-item--direita" data-tier="S" style="--tier-cor: #ff4d4d;">
+                                <span class="tier-item__ramo"><i class="tier-item__no"></i></span>
+                                <span class="tier-item__texto">
+                                    <strong>TIER S</strong>
+                                    <small>EM BREVE</small>
+                                </span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Painel Direito: Informações e Tabela de Recompensas -->
+                    <aside class="tier-painel" id="tier-painel" aria-live="polite">
+                        <!-- Preenchido dinamicamente pelo criar_fichas.js -->
+                    </aside>
+
                 </div>
             </div>
 
+            <!-- ETAPA 02: ORIGEM, ARQUÉTIPO, ATRIBUTOS E CAMINHOS EVOLUTIVOS -->
             <div class="aba-conteudo" data-conteudo="origem">
-                <div class="placeholder-etapa">
-                    <h2>02 // Mapa Galáctico &amp; Linha Evolutiva</h2>
-                    <p>Espaço pronto para a galáxia interativa, viagem espacial, planeta 3D e árvores evolutivas.</p>
+                <div class="origem-container" id="origem-container">
+
+                    <!-- TELA 1: MAPA GALÁCTICO -->
+                    <section class="galaxia-tela" id="galaxia-tela" aria-label="Mapa galáctico interativo">
+                        <canvas id="canvas-galaxia" aria-hidden="true"></canvas>
+
+                        <div class="galaxia-hud-topo">
+                            <span class="galaxia-coord" id="galaxia-coord" aria-live="polite">
+                                SETOR GALÁCTICO // SELECIONE UM PLANETA
+                            </span>
+                            <p>Arraste para explorar, use a roda do mouse para aproximar e selecione um mundo para iniciar o salto hiperespacial.</p>
+                        </div>
+
+                        <!-- Os seis marcadores são criados pelo JavaScript. -->
+                        <div class="galaxia-planetas-layer" id="galaxia-planetas-layer" aria-label="Sistemas planetários detectados"></div>
+
+                        <div class="galaxia-hud-rodape">
+                            <span>SISTEMAS DETECTADOS: 05 CONHECIDOS // 01 CLASSIFICADO</span>
+
+                            <div class="galaxia-controles" aria-label="Controles do mapa">
+                                <button type="button" class="galaxia-btn-reset galaxia-btn-zoom" id="galaxia-btn-zoom-out" aria-label="Diminuir zoom">−</button>
+                                <button type="button" class="galaxia-btn-reset galaxia-btn-zoom" id="galaxia-btn-zoom-in" aria-label="Aumentar zoom">+</button>
+                                <button type="button" class="galaxia-btn-reset" id="galaxia-btn-reset">CENTRALIZAR ÓRBITA</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- TELA 2: DOSSIÊ DO PLANETA E DA ESPÉCIE -->
+                    <section class="planeta-tela oculto" id="planeta-tela" aria-live="polite">
+                        <div class="planeta-barra-topo">
+                            <button type="button" class="botao-voltar-galaxia" id="botao-voltar-galaxia">
+                                ✦ VOLTAR À GALÁXIA
+                            </button>
+                            <span class="planeta-setor-tag" id="planeta-setor-tag">SISTEMA LOCAL</span>
+                        </div>
+
+                        <div class="planeta-grade-superior">
+                            <section class="planeta-lado-esquerdo">
+                                <div class="planeta-titulo-box">
+                                    <span class="hud-micro-tag">MUNDO NATAL</span>
+                                    <h2 id="planeta-nome">Terra (Earth)</h2>
+                                </div>
+
+                                <div class="planeta-3d-palco" id="planeta-3d-palco" aria-label="Visualização do planeta"></div>
+
+                                <div class="planeta-info-inferior">
+                                    <span class="hud-micro-tag">DADOS PLANETÁRIOS &amp; LOCALIZAÇÃO</span>
+                                    <p id="planeta-descricao"></p>
+                                </div>
+                            </section>
+
+                            <section class="planeta-lado-direito">
+                                <div class="especie-cabecalho">
+                                    <span class="hud-micro-tag">AMOSTRA GENÉTICA</span>
+                                    <h2 id="especie-nome">Humano (Human)</h2>
+                                    <div class="especie-ben-nome" id="especie-ben-nome">
+                                        DESIGNAÇÃO OMNITRIX // FORMA BASE
+                                    </div>
+                                </div>
+
+                                <p class="especie-descricao" id="especie-descricao"></p>
+
+                                <div class="especie-imagem-wrapper">
+                                    <div class="especie-imagem-card" id="especie-imagem-card"
+                                        tabindex="0" role="button" aria-label="Ampliar imagem ou projeção da espécie">
+                                        <div class="especie-imagem-brilho"></div>
+                                        <div class="especie-imagem-conteudo" id="especie-imagem-conteudo"></div>
+                                        <span class="especie-imagem-dica">⌕ CLIQUE PARA TELA CHEIA</span>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="origem-parte-inferior">
+                            <div class="raca-atributos-grid">
+                                <section class="raca-info-box">
+                                    <span class="hud-micro-tag">TRAÇOS BIOLÓGICOS &amp; ARQUÉTIPO</span>
+
+                                    <div class="arquetipo-seletor">
+                                        <label for="select-arquetipo">Arquétipo Inicial:</label>
+                                        <select id="select-arquetipo">
+                                            <option value="Combatente">Combatente (Linha de Frente)</option>
+                                            <option value="Estrategista">Estrategista (Tático &amp; Técnico)</option>
+                                            <option value="Explorador">Explorador (Mobilidade &amp; Reconhecimento)</option>
+                                            <option value="Versátil">Versátil (Adaptação Geral)</option>
+                                        </select>
+                                    </div>
+
+                                    <p class="raca-info-texto" id="raca-info-texto">
+                                        Selecione um arquétipo para consultar sua proposta inicial.
+                                    </p>
+                                </section>
+
+                                <section class="atributos-box">
+                                    <div class="atributos-topo">
+                                        <span class="hud-micro-tag">ATRIBUTOS BASE DA ESPÉCIE</span>
+                                        <span class="atributos-limite-tag" id="atributos-limite-tag">LIMITE TIER: +6</span>
+                                    </div>
+                                    <div class="atributos-lista" id="atributos-lista"></div>
+                                </section>
+                            </div>
+
+                            <section class="evolutivo-secao">
+                                <div class="evolutivo-cabecalho">
+                                    <span class="hud-micro-tag">LINHA EVOLUTIVA</span>
+                                    <h3>Caminhos Evolutivos</h3>
+                                    <p>Selecione um dos três caminhos para consultar seus estágios. O conteúdo permanece provisório até a definição das regras.</p>
+                                </div>
+
+                                <div class="evolutivo-banners" id="evolutivo-banners"></div>
+
+                                <div class="evolutivo-painel-interativo" id="evolutivo-painel-interativo">
+                                    <div class="evolutivo-arvore" id="evolutivo-arvore"></div>
+
+                                    <aside class="evolutivo-detalhe-direita" id="evolutivo-detalhe-direita" aria-live="polite">
+                                        <span class="hud-micro-tag" id="evo-detalhe-tag">INSPEÇÃO DE NÓ</span>
+                                        <h4 id="evo-detalhe-titulo">Selecione um estágio</h4>
+                                        <p id="evo-detalhe-texto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                        <div class="evo-detalhe-bonus" id="evo-detalhe-bonus">BENEFÍCIO: LOREM IPSUM</div>
+                                    </aside>
+                                </div>
+                            </section>
+
+                            <div class="origem-rodape-acoes">
+                                <p class="origem-feedback" id="origem-feedback" role="status" aria-live="polite"></p>
+                                <button type="button" class="tier-botao-selecionar" id="btn-confirmar-origem"
+                                        style="--tier-cor: #b9ff35;" disabled>
+                                    CONFIRMAR ORIGEM &amp; ARQUÉTIPO NA FICHA
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- MODAL DE VISUALIZAÇÃO AMPLIADA DA ESPÉCIE -->
+                <div class="especie-modal-fullscreen oculto" id="especie-modal-fullscreen"
+                    role="dialog" aria-modal="true" aria-hidden="true" aria-label="Visualização ampliada da espécie">
+                    <button type="button" class="especie-modal-fechar" id="especie-modal-fechar" aria-label="Fechar visualização">✕</button>
+                    <div class="especie-modal-palco" id="especie-modal-palco"></div>
+                    <p class="especie-modal-legenda" id="especie-modal-legenda"></p>
                 </div>
             </div>
+
 
             <div class="aba-conteudo" data-conteudo="conhecimento">
                 <div class="placeholder-etapa">
@@ -173,7 +381,7 @@
     <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
 
     <script src="script.js"></script>
-    <script src="criar_fichas.js"></script>
+    <script src="origem.js"></script>
 
 </body>
 </html>

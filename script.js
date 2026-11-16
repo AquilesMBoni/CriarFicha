@@ -880,3 +880,257 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+/* =========================================
+    4. ESTADO GLOBAL DA FICHA (SALVO PARA AS PRÓXIMAS ETAPAS)
+========================================= */
+window.fichaBen10 = JSON.parse(localStorage.getItem('fichaBen10')) || {
+    tier: null,
+    origem: null,
+    arquetipo: null,
+    atributos: {},
+    conhecimentos: [],
+    detalhes: {}
+};
+
+function salvarFichaBen10() {
+    localStorage.setItem('fichaBen10', JSON.stringify(window.fichaBen10));
+    atualizarResumoCartoesHub();
+}
+
+function atualizarResumoCartoesHub() {
+    const cartaoTier = document.querySelector('.cartao-etapa[data-etapa="tier"] .cartao-etapa__conteudo');
+    if (!cartaoTier) return;
+
+    let badge = cartaoTier.querySelector('.cartao-badge-salvo');
+    if (window.fichaBen10.tier) {
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'cartao-badge-salvo';
+            const acao = cartaoTier.querySelector('.cartao-etapa__acao');
+            cartaoTier.insertBefore(badge, acao);
+        }
+        badge.textContent = `SELECIONADO: ${window.fichaBen10.tier.titulo.toUpperCase()}`;
+    }
+}
+
+/* =========================================
+    5. MÓDULO TIER — DADOS, HOVER E SELEÇÃO
+========================================= */
+const DADOS_TIERS = {
+    E: {
+        id: 'E',
+        titulo: 'Tier E',
+        subtitulo: 'EM BREVE',
+        cor: '#94a3b8',
+        disponivel: false,
+        descricao: 'Escala inicial civil ou recruta sem treinamento avançado. Os valores oficiais deste Tier serão liberados futuramente.'
+    },
+    D: {
+        id: 'D',
+        titulo: 'Tier D – Ano Um',
+        subtitulo: 'ANO UM',
+        cor: '#b9ff35',
+        disponivel: true,
+        descricao: 'Heróis recém-descobertos dando os primeiros passos com seus poderes e equipamentos. Ideal para campanhas focadas em aprendizado, descobertas e ameaças urbanas.',
+        stats: {
+            pax: 40,
+            determinacao: 12,
+            defesa: 15,
+            bonusAtaque: '+1',
+            dadoDano: '1d6',
+            limiteAtributo: '+6',
+            limitePoder: 'Grau 2'
+        }
+    },
+    C: {
+        id: 'C',
+        titulo: 'Tier C – Herói Local',
+        subtitulo: 'HERÓI LOCAL',
+        cor: '#38bdf8',
+        disponivel: true,
+        descricao: 'Protetores reconhecidos em sua cidade ou setor, com maior domínio das próprias transformações e recursos táticos para enfrentar vilões recorrentes.',
+        stats: {
+            pax: 60,
+            determinacao: 15,
+            defesa: 18,
+            bonusAtaque: '+2',
+            dadoDano: '1d6',
+            limiteAtributo: '+9',
+            limitePoder: 'Grau 2'
+        }
+    },
+    B: {
+        id: 'B',
+        titulo: 'Tier B',
+        subtitulo: 'EM BREVE',
+        cor: '#c084fc',
+        disponivel: false,
+        descricao: 'Defensores de escala planetária e agentes experientes dos Encanadores. Os atributos e recompensas deste nível serão adicionados em breve.'
+    },
+    A: {
+        id: 'A',
+        titulo: 'Tier A',
+        subtitulo: 'EM BREVE',
+        cor: '#fbbf24',
+        disponivel: false,
+        descricao: 'Ameaças e campeões de nível intergaláctico capazes de alterar o destino de sistemas inteiros. Conteúdo reservado para atualização futura.'
+    },
+    S: {
+        id: 'S',
+        titulo: 'Tier S',
+        subtitulo: 'EM BREVE',
+        cor: '#ff4d4d',
+        disponivel: false,
+        descricao: 'O ápice cósmico do universo de Ben 10. Os parâmetros oficiais deste Tier estarão disponíveis em breve.'
+    }
+};
+
+const tierPalco = document.getElementById('tier-palco');
+const tierPainel = document.getElementById('tier-painel');
+const tierItens = document.querySelectorAll('.tier-item');
+
+function renderizarPainelTier(tierId) {
+    const dados = DADOS_TIERS[tierId];
+    if (!dados || !tierPainel) return;
+
+    tierPainel.style.setProperty('--tier-cor', dados.cor);
+
+    tierItens.forEach(item => {
+        item.classList.toggle('ativo', item.dataset.tier === tierId);
+    });
+
+    const jaEscolhido = window.fichaBen10.tier && window.fichaBen10.tier.id === dados.id;
+
+    if (!dados.disponivel) {
+        tierPainel.innerHTML = `
+            <div class="tier-painel__cabecalho">
+                <div>
+                    <span class="tier-painel__tag">ESCALA DE CAMPANHA // ${dados.subtitulo}</span>
+                    <h3>${dados.titulo}</h3>
+                </div>
+            </div>
+            <p class="tier-painel__descricao">${dados.descricao}</p>
+            <div class="tier-em-breve-box">
+                <strong>EM BREVE</strong>
+                <span>Os valores de PAX, Determinação, Defesa e limites deste Tier serão adicionados com o livro oficial.</span>
+            </div>
+        `;
+        return;
+    }
+
+    const s = dados.stats;
+    tierPainel.innerHTML = `
+        <div class="tier-painel__cabecalho">
+            <div>
+                <span class="tier-painel__tag">ESCALA DISPONÍVEL // ${dados.subtitulo}</span>
+                <h3>${dados.titulo}</h3>
+            </div>
+        </div>
+
+        <p class="tier-painel__descricao">${dados.descricao}</p>
+
+        <div class="tier-painel__subtitulo">RECOMPENSAS E PARÂMETROS INICIAIS</div>
+
+        <div class="tier-tabela-wrap">
+            <table class="tier-tabela">
+                <thead>
+                    <tr>
+                        <th>PAX</th>
+                        <th>Determinação</th>
+                        <th>Defesa</th>
+                        <th>Bônus Ataque</th>
+                        <th>Dado de Dano</th>
+                        <th>Limite Atributo</th>
+                        <th>Limite Poder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${s.pax}</td>
+                        <td>${s.determinacao}</td>
+                        <td>${s.defesa}</td>
+                        <td>${s.bonusAtaque}</td>
+                        <td>${s.dadoDano}</td>
+                        <td>${s.limiteAtributo}</td>
+                        <td>${s.limitePoder}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button type="button"
+                class="tier-botao-selecionar ${jaEscolhido ? 'ja-selecionado' : ''}"
+                id="btn-confirmar-tier"
+                data-tier="${dados.id}">
+            ${jaEscolhido ? '✓ TIER SELECIONADO PARA A FICHA' : `SELECIONAR ${dados.titulo.toUpperCase()}`}
+        </button>
+    `;
+
+    const btnConfirmar = document.getElementById('btn-confirmar-tier');
+    if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', () => selecionarTier(dados.id));
+    }
+}
+
+function selecionarTier(tierId) {
+    const dados = DADOS_TIERS[tierId];
+    if (!dados || !dados.disponivel) return;
+
+    window.fichaBen10.tier = {
+        id: dados.id,
+        titulo: dados.titulo,
+        ...dados.stats
+    };
+    salvarFichaBen10();
+
+    tierItens.forEach(item => {
+        item.classList.toggle('selecionado', item.dataset.tier === tierId);
+    });
+
+    renderizarPainelTier(tierId);
+}
+
+if (tierPalco && tierItens.length > 0) {
+    tierItens.forEach(item => {
+        const tierId = item.dataset.tier;
+
+        /* Hover: arrasta a linha do tempo para a esquerda e abre o painel */
+        item.addEventListener('mouseenter', () => {
+            tierPalco.classList.add('painel-aberto');
+            renderizarPainelTier(tierId);
+        });
+
+        /* Clique direto no ramo também seleciona (se disponível) e fixa o painel */
+        item.addEventListener('click', () => {
+            tierPalco.classList.add('painel-aberto');
+            if (DADOS_TIERS[tierId]?.disponivel) {
+                selecionarTier(tierId);
+            } else {
+                renderizarPainelTier(tierId);
+            }
+        });
+    });
+
+    /* Ao sair do palco: se já houver um Tier selecionado, mantém ele visível; senão centraliza */
+    tierPalco.addEventListener('mouseleave', () => {
+        if (window.fichaBen10.tier) {
+            tierPalco.classList.add('painel-aberto');
+            renderizarPainelTier(window.fichaBen10.tier.id);
+        } else {
+            tierPalco.classList.remove('painel-aberto');
+            tierItens.forEach(i => i.classList.remove('ativo'));
+        }
+    });
+
+    /* Restaura seleção anterior caso o usuário já tenha escolhido um Tier */
+    if (window.fichaBen10.tier) {
+        const idSalvo = window.fichaBen10.tier.id;
+        tierPalco.classList.add('painel-aberto');
+        tierItens.forEach(item => {
+            item.classList.toggle('selecionado', item.dataset.tier === idSalvo);
+        });
+        renderizarPainelTier(idSalvo);
+        atualizarResumoCartoesHub();
+    }
+}
