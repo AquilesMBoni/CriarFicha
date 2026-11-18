@@ -196,31 +196,31 @@
     }
 
     function obterFicha() {
-        if (window.fichaBen10 && typeof window.fichaBen10 === 'object') {
+            if (window.fichaBen10 && typeof window.fichaBen10 === 'object') {
+                return window.fichaBen10;
+            }
+
+            try {
+                const salva = JSON.parse(sessionStorage.getItem('fichaBen10'));
+                if (salva && typeof salva === 'object') {
+                    window.fichaBen10 = salva;
+                    return salva;
+                }
+            } catch (erro) {
+                console.warn('Não foi possível recuperar a ficha temporária:', erro);
+            }
+
+            window.fichaBen10 = {
+                tier: null,
+                origem: null,
+                arquetipo: null,
+                atributos: {},
+                conhecimentos: [],
+                detalhes: {}
+            };
+
             return window.fichaBen10;
         }
-
-        try {
-            const salva = JSON.parse(localStorage.getItem('fichaBen10'));
-            if (salva && typeof salva === 'object') {
-                window.fichaBen10 = salva;
-                return salva;
-            }
-        } catch (erro) {
-            console.warn('Não foi possível recuperar a ficha salva:', erro);
-        }
-
-        window.fichaBen10 = {
-            tier: null,
-            origem: null,
-            arquetipo: null,
-            atributos: {},
-            conhecimentos: [],
-            detalhes: {}
-        };
-
-        return window.fichaBen10;
-    }
 
     function iniciarModuloOrigem() {
         const origemAba = $('.aba-conteudo[data-conteudo="origem"]');
@@ -1073,32 +1073,48 @@
         /* -----------------------------------------------------
            MODAL E EFEITO DE INCLINAÇÃO DO CARTÃO DA ESPÉCIE
         ----------------------------------------------------- */
-        let elementoComFocoAnterior = null;
 
-        function abrirModalEspecie() {
-            if (!elementos.modal || !elementos.modalPalco || !estado.planetaSelecionado) return;
+        function abrirModalEspecie(conteudoOuEvento, legendaTexto) {
+            const modal = document.getElementById("especie-modal-fullscreen");
+            const palco = document.getElementById("especie-modal-palco");
+            const legenda = document.getElementById("especie-modal-legenda");
 
-            elementoComFocoAnterior = document.activeElement;
-            elementos.modalPalco.innerHTML = '';
-            if (elementos.conteudoEspecie) {
-                Array.from(elementos.conteudoEspecie.children).forEach(filho => {
-                    elementos.modalPalco.appendChild(filho.cloneNode(true));
-                });
-            }
-            if (elementos.modalLegenda) {
-                elementos.modalLegenda.textContent = estado.planetaSelecionado.especie;
+            if (!modal || !palco) return;
+
+            // Move o modal para fora de containers com transform/backdrop-filter
+            if (modal.parentElement !== document.body) {
+                document.body.appendChild(modal);
             }
 
-            elementos.modal.classList.remove('oculto');
-            elementos.modal.setAttribute('aria-hidden', 'false');
-            elementos.modalFechar?.focus();
+            let htmlFinal = "";
+            let legendaFinal = legendaTexto || "";
+
+            // Se foi chamado via evento de clique (PointerEvent / MouseEvent) ou sem string
+            if (typeof conteudoOuEvento === "string") {
+                htmlFinal = conteudoOuEvento;
+            } else {
+                const cardConteudo = document.querySelector(".especie-imagem-conteudo");
+                const tituloEspecie = document.querySelector(".especie-cabecalho h2");
+
+                htmlFinal = cardConteudo ? cardConteudo.innerHTML : "";
+                if (!legendaFinal && tituloEspecie) {
+                    legendaFinal = tituloEspecie.textContent.trim();
+                }
+            }
+
+            palco.innerHTML = htmlFinal;
+            if (legenda) legenda.textContent = legendaFinal;
+
+            modal.classList.remove("oculto");
+            document.body.style.overflow = "hidden";
         }
 
         function fecharModalEspecie() {
-            if (!elementos.modal) return;
-            elementos.modal.classList.add('oculto');
-            elementos.modal.setAttribute('aria-hidden', 'true');
-            elementoComFocoAnterior?.focus?.();
+            const modal = document.getElementById("especie-modal-fullscreen");
+            if (!modal) return;
+
+            modal.classList.add("oculto");
+            document.body.style.overflow = ""; // Restaura o scroll
         }
 
         elementos.cartaoEspecie?.addEventListener('click', abrirModalEspecie);
@@ -1156,51 +1172,56 @@
         }
 
         function confirmarOrigem() {
-            if (!estado.planetaSelecionado) {
-                if (elementos.feedback) elementos.feedback.textContent = 'Selecione um sistema na galáxia antes de confirmar.';
-                return;
-            }
+                    if (!estado.planetaSelecionado) {
+                        if (elementos.feedback) elementos.feedback.textContent = 'Selecione um sistema na galáxia antes de confirmar.';
+                        return;
+                    }
 
-            const planeta = estado.planetaSelecionado;
-            const ficha = obterFicha();
-            const arquetipo = elementos.seletorArquetipo?.value || 'Versátil';
+                    const planeta = estado.planetaSelecionado;
+                    const ficha = obterFicha();
+                    const arquetipo = elementos.seletorArquetipo?.value || 'O Combatente';
 
-            ficha.origem = {
-                id: planeta.id,
-                planeta: planeta.planeta,
-                especie: planeta.especie,
-                setor: planeta.setor,
-                codigo: planeta.codigo
-            };
-            ficha.arquetipo = arquetipo;
+                    ficha.origem = {
+                        id: planeta.id,
+                        planeta: planeta.planeta,
+                        especie: planeta.especie,
+                        setor: planeta.setor,
+                        codigo: planeta.codigo
+                    };
+                    ficha.arquetipo = arquetipo;
 
-            if (!ficha.atributos || typeof ficha.atributos !== 'object') {
-                ficha.atributos = {};
-            }
+                    if (!ficha.atributos || typeof ficha.atributos !== 'object') {
+                        ficha.atributos = {};
+                    }
 
-            try {
-                if (typeof window.salvarFichaBen10 === 'function') {
-                    window.salvarFichaBen10();
-                } else {
-                    localStorage.setItem('fichaBen10', JSON.stringify(ficha));
+                    try {
+                        sessionStorage.setItem('fichaBen10', JSON.stringify(ficha));
+
+                        if (window.FichaSessao) {
+                            const rascunho = window.FichaSessao.obterRascunho();
+                            rascunho.origem = {
+                                planetaId: planeta.id,
+                                planetaNome: planeta.planeta,
+                                especieNome: planeta.especie,
+                                arquetipo: arquetipo,
+                                caminhoEvolutivo: caminhosEvolutivos[estado.caminhoAtivo]?.titulo || null
+                            };
+                            window.FichaSessao.salvarRascunho(rascunho);
+                        }
+                    } catch (erro) {
+                        console.error('Não foi possível salvar a origem na sessão:', erro);
+                        return;
+                    }
+
+                    atualizarResumoCartaoOrigem();
+                    if (elementos.feedback) {
+                        elementos.feedback.textContent = `${planeta.especie} — origem e arquétipo salvos na ficha.`;
+                    }
+                    if (elementos.botaoConfirmar) {
+                        elementos.botaoConfirmar.textContent = '✓ ORIGEM E ARQUÉTIPO SALVOS NA FICHA';
+                        elementos.botaoConfirmar.classList.add('ja-selecionado');
+                    }
                 }
-            } catch (erro) {
-                console.error('Não foi possível salvar a origem na ficha:', erro);
-                if (elementos.feedback) {
-                    elementos.feedback.textContent = 'Não foi possível salvar no armazenamento local deste navegador.';
-                }
-                return;
-            }
-
-            atualizarResumoCartaoOrigem();
-            if (elementos.feedback) {
-                elementos.feedback.textContent = `${planeta.especie} — origem e arquétipo salvos na ficha.`;
-            }
-            if (elementos.botaoConfirmar) {
-                elementos.botaoConfirmar.textContent = '✓ ORIGEM E ARQUÉTIPO SALVOS NA FICHA';
-                elementos.botaoConfirmar.classList.add('ja-selecionado');
-            }
-        }
 
         elementos.botaoConfirmar?.addEventListener('click', confirmarOrigem);
 

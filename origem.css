@@ -1,12 +1,12 @@
 /* =========================================================
-   BEN 10 BEYOND — ETAPA 02: ORIGEM E GALÁXIA
+   BEN 10 BEYOND — ETAPA 02: ORIGEM E GALÁXIA (ESCALA 150%)
    Arquivo complementar: carregue depois de estilo.css
 ========================================================= */
 
 .origem-container {
     --planeta-destaque: var(--verde-claro, #b9ff35);
     width: 100%;
-    min-height: 62vh;
+    min-height: 66vh;
     color: #fff;
 }
 
@@ -20,17 +20,17 @@
 }
 
 /* =========================================================
-   1. MAPA GALÁCTICO
+   1. MAPA GALÁCTICO (150%)
 ========================================================= */
 .galaxia-tela {
     position: relative;
     isolation: isolate;
     width: 100%;
-    height: clamp(520px, 70vh, 820px);
-    min-height: 520px;
+    height: clamp(580px, 74vh, 880px);
+    min-height: 580px;
     overflow: hidden;
-    border: 1px solid rgba(185, 255, 53, .48);
-    border-radius: 22px;
+    border: 1.5px solid rgba(185, 255, 53, .48);
+    border-radius: 26px;
     background:
         radial-gradient(ellipse at 50% 48%, rgba(22, 46, 24, .54), transparent 48%),
         radial-gradient(circle at 50% 50%, #071009 0%, #020503 68%, #010201 100%);
@@ -72,30 +72,30 @@
 .galaxia-hud-rodape {
     position: absolute;
     z-index: 5;
-    left: 22px;
-    right: 22px;
+    left: 28px;
+    right: 28px;
 }
 
 .galaxia-hud-topo {
-    top: 18px;
+    top: 24px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 7px;
+    gap: 10px;
     pointer-events: none;
 }
 
 .galaxia-coord {
     display: inline-flex;
     align-items: center;
-    min-height: 29px;
+    min-height: 40px;
     max-width: 100%;
-    padding: 6px 13px;
+    padding: 8px 18px;
     border: 1px solid rgba(185, 255, 53, .58);
     border-radius: 999px;
     background: rgba(2, 8, 4, .86);
     color: var(--verde-claro, #b9ff35);
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 800;
     letter-spacing: .13em;
     line-height: 1.3;
@@ -104,26 +104,26 @@
 }
 
 .galaxia-hud-topo p {
-    max-width: min(650px, 90%);
+    max-width: min(820px, 92%);
     color: #d7e7d0;
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 12px;
+    font-size: 17px;
     line-height: 1.5;
     text-shadow: 0 2px 8px #000;
 }
 
 .galaxia-hud-rodape {
-    bottom: 15px;
+    bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
     pointer-events: none;
 }
 
 .galaxia-hud-rodape > span {
     color: rgba(185, 255, 53, .84);
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: .12em;
     line-height: 1.5;
@@ -134,19 +134,19 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 7px;
+    gap: 10px;
     pointer-events: auto;
 }
 
 .galaxia-btn-reset {
-    min-height: 34px;
-    padding: 7px 12px;
+    min-height: 46px;
+    padding: 10px 18px;
     border: 1px solid rgba(185, 255, 53, .48);
-    border-radius: 9px;
+    border-radius: 12px;
     background: rgba(3, 10, 5, .9);
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: .08em;
     cursor: pointer;
@@ -163,13 +163,13 @@
 }
 
 .galaxia-btn-zoom {
-    width: 34px;
+    width: 46px;
     padding-inline: 0;
-    font-size: 17px;
+    font-size: 24px;
     line-height: 1;
 }
 
-/* Camada dos marcadores: o JS calcula left/top considerando pan e zoom. */
+/* Marcadores dos sistemas planetários (150%) */
 .galaxia-planetas-layer {
     position: absolute;
     inset: 0;
@@ -185,9 +185,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 9px;
-    min-width: 76px;
-    padding: 8px;
+    gap: 12px;
+    min-width: 105px;
+    padding: 10px;
     border: 0;
     background: transparent;
     color: #fff;
@@ -210,15 +210,15 @@
 .planeta-marcador__orbe {
     position: relative;
     display: block;
-    width: 22px;
-    height: 22px;
-    flex: 0 0 22px;
-    border: 1px solid rgba(255, 255, 255, .85);
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border: 1.5px solid rgba(255, 255, 255, .85);
     border-radius: 50%;
     background: radial-gradient(circle at 32% 28%, #fff 0 5%, var(--planeta-cor, #b9ff35) 35%, #071008 100%);
     box-shadow:
-        0 0 13px var(--planeta-cor, #b9ff35),
-        0 0 27px color-mix(in srgb, var(--planeta-cor, #b9ff35) 58%, transparent);
+        0 0 16px var(--planeta-cor, #b9ff35),
+        0 0 34px color-mix(in srgb, var(--planeta-cor, #b9ff35) 58%, transparent);
     transition: transform .22s ease, box-shadow .22s ease;
 }
 
@@ -226,15 +226,15 @@
 .planeta-marcador__orbe::after {
     content: "";
     position: absolute;
-    inset: -7px;
-    border: 1px dashed var(--planeta-cor, #b9ff35);
+    inset: -9px;
+    border: 1.5px dashed var(--planeta-cor, #b9ff35);
     border-radius: 50%;
     opacity: .7;
     animation: orbitaMarcador 10s linear infinite;
 }
 
 .planeta-marcador__orbe::after {
-    inset: -12px;
+    inset: -16px;
     border-style: solid;
     border-color: color-mix(in srgb, var(--planeta-cor, #b9ff35) 45%, transparent);
     opacity: .32;
@@ -247,19 +247,18 @@
 .planeta-marcador.selecionado .planeta-marcador__orbe {
     transform: scale(1.28);
     box-shadow:
-        0 0 18px var(--planeta-cor, #b9ff35),
-        0 0 42px color-mix(in srgb, var(--planeta-cor, #b9ff35) 70%, transparent);
+        0 0 22px var(--planeta-cor, #b9ff35),
+        0 0 48px color-mix(in srgb, var(--planeta-cor, #b9ff35) 70%, transparent);
 }
 
 @keyframes orbitaMarcador {
     to { transform: rotate(360deg); }
 }
 
-/* Marcador quando usa imagem PNG do planeta */
 .planeta-marcador__orbe--imagem {
-    width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
     border: none;
     background: transparent;
     box-shadow: none;
@@ -270,7 +269,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--planeta-cor, #b9ff35) 65%, transparent));
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--planeta-cor, #b9ff35) 65%, transparent));
     transition: filter .22s ease;
 }
 
@@ -283,18 +282,18 @@
 .planeta-marcador:hover .planeta-marcador__orbe--imagem img,
 .planeta-marcador:focus-visible .planeta-marcador__orbe--imagem img,
 .planeta-marcador.selecionado .planeta-marcador__orbe--imagem img {
-    filter: drop-shadow(0 0 14px var(--planeta-cor, #b9ff35));
+    filter: drop-shadow(0 0 16px var(--planeta-cor, #b9ff35));
 }
 
 .planeta-marcador__etiqueta {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
-    max-width: 170px;
-    padding: 6px 10px;
+    gap: 4px;
+    max-width: 240px;
+    padding: 8px 14px;
     border: 1px solid color-mix(in srgb, var(--planeta-cor, #b9ff35) 62%, transparent);
-    border-radius: 8px;
+    border-radius: 10px;
     background: rgba(2, 7, 4, .88);
     box-shadow: 0 5px 14px rgba(0, 0, 0, .55);
     backdrop-filter: blur(7px);
@@ -311,10 +310,10 @@
 }
 
 .planeta-marcador__etiqueta strong {
-    max-width: 150px;
+    max-width: 220px;
     overflow: hidden;
     color: #fff;
-    font-size: 10px;
+    font-size: 14.5px;
     font-weight: 800;
     letter-spacing: .055em;
     text-overflow: ellipsis;
@@ -322,17 +321,17 @@
 
 .planeta-marcador__etiqueta small {
     color: var(--planeta-cor, #b9ff35);
-    font-size: 8px;
+    font-size: 11.5px;
     font-weight: 800;
     letter-spacing: .12em;
 }
 
 .planeta-marcador--segredo .planeta-marcador__orbe {
-    width: 26px;
-    height: 26px;
-    border-radius: 4px;
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
     background: linear-gradient(135deg, #fff, #d946ef 35%, #08020b 76%);
-    box-shadow: 0 0 17px #d946ef, 0 0 34px rgba(217, 70, 239, .62);
+    box-shadow: 0 0 20px #d946ef, 0 0 40px rgba(217, 70, 239, .62);
     animation: glitchSegredo 1.35s steps(2, end) infinite;
 }
 
@@ -347,18 +346,15 @@
 }
 
 /* =========================================================
-   2. DOSSIÊ DO PLANETA E DA ESPÉCIE
+   2. DOSSIÊ DO PLANETA E DA ESPÉCIE (150%)
 ========================================================= */
 .planeta-tela {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
     animation: chegadaHiperespaco .55s cubic-bezier(.22, 1, .36, 1) both;
 }
 
-/* =========================================================
-   SEPARAÇÕES ENTRE AS 3 SESSÕES (TRILHAS DE CIRCUITO)
-========================================================= */
 .dossie-sessao {
     position: relative;
     width: 100%;
@@ -370,12 +366,12 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 84px;
-    margin: 6px 0;
+    height: 110px;
+    margin: 8px 0;
     overflow: hidden;
     border-top: 1px solid rgba(185, 255, 53, .16);
     border-bottom: 1px solid rgba(185, 255, 53, .16);
-    border-radius: 14px;
+    border-radius: 18px;
     background:
         radial-gradient(ellipse at center, rgba(185, 255, 53, .08), rgba(2, 6, 3, .88) 70%);
 }
@@ -392,12 +388,12 @@
 .circuito-divisor__tag {
     position: relative;
     z-index: 2;
-    padding: 6px 14px;
+    padding: 8px 20px;
     border: 1px solid rgba(185, 255, 53, .52);
     border-radius: 999px;
     background: rgba(3, 9, 4, .92);
     color: var(--verde-claro, #b9ff35);
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: .16em;
     box-shadow: 0 0 18px rgba(185, 255, 53, .18);
@@ -405,11 +401,11 @@
 }
 
 .arquetipo-intro {
-    margin-top: 8px;
+    margin-top: 10px;
     color: #9fb894;
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 11px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.55;
 }
 
 @keyframes chegadaHiperespaco {
@@ -422,18 +418,18 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 16px;
 }
 
 .botao-voltar-galaxia {
-    min-height: 40px;
-    padding: 9px 17px;
-    border: 1px solid var(--verde-claro, #b9ff35);
-    border-radius: 11px;
+    min-height: 52px;
+    padding: 12px 24px;
+    border: 1.5px solid var(--verde-claro, #b9ff35);
+    border-radius: 14px;
     background: rgba(185, 255, 53, .1);
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 10px;
+    font-size: 14.5px;
     font-weight: 800;
     letter-spacing: .1em;
     cursor: pointer;
@@ -452,7 +448,7 @@
 .hud-micro-tag {
     display: inline-block;
     color: var(--verde-claro, #b9ff35);
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: .15em;
     line-height: 1.5;
@@ -460,7 +456,7 @@
 }
 
 .planeta-setor-tag {
-    padding: 6px 11px;
+    padding: 8px 16px;
     border: 1px solid color-mix(in srgb, var(--planeta-destaque) 46%, transparent);
     border-radius: 999px;
     background: rgba(0, 0, 0, .24);
@@ -470,7 +466,7 @@
     display: grid;
     grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
     align-items: stretch;
-    gap: 22px;
+    gap: 28px;
 }
 
 .planeta-lado-esquerdo,
@@ -478,20 +474,20 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding: clamp(18px, 2.2vw, 26px);
+    gap: 20px;
+    padding: clamp(24px, 2.8vw, 34px);
     border: 1px solid color-mix(in srgb, var(--planeta-destaque) 36%, transparent);
-    border-radius: 19px;
+    border-radius: 24px;
     background: linear-gradient(155deg, rgba(12, 24, 11, .93), rgba(3, 7, 4, .97));
     box-shadow: inset 0 0 25px rgba(185, 255, 53, .035), 0 12px 32px rgba(0, 0, 0, .2);
 }
 
 .planeta-titulo-box h2,
 .especie-cabecalho h2 {
-    margin-top: 5px;
+    margin-top: 8px;
     color: var(--planeta-destaque);
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: clamp(25px, 2.6vw, 38px);
+    font-size: clamp(34px, 3.6vw, 54px);
     line-height: 1.12;
     overflow-wrap: anywhere;
     text-shadow: 0 0 19px color-mix(in srgb, var(--planeta-destaque) 32%, transparent);
@@ -502,10 +498,10 @@
     display: grid;
     place-items: center;
     width: 100%;
-    min-height: 270px;
+    min-height: 360px;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--planeta-destaque) 28%, transparent);
-    border-radius: 16px;
+    border-radius: 20px;
     background:
         radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--planeta-destaque) 15%, transparent), transparent 47%),
         radial-gradient(ellipse at center, rgba(16, 31, 18, .55), rgba(2, 5, 3, .98) 72%);
@@ -525,7 +521,7 @@
     position: relative;
     z-index: 1;
     width: 100%;
-    height: 290px;
+    height: 390px;
     background: transparent;
     --poster-color: transparent;
 }
@@ -534,7 +530,7 @@
     position: relative;
     z-index: 1;
     display: block;
-    width: clamp(145px, 17vw, 190px);
+    width: clamp(190px, 22vw, 255px);
     aspect-ratio: 1;
     overflow: hidden;
     border-radius: 50%;
@@ -620,48 +616,48 @@
 
 .planeta-glb-badge {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
+    right: 14px;
+    bottom: 14px;
     z-index: 2;
-    padding: 4px 8px;
+    padding: 6px 12px;
     border: 1px solid rgba(185, 255, 53, .35);
-    border-radius: 6px;
+    border-radius: 8px;
     background: rgba(0, 0, 0, .76);
     color: rgba(185, 255, 53, .85);
-    font-size: 8px;
+    font-size: 11.5px;
     font-weight: 700;
     letter-spacing: .1em;
 }
 
 .planeta-info-inferior p,
 .especie-descricao {
-    margin-top: 6px;
+    margin-top: 8px;
     color: #d9e6d1;
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 13px;
-    line-height: 1.7;
+    font-size: 18.5px;
+    line-height: 1.72;
     white-space: pre-line;
 }
 
 .especie-ben-nome {
     display: inline-block;
     max-width: 100%;
-    margin-top: 8px;
-    padding: 5px 11px;
+    margin-top: 10px;
+    padding: 7px 15px;
     border: 1px solid color-mix(in srgb, var(--planeta-destaque) 48%, transparent);
     border-radius: 999px;
     background: rgba(255, 255, 255, .035);
     color: #dcebd3;
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: .1em;
     line-height: 1.4;
 }
 
-/* Cartão visual da espécie: mostra uma imagem configurada ou um holograma provisório. */
+/* Cartão visual da espécie (150%) */
 .especie-imagem-wrapper {
     margin-top: auto;
-    padding-top: 4px;
+    padding-top: 8px;
     perspective: 1000px;
 }
 
@@ -671,10 +667,10 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 220px;
+    min-height: 295px;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--planeta-destaque) 56%, transparent);
-    border-radius: 16px;
+    border-radius: 20px;
     background:
         radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--planeta-destaque) 17%, transparent), transparent 58%),
         linear-gradient(145deg, rgba(13, 26, 12, .95), rgba(2, 5, 3, .98));
@@ -711,15 +707,15 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    min-height: 220px;
-    padding: 18px;
+    min-height: 295px;
+    padding: 24px;
     transform: translateZ(18px);
 }
 
 .especie-imagem-conteudo img {
     display: block;
     max-width: 100%;
-    max-height: 210px;
+    max-height: 285px;
     object-fit: contain;
     filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .85));
 }
@@ -728,20 +724,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 9px;
+    gap: 12px;
     text-align: center;
 }
 
 .especie-holograma-placeholder__simbolo {
     display: grid;
     place-items: center;
-    width: 82px;
-    height: 82px;
-    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 58%, transparent);
+    width: 112px;
+    height: 112px;
+    border: 1.5px solid color-mix(in srgb, var(--planeta-destaque) 58%, transparent);
     border-radius: 50%;
     background: color-mix(in srgb, var(--planeta-destaque) 9%, transparent);
     color: var(--planeta-destaque);
-    font-size: 35px;
+    font-size: 48px;
     text-shadow: 0 0 20px var(--planeta-destaque);
     box-shadow: 0 0 25px color-mix(in srgb, var(--planeta-destaque) 22%, transparent), inset 0 0 22px rgba(255,255,255,.04);
 }
@@ -749,55 +745,55 @@
 .especie-holograma-placeholder strong {
     color: #f2f7ee;
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: 16px;
+    font-size: 23px;
     letter-spacing: .04em;
 }
 
 .especie-holograma-placeholder small {
     color: color-mix(in srgb, var(--planeta-destaque) 78%, #fff);
-    font-size: 8px;
+    font-size: 11.5px;
     font-weight: 800;
     letter-spacing: .14em;
 }
 
 .especie-imagem-dica {
     position: absolute;
-    right: 10px;
-    bottom: 9px;
+    right: 14px;
+    bottom: 12px;
     z-index: 3;
-    padding: 4px 9px;
+    padding: 6px 13px;
     border: 1px solid rgba(185, 255, 53, .34);
     border-radius: 999px;
     background: rgba(0, 0, 0, .76);
     color: var(--verde-claro, #b9ff35);
-    font-size: 8px;
+    font-size: 11.5px;
     font-weight: 800;
     letter-spacing: .08em;
     pointer-events: none;
 }
 
 /* =========================================================
-   3. ARQUÉTIPO E ATRIBUTOS
+   3. ARQUÉTIPO E ATRIBUTOS (150%)
 ========================================================= */
 .origem-parte-inferior {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 28px;
 }
 
 .raca-atributos-grid {
     display: grid;
     grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-    gap: 22px;
+    gap: 28px;
 }
 
 .raca-info-box,
 .atributos-box,
 .evolutivo-secao {
     min-width: 0;
-    padding: clamp(18px, 2.2vw, 25px);
+    padding: clamp(24px, 2.8vw, 34px);
     border: 1px solid rgba(185, 255, 53, .3);
-    border-radius: 18px;
+    border-radius: 22px;
     background: linear-gradient(155deg, rgba(10, 21, 9, .94), rgba(3, 7, 4, .97));
     box-shadow: inset 0 0 22px rgba(185, 255, 53, .025);
 }
@@ -805,27 +801,27 @@
 .arquetipo-seletor {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin: 13px 0 15px;
+    gap: 11px;
+    margin: 18px 0 20px;
 }
 
 .arquetipo-seletor label {
     color: #e8f2e1;
-    font-size: 11px;
+    font-size: 16px;
     font-weight: 800;
     letter-spacing: .05em;
 }
 
 .arquetipo-seletor select {
     width: 100%;
-    min-height: 42px;
-    padding: 10px 13px;
-    border: 1px solid rgba(185, 255, 53, .5);
-    border-radius: 10px;
+    min-height: 56px;
+    padding: 13px 18px;
+    border: 1.5px solid rgba(185, 255, 53, .5);
+    border-radius: 13px;
     background: #050b05;
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 12px;
+    font-size: 17.5px;
     font-weight: 700;
     cursor: pointer;
 }
@@ -838,8 +834,8 @@
 .raca-info-texto {
     color: #d4e2cb;
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 12px;
-    line-height: 1.7;
+    font-size: 17.5px;
+    line-height: 1.72;
 }
 
 .atributos-topo {
@@ -847,23 +843,23 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .atributos-limite-tag {
-    padding: 5px 9px;
+    padding: 7px 14px;
     border: 1px solid rgba(185, 255, 53, .55);
     border-radius: 999px;
     background: rgba(185, 255, 53, .1);
     color: var(--verde-claro, #b9ff35);
-    font-size: 8px;
+    font-size: 12px;
     font-weight: 800;
     letter-spacing: .09em;
 }
 
 .atributos-lista {
-    min-height: 100px;
+    min-height: 140px;
     display: grid;
     align-content: center;
 }
@@ -873,63 +869,63 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100px;
-    gap: 7px;
-    padding: 16px;
+    min-height: 140px;
+    gap: 10px;
+    padding: 22px;
     border: 1px dashed rgba(185, 255, 53, .28);
-    border-radius: 12px;
+    border-radius: 15px;
     background: rgba(0, 0, 0, .2);
     text-align: center;
 }
 
 .atributos-vazio strong {
     color: var(--verde-claro, #b9ff35);
-    font-size: 9px;
+    font-size: 13.5px;
     letter-spacing: .12em;
 }
 
 .atributos-vazio span {
-    max-width: 460px;
+    max-width: 560px;
     color: #aebfa5;
-    font-size: 11px;
+    font-size: 16px;
     line-height: 1.55;
 }
 
 /* =========================================================
-   4. CAMINHOS EVOLUTIVOS — CONTEÚDO PROVISÓRIO
+   4. CAMINHOS EVOLUTIVOS — CONTEÚDO PROVISÓRIO (150%)
 ========================================================= */
 .evolutivo-cabecalho h3 {
-    margin-top: 5px;
+    margin-top: 8px;
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: clamp(22px, 2.2vw, 31px);
+    font-size: clamp(30px, 3vw, 44px);
 }
 
 .evolutivo-cabecalho p {
-    max-width: 800px;
-    margin-top: 7px;
+    max-width: 960px;
+    margin-top: 10px;
     color: #cbdcc1;
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 11px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.65;
 }
 
 .evolutivo-banners {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 13px;
-    margin-top: 17px;
+    gap: 18px;
+    margin-top: 22px;
 }
 
 .evo-banner-btn {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    min-height: 112px;
-    padding: 16px;
+    gap: 9px;
+    min-height: 150px;
+    padding: 22px;
     border: 1px solid rgba(185, 255, 53, .3);
-    border-radius: 14px;
+    border-radius: 18px;
     background: linear-gradient(145deg, rgba(16, 31, 13, .96), rgba(3, 7, 4, .98));
     color: #fff;
     text-align: left;
@@ -949,7 +945,7 @@
 
 .evo-banner-btn small {
     color: var(--verde-claro, #b9ff35);
-    font-size: 8px;
+    font-size: 11.5px;
     font-weight: 800;
     letter-spacing: .13em;
 }
@@ -957,24 +953,24 @@
 .evo-banner-btn strong {
     color: #f4f8f1;
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: 16px;
+    font-size: 23px;
 }
 
 .evo-banner-btn span {
     color: #afc2a5;
-    font-size: 10px;
-    line-height: 1.45;
+    font-size: 14.5px;
+    line-height: 1.48;
 }
 
 .evolutivo-painel-interativo {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
     align-items: stretch;
-    gap: 17px;
-    margin-top: 17px;
-    padding: 17px;
+    gap: 22px;
+    margin-top: 22px;
+    padding: 22px;
     border: 1px solid rgba(185, 255, 53, .22);
-    border-radius: 15px;
+    border-radius: 19px;
     background: rgba(1, 4, 2, .62);
 }
 
@@ -982,18 +978,18 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 11px;
+    gap: 15px;
     min-width: 0;
-    padding: 8px 8px 8px 24px;
+    padding: 10px 10px 10px 32px;
 }
 
 .evolutivo-arvore::before {
     content: "";
     position: absolute;
-    top: 23px;
-    bottom: 23px;
-    left: 9px;
-    width: 2px;
+    top: 30px;
+    bottom: 30px;
+    left: 12px;
+    width: 3px;
     border-radius: 99px;
     background: linear-gradient(180deg, var(--verde-claro, #b9ff35), rgba(185, 255, 53, .12));
     box-shadow: 0 0 10px rgba(185, 255, 53, .35);
@@ -1003,12 +999,12 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     width: 100%;
-    min-height: 62px;
-    padding: 11px 13px;
+    min-height: 82px;
+    padding: 15px 18px;
     border: 1px solid rgba(185, 255, 53, .27);
-    border-radius: 11px;
+    border-radius: 14px;
     background: rgba(10, 20, 9, .92);
     color: #fff;
     text-align: left;
@@ -1019,11 +1015,11 @@
 .evo-no-item::before {
     content: "";
     position: absolute;
-    left: -21px;
+    left: -27px;
     top: 50%;
-    width: 10px;
-    height: 10px;
-    border: 2px solid var(--verde-claro, #b9ff35);
+    width: 13px;
+    height: 13px;
+    border: 2.5px solid var(--verde-claro, #b9ff35);
     border-radius: 50%;
     background: #050805;
     box-shadow: 0 0 9px rgba(185, 255, 53, .65);
@@ -1047,32 +1043,32 @@
 .evo-no-nivel {
     display: grid;
     place-items: center;
-    width: 31px;
-    height: 31px;
-    flex: 0 0 31px;
-    border: 1px solid var(--verde-claro, #b9ff35);
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border: 1.5px solid var(--verde-claro, #b9ff35);
     border-radius: 50%;
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: 12px;
+    font-size: 17px;
 }
 
 .evo-no-info {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     min-width: 0;
 }
 
 .evo-no-info strong {
     overflow-wrap: anywhere;
     color: #fff;
-    font-size: 11px;
+    font-size: 16px;
 }
 
 .evo-no-info small {
     color: #a9c69a;
-    font-size: 8px;
+    font-size: 11.5px;
     letter-spacing: .1em;
 }
 
@@ -1080,79 +1076,60 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 220px;
-    padding: 20px;
+    min-height: 290px;
+    padding: 26px;
     border: 1px solid color-mix(in srgb, var(--planeta-destaque) 35%, transparent);
-    border-radius: 13px;
+    border-radius: 17px;
     background: linear-gradient(145deg, rgba(14, 27, 11, .94), rgba(3, 7, 4, .98));
 }
 
 .evolutivo-detalhe-direita h4 {
-    margin: 8px 0 10px;
+    margin: 10px 0 14px;
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: clamp(18px, 2vw, 23px);
+    font-size: clamp(25px, 2.8vw, 33px);
     line-height: 1.2;
 }
 
 .evolutivo-detalhe-direita p {
     color: #d4e1cc;
     font-family: var(--fonte-texto, Arial, sans-serif);
-    font-size: 11px;
-    line-height: 1.7;
+    font-size: 16px;
+    line-height: 1.72;
 }
 
 .evo-detalhe-bonus {
-    margin-top: 16px;
-    padding: 10px 12px;
-    border-left: 3px solid var(--verde-claro, #b9ff35);
-    border-radius: 0 8px 8px 0;
+    margin-top: 20px;
+    padding: 13px 16px;
+    border-left: 4px solid var(--verde-claro, #b9ff35);
+    border-radius: 0 10px 10px 0;
     background: rgba(185, 255, 53, .08);
     color: var(--verde-claro, #b9ff35);
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: .08em;
     line-height: 1.5;
 }
 
 /* =========================================================
-   5. CONFIRMAÇÃO E MODAL
+   5. CONFIRMAÇÃO E MODAL 
 ========================================================= */
-.origem-rodape-acoes {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 7px;
-}
-
-.origem-rodape-acoes .tier-botao-selecionar {
-    margin-top: 0;
-}
-
-.origem-rodape-acoes .tier-botao-selecionar:disabled {
-    opacity: .42;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.origem-feedback {
-    min-height: 16px;
-    color: var(--verde-claro, #b9ff35);
-    font-size: 10px;
-    text-align: right;
-}
-
 .especie-modal-fullscreen {
     position: fixed;
-    inset: 0;
-    z-index: 300;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: 9999;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    padding: 45px 25px 25px;
+    gap: 16px;
+    padding: 24px;
+    overflow: hidden;
+
     background: rgba(1, 4, 2, .96);
     backdrop-filter: blur(12px);
     animation: revelarModalEspecie .22s ease both;
@@ -1164,26 +1141,28 @@
 }
 
 .especie-modal-fechar {
-    position: absolute;
-    top: 20px;
-    right: 22px;
+    position: fixed;
+    top: 22px;
+    right: 26px;
+    z-index: 10000;
     display: grid;
     place-items: center;
-    width: 43px;
-    height: 43px;
-    border: 1px solid var(--verde-claro, #b9ff35);
+    width: 54px;
+    height: 54px;
+    border: 1.5px solid var(--verde-claro, #b9ff35);
     border-radius: 50%;
     background: rgba(7, 16, 7, .94);
     color: var(--verde-claro, #b9ff35);
-    font-size: 20px;
+    font-size: 25px;
     cursor: pointer;
-    transition: background .2s ease, color .2s ease;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 
 .especie-modal-fechar:hover,
 .especie-modal-fechar:focus-visible {
     background: var(--verde-claro, #b9ff35);
     color: #050805;
+    transform: scale(1.06);
     outline: none;
 }
 
@@ -1191,46 +1170,50 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: min(88vw, 1050px);
-    height: min(76vh, 760px);
-    padding: 18px;
-    border: 1px solid color-mix(in srgb, var(--planeta-destaque) 35%, transparent);
-    border-radius: 18px;
-    background: radial-gradient(circle at center, rgba(185, 255, 53, .06), rgba(0, 0, 0, .3));
+    width: min(92vw, 1280px);
+    height: calc(100dvh - 130px);
+    padding: 24px;
+    border: 1px solid color-mix(in srgb, var(--planeta-destaque, #b9ff35) 38%, transparent);
+    border-radius: 22px;
+    background: radial-gradient(circle at center, rgba(185, 255, 53, .08), rgba(0, 0, 0, .42));
 }
 
+/* Faz a imagem crescer até o limite do palco mantendo a proporção */
 .especie-modal-palco img {
+    width: 100%;
+    height: 100%;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 10px 28px rgba(0, 0, 0, .8));
+    filter: drop-shadow(0 12px 32px rgba(0, 0, 0, .85));
 }
 
 .especie-modal-palco .especie-holograma-placeholder__simbolo {
-    width: 130px;
-    height: 130px;
-    font-size: 58px;
+    width: 180px;
+    height: 180px;
+    font-size: 82px;
 }
 
 .especie-modal-palco .especie-holograma-placeholder strong {
-    font-size: clamp(18px, 3vw, 30px);
+    font-size: clamp(26px, 3.6vw, 40px);
 }
 
 .especie-modal-palco .especie-holograma-placeholder small {
-    font-size: 10px;
+    font-size: 14px;
 }
 
 .especie-modal-legenda {
     max-width: 90vw;
+    margin: 0;
     color: var(--verde-claro, #b9ff35);
     font-family: var(--fonte-titulo, sans-serif);
-    font-size: clamp(17px, 2.3vw, 25px);
+    font-size: clamp(22px, 2.6vw, 32px);
     letter-spacing: .05em;
     text-align: center;
 }
 
 /* =========================================================
-   6. RESPONSIVIDADE
+   6. RESPONSIVIDADE (150%)
 ========================================================= */
 @media (max-width: 900px) {
     .planeta-grade-superior,
@@ -1239,79 +1222,85 @@
     }
 
     .planeta-3d-palco {
-        min-height: 245px;
+        min-height: 290px;
     }
 
     .planeta-esfera-provisoria {
-        width: 165px;
+        width: 205px;
     }
 }
 
 @media (max-width: 700px) {
     .galaxia-tela {
-        height: 68vh;
-        min-height: 510px;
-        border-radius: 15px;
+        height: 70vh;
+        min-height: 540px;
+        border-radius: 18px;
     }
 
     .galaxia-hud-topo,
     .galaxia-hud-rodape {
-        left: 12px;
-        right: 12px;
+        left: 14px;
+        right: 14px;
     }
 
     .galaxia-hud-topo {
-        top: 12px;
+        top: 14px;
+    }
+
+    .galaxia-coord {
+        min-height: 32px;
+        padding: 6px 12px;
+        font-size: 11px;
     }
 
     .galaxia-hud-topo p {
         max-width: 100%;
-        font-size: 10px;
+        font-size: 13px;
     }
 
     .galaxia-hud-rodape {
-        bottom: 10px;
+        bottom: 12px;
         align-items: flex-end;
     }
 
     .galaxia-hud-rodape > span {
-        max-width: 120px;
-        font-size: 7px;
+        max-width: 160px;
+        font-size: 9.5px;
     }
 
     .galaxia-controles {
-        gap: 5px;
+        gap: 6px;
     }
 
     .galaxia-btn-reset {
-        min-height: 32px;
-        padding: 6px 8px;
-        font-size: 8px;
+        min-height: 38px;
+        padding: 7px 11px;
+        font-size: 10.5px;
     }
 
     .galaxia-btn-zoom {
-        width: 30px;
+        width: 38px;
         padding: 0;
-        font-size: 15px;
+        font-size: 19px;
     }
 
     .planeta-marcador {
-        min-width: 60px;
-        padding: 5px;
-        gap: 7px;
+        min-width: 75px;
+        padding: 6px;
+        gap: 8px;
     }
 
     .planeta-marcador__etiqueta {
-        padding: 5px 7px;
+        padding: 6px 9px;
     }
 
     .planeta-marcador__etiqueta strong {
-        max-width: 112px;
-        font-size: 8px;
+        max-width: 145px;
+        font-size: 11px;
     }
 
     .planeta-marcador__etiqueta small {
-        font-size: 7px;
+        font-size: 9px;
     }
 
     .evolutivo-banners {
@@ -1324,11 +1313,11 @@
 
     .evolutivo-painel-interativo {
         grid-template-columns: 1fr;
-        padding: 12px;
+        padding: 15px;
     }
 
     .evolutivo-detalhe-direita {
-        min-height: 170px;
+        min-height: 210px;
     }
 
     .origem-rodape-acoes {
@@ -1341,8 +1330,8 @@
 
     .origem-rodape-acoes .tier-botao-selecionar {
         width: 100%;
-        padding-inline: 12px;
-        font-size: 10px;
+        padding-inline: 14px;
+        font-size: 13.5px;
     }
 }
 
@@ -1366,7 +1355,7 @@
 
     .planeta-setor-tag {
         max-width: 100%;
-        font-size: 7px;
+        font-size: 10px;
     }
 
     .planeta-lado-esquerdo,
@@ -1374,16 +1363,16 @@
     .raca-info-box,
     .atributos-box,
     .evolutivo-secao {
-        padding: 15px;
+        padding: 18px;
     }
 
     .especie-modal-fullscreen {
-        padding-inline: 12px;
+        padding-inline: 14px;
     }
 
     .especie-modal-palco {
         width: 96vw;
-        padding: 8px;
+        padding: 10px;
     }
 }
 

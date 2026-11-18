@@ -421,6 +421,7 @@ if (canvasFundo) {
     window.addEventListener('resize', ajustarCanvasFundo);
 }
 
+
 /* =========================
    EFEITO FADE NA ROLAGEM
 ========================= */
@@ -441,22 +442,20 @@ function atualizarFadeSobre() {
         }
 
         const rect = secao.getBoundingClientRect();
-        const distancia = Math.max(1, secao.offsetHeight - alturaJanela);
+        const distancia = Math.max(1, secao.offsetHeight - alturaJanela * 0.50);
         let progresso = -rect.top / distancia;
         progresso = Math.max(0, Math.min(1, progresso));
 
-        // 1. Texto desaparece primeiro
+        // 1. Texto permanece legível até metade da transição e desaparece suavemente
         if (texto) {
-            let opacidadeTexto = 1 - (progresso / 0.40);
-            opacidadeTexto = Math.max(0, Math.min(1, opacidadeTexto));
-            texto.style.opacity = opacidadeTexto;
+            let opacidadeTexto = 1 - Math.max(0, (progresso - 0.35) / 0.45);
+            texto.style.opacity = Math.max(0, Math.min(1, opacidadeTexto));
         }
 
-        // 2. Imagem permanece mais tempo e desaparece depois
+        // 2. Imagem acompanha logo atrás, sem deixar buraco verde na tela
         if (imagem) {
-            let opacidadeImagem = 1 - ((progresso - 0.55) / 0.35);
-            opacidadeImagem = Math.max(0, Math.min(1, opacidadeImagem));
-            imagem.style.opacity = opacidadeImagem;
+            let opacidadeImagem = 1 - Math.max(0, (progresso - 0.55) / 0.40);
+            imagem.style.opacity = Math.max(0, Math.min(1, opacidadeImagem));
         }
     });
 }
@@ -825,8 +824,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             /* Passo 2: Expande na aba interna */
             setTimeout(() => {
-                const alvoW = Math.min(1260, window.innerWidth * 0.88);
-                const alvoH = window.innerHeight * 0.72;
+                const alvoW = Math.min(1380, window.innerWidth * 0.89);
+                const alvoH = window.innerHeight * 0.75;
                 clone.style.top = `${Math.max(105, (window.innerHeight - alvoH) / 2)}px`;
                 clone.style.left = `${(window.innerWidth - alvoW) / 2}px`;
                 clone.style.width = `${alvoW}px`;
@@ -844,6 +843,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 abaStatus.textContent = `MÓDULO ATIVO // ${titulo.toUpperCase()}`;
                 abaExpandida.classList.add('ativa');
+                abaStatus.textContent = `MÓDULO ATIVO // ${titulo.toUpperCase()}`;
+                abaExpandida.classList.add('ativa');
+                abaExpandida.setAttribute('aria-hidden', 'false');
+
+                if (window.FichaSessao) {
+                    window.FichaSessao.atualizarHudPax(etapa);
+                }
                 abaExpandida.setAttribute('aria-hidden', 'false');
 
                 clone.remove();
@@ -882,19 +888,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================================
-    4. ESTADO GLOBAL DA FICHA (SALVO PARA AS PRÓXIMAS ETAPAS)
+    4. ESTADO GLOBAL DA FICHA (TEMPORÁRIO NA SESSÃO)
 ========================================= */
-window.fichaBen10 = JSON.parse(localStorage.getItem('fichaBen10')) || {
+window.fichaBen10 = {
     tier: null,
-    origem: null,
-    arquetipo: null,
-    atributos: {},
-    conhecimentos: [],
-    detalhes: {}
+    origem: null
 };
 
 function salvarFichaBen10() {
-    localStorage.setItem('fichaBen10', JSON.stringify(window.fichaBen10));
+    if (window.FichaSessao && window.fichaBen10.tier) {
+        window.FichaSessao.definirTier(window.fichaBen10.tier.id);
+    }
     atualizarResumoCartoesHub();
 }
 
@@ -911,6 +915,8 @@ function atualizarResumoCartoesHub() {
             cartaoTier.insertBefore(badge, acao);
         }
         badge.textContent = `SELECIONADO: ${window.fichaBen10.tier.titulo.toUpperCase()}`;
+    } else if (badge) {
+        badge.remove();
     }
 }
 
@@ -1095,13 +1101,11 @@ if (tierPalco && tierItens.length > 0) {
     tierItens.forEach(item => {
         const tierId = item.dataset.tier;
 
-        /* Hover: arrasta a linha do tempo para a esquerda e abre o painel */
         item.addEventListener('mouseenter', () => {
             tierPalco.classList.add('painel-aberto');
             renderizarPainelTier(tierId);
         });
 
-        /* Clique direto no ramo também seleciona (se disponível) e fixa o painel */
         item.addEventListener('click', () => {
             tierPalco.classList.add('painel-aberto');
             if (DADOS_TIERS[tierId]?.disponivel) {
@@ -1112,7 +1116,6 @@ if (tierPalco && tierItens.length > 0) {
         });
     });
 
-    /* Ao sair do palco: se já houver um Tier selecionado, mantém ele visível; senão centraliza */
     tierPalco.addEventListener('mouseleave', () => {
         if (window.fichaBen10.tier) {
             tierPalco.classList.add('painel-aberto');
@@ -1123,14 +1126,10 @@ if (tierPalco && tierItens.length > 0) {
         }
     });
 
-    /* Restaura seleção anterior caso o usuário já tenha escolhido um Tier */
-    if (window.fichaBen10.tier) {
-        const idSalvo = window.fichaBen10.tier.id;
+    // Restaura apenas se já foi selecionado nesta mesma sessão
+    const tierSessao = window.FichaSessao?.obterRascunho().tier;
+    if (tierSessao && DADOS_TIERS[tierSessao]) {
+        selecionarTier(tierSessao);
         tierPalco.classList.add('painel-aberto');
-        tierItens.forEach(item => {
-            item.classList.toggle('selecionado', item.dataset.tier === idSalvo);
-        });
-        renderizarPainelTier(idSalvo);
-        atualizarResumoCartoesHub();
     }
 }

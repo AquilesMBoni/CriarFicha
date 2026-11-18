@@ -11,6 +11,7 @@
     <link rel="icon" type="image/png" href="img/icone.png">
     <link rel="stylesheet" href="estilo.css">
     <link rel="stylesheet" href="origem.css">
+    <link rel="stylesheet" href="conhecimentos-finais.css">
 
     <!-- Já deixamos o model-viewer carregado para os planetas 3D da Etapa 3 -->
     <script type="module"
@@ -123,7 +124,7 @@
         </section>
 
 
-        <!-- ABA EXPANDIDA CENTRALIZADA (mantém igual ao anterior) -->
+        <!-- ABA EXPANDIDA CENTRALIZADA -->
         <section class="aba-expandida" id="aba-expandida" aria-hidden="true">
 
             <div class="aba-expandida__topo">
@@ -377,19 +378,235 @@
             </div>
 
 
+            <!-- CONTEÚDO: CONHECIMENTO (Módulo 03) -->
             <div class="aba-conteudo" data-conteudo="conhecimento">
-                <div class="placeholder-etapa">
-                    <span class="selo-oficial">AGUARDANDO REGRAS OFICIAIS</span>
-                    <h2>03 // Conhecimento</h2>
-                    <p>Esta etapa será implementada assim que o sistema oficial de perícias e conhecimentos for lançado.</p>
+                <header class="secao-cabecalho">
+                    <span class="secao-etiqueta">MÓDULO 03 // ESPECIALIZAÇÃO &amp; IDENTIDADE</span>
+                    <h2>Conhecimentos &amp; Traços</h2>
+                    <p>Sem o Conhecimento adequado, testes especializados não podem ser realizados. Cada Conhecimento ou Traço Simples custa <strong>4 PAX</strong>.</p>
+                </header>
+
+                <!-- SUBSEÇÃO: CONHECIMENTOS -->
+                <div class="bloco-subsecao">
+                    <div class="subsecao-titulo-linha">
+                        <h3>Conhecimentos (4 PAX cada)</h3>
+                        <span id="contador-conhecimentos" class="badge-omnitrix">0 selecionados</span>
+                    </div>
+
+                    <!-- BARRA DE PESQUISA DE CONHECIMENTOS -->
+                    <div class="detalhes-pesquisa" id="conhecimentos-pesquisa-box">
+                        <div class="detalhes-pesquisa__campo" role="combobox" aria-expanded="false" aria-owns="conhecimentos-pesquisa-lista" aria-haspopup="listbox">
+                            <svg class="detalhes-pesquisa__lupa" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"></circle>
+                                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></line>
+                            </svg>
+
+                            <input
+                                type="text"
+                                id="input-pesquisa-conhecimentos"
+                                class="detalhes-pesquisa__input"
+                                placeholder="Pesquisar..."
+                                autocomplete="off"
+                                aria-autocomplete="list"
+                                aria-controls="conhecimentos-pesquisa-lista"
+                            >
+
+                            <button
+                                type="button"
+                                id="btn-limpar-pesquisa-conhecimentos"
+                                class="detalhes-pesquisa__limpar oculto"
+                                aria-label="Limpar pesquisa de conhecimentos"
+                                title="Limpar pesquisa"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <ul
+                            id="conhecimentos-pesquisa-lista"
+                            class="detalhes-pesquisa__dropdown oculto"
+                            role="listbox"
+                            aria-label="Sugestões de conhecimentos"
+                        ></ul>
+                    </div>
+
+                    <div id="grid-conhecimentos" class="grid-cards-jlu">
+                        <!-- Renderizado via conhecimentos-finais.js -->
+                    </div>
+                </div>
+
+                <!-- SUBSEÇÃO: TRAÇOS SIMPLES -->
+                <div class="bloco-subsecao">
+                    <div class="subsecao-titulo-linha">
+                        <h3>Traços Simples (4 PAX cada)</h3>
+                        <span id="contador-tracos" class="badge-omnitrix">0 selecionados</span>
+                    </div>
+
+                    <!-- BARRA DE PESQUISA DE TRAÇOS SIMPLES -->
+                    <div class="detalhes-pesquisa" id="tracos-pesquisa-box">
+                        <div class="detalhes-pesquisa__campo" role="combobox" aria-expanded="false" aria-owns="tracos-pesquisa-lista" aria-haspopup="listbox">
+                            <svg class="detalhes-pesquisa__lupa" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"></circle>
+                                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></line>
+                            </svg>
+
+                            <input
+                                type="text"
+                                id="input-pesquisa-tracos"
+                                class="detalhes-pesquisa__input"
+                                placeholder="Pesquisar..."
+                                autocomplete="off"
+                                aria-autocomplete="list"
+                                aria-controls="tracos-pesquisa-lista"
+                            >
+
+                            <button
+                                type="button"
+                                id="btn-limpar-pesquisa-tracos"
+                                class="detalhes-pesquisa__limpar oculto"
+                                aria-label="Limpar pesquisa de traços"
+                                title="Limpar pesquisa"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <ul
+                            id="tracos-pesquisa-lista"
+                            class="detalhes-pesquisa__dropdown oculto"
+                            role="listbox"
+                            aria-label="Sugestões de traços simples"
+                        ></ul>
+                    </div>
+
+                    <div id="grid-tracos" class="grid-cards-jlu">
+                        <!-- Renderizado via conhecimentos-finais.js -->
+                    </div>
                 </div>
             </div>
 
+            <!-- CONTEÚDO: DETALHES FINAIS (Módulo 04) -->
             <div class="aba-conteudo" data-conteudo="detalhes">
-                <div class="placeholder-etapa">
-                    <span class="selo-oficial">AGUARDANDO REGRAS OFICIAIS</span>
-                    <h2>04 // Detalhes Finais</h2>
-                    <p>Campos de nome, fraquezas, histórico e exportação da ficha entrarão aqui na etapa final.</p>
+                <header class="secao-cabecalho">
+                    <span class="secao-etiqueta">MÓDULO 04 // PROTOCOLO DE IDENTIDADE</span>
+                    <h2>Detalhes Finais</h2>
+                    <p>Defina o codinome, o arsenal de campo, a limitação obrigatória e a essência narrativa do personagem.</p>
+                </header>
+
+                <!-- 1. IDENTIDADE E ALMA -->
+                <div class="painel-detalhes-grid">
+                    <div class="card-detalhe-form">
+                        <h3>Identidade &amp; Alma</h3>
+                        <div class="campo-grupo">
+                            <label for="input-codinome">Codinome / Designação Heroica</label>
+                            <input type="text" id="input-codinome" placeholder="Ex: Ben Tennyson / Portador do Omnitrix">
+                        </div>
+                        <div class="campo-grupo">
+                            <label for="input-identidade-civil">Identidade Civil / Origem</label>
+                            <input type="text" id="input-identidade-civil" placeholder="Ex: Bellwood, Terra">
+                        </div>
+                        <div class="campo-grupo">
+                            <label for="input-frase-efeito">Frase de Efeito / Bússola Moral</label>
+                            <input type="text" id="input-frase-efeito" placeholder="Ex: Tá na hora de virar herói!">
+                        </div>
+                        <div class="campo-grupo">
+                            <label for="input-alma-personagem">Alma do Personagem (História &amp; Motivação)</label>
+                            <textarea id="input-alma-personagem" rows="4" placeholder="O que impulsiona este herói a lutar? Quais são seus laços e objetivos?"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 2. LIMITAÇÃO OBRIGATÓRIA -->
+                    <div class="card-detalhe-form">
+                        <h3>Limitação Obrigatória</h3>
+                        <p class="texto-apoio">Todo herói possui uma fraqueza mecânica e narrativa que o torna tangível.</p>
+
+                        <div class="campo-grupo">
+                            <label for="select-tipo-limitacao">Tipo de Consequência</label>
+                            <select id="select-tipo-limitacao">
+                                <option value="">Selecione a consequência...</option>
+                                <option value="vulnerabilidade">Vulnerabilidade (Recebe status Vulnerável ao contato)</option>
+                                <option value="fraqueza">Fraqueza (Recebe status negativo sob uma condição)</option>
+                                <option value="anulacao">Anulação (Poderes ou dispositivos desativados temporariamente)</option>
+                                <option value="debilitacao">Debilitação (Avança 1 nível na trilha de Condição)</option>
+                                <option value="impossibilidade">Impossibilidade (Incapaz de usar certos Conhecimentos/Traços)</option>
+                            </select>
+                        </div>
+
+                        <div class="campo-grupo">
+                            <label for="input-limitacao-nome">Nome da Limitação</label>
+                            <input type="text" id="input-limitacao-nome" placeholder="Ex: Recarga do Omnitrix / Código de Não-Letalidade">
+                        </div>
+
+                        <div class="campo-grupo">
+                            <label for="input-limitacao-desc">Gatilho &amp; Efeito Narrativo</label>
+                            <textarea id="input-limitacao-desc" rows="4" placeholder="Descreva quando essa limitação é ativada e como afeta o personagem em cena."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. EQUIPAMENTOS & ARMAS -->
+                <div class="bloco-subsecao">
+                    <div class="subsecao-titulo-linha">
+                        <h3>Equipamentos &amp; Armas (1 PAX cada)</h3>
+                        <span id="contador-equipamentos" class="badge-omnitrix">0 itens (0 PAX)</span>
+                    </div>
+                    <!-- BARRA DE PESQUISA DE EQUIPAMENTOS & ARMAS -->
+                    <div class="detalhes-pesquisa" id="detalhes-pesquisa-box">
+                        <div class="detalhes-pesquisa__campo" role="combobox" aria-expanded="false" aria-owns="detalhes-pesquisa-lista" aria-haspopup="listbox">
+                            <!-- Ícone de Lupa à Esquerda -->
+                            <svg class="detalhes-pesquisa__lupa" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"></circle>
+                                <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></line>
+                            </svg>
+
+                            <input
+                                type="text"
+                                id="input-pesquisa-detalhes"
+                                class="detalhes-pesquisa__input"
+                                placeholder="Pesquisar..."
+                                autocomplete="off"
+                                aria-autocomplete="list"
+                                aria-controls="detalhes-pesquisa-lista"
+                            >
+
+                            <!-- Botão Limpar ('X') à Direita -->
+                            <button
+                                type="button"
+                                id="btn-limpar-pesquisa-detalhes"
+                                class="detalhes-pesquisa__limpar oculto"
+                                aria-label="Limpar pesquisa"
+                                title="Limpar pesquisa"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <!-- Dropdown de Sugestões em Tempo Real -->
+                        <ul
+                            id="detalhes-pesquisa-lista"
+                            class="detalhes-pesquisa__dropdown oculto"
+                            role="listbox"
+                            aria-label="Sugestões de equipamentos e armas"
+                        ></ul>
+                    </div>
+                    <p class="texto-apoio">Dispositivos utilitários possuem <strong>3 usos por Edição</strong> (1 Ação para ativar). Armas concedem +1 de Dano (Marcial) ou +1 de Ataque (Longo Alcance).</p>
+
+                    <div id="grid-equipamentos" class="grid-cards-jlu grid-equipamentos-compacto">
+                        <!-- Renderizado via conhecimentos-finais.js -->
+                    </div>
+                </div>
+
+                <!-- 4. RESUMO FINAL DA FICHA -->
+                <div class="painel-resumo-final">
+                    <div class="resumo-cabecalho">
+                        <h3>Síntese do Dossiê do Personagem</h3>
+                        <button type="button" id="btn-exportar-ficha" class="tier-botao-selecionar" style="--tier-cor: #b9ff35;">
+                            CONCLUIR &amp; GERAR FICHA
+                        </button>
+                    </div>
+                    <div id="resumo-ficha-conteudo" class="resumo-grid">
+                        <!-- Preenchido dinamicamente -->
+                    </div>
                 </div>
             </div>
 
@@ -403,8 +620,10 @@
     <!-- Canvas do rastro de bolhas do mouse -->
     <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
 
+    <script src="gerenciador-ficha.js"></script>
     <script src="script.js"></script>
     <script src="origem.js"></script>
+    <script src="conhecimentos-finais.js"></script>
 
 </body>
 </html>

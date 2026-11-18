@@ -1,11 +1,122 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fichas</title>
+    <meta name="theme-color" content="#050805">
+
+    <title>Fichas Salvas — Ben 10 Beyond</title>
+
+    <link rel="icon" type="image/png" href="img/icone.png">
+    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="fichas.css">
+
+     <!-- Bibliotecas client-side para PDF editável (AcroForm) + fontes personalizadas -->
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
 </head>
-<body>
-   Fichas
+</head>
+
+<body class="body-criar body-fichas">
+
+    <!-- MENU PRINCIPAL -->
+    <header class="header">
+        <a class="marca" href="index.html">
+            <img src="img/icone.png" alt="">
+            <span>BEN 10 BEYOND</span>
+        </a>
+
+        <nav class="menu-basico" aria-label="Menu principal">
+            <a href="index.html">HOME</a>
+            <a href="criar_fichas.html">CRIAR FICHAS</a>
+            <a href="fichas.html" aria-current="page">FICHAS</a>
+            <a href="sobre.html">SOBRE</a>
+        </nav>
+
+        <div class="omnitrix-placeholder" aria-label="Espaço reservado para o menu 3D do Omnitrix">
+            <span class="omnitrix-placeholder__simbolo">✳</span>
+            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
+        </div>
+    </header>
+
+    <!-- FUNDO TECNOLÓGICO INTERATIVO -->
+    <canvas id="canvas-tech" aria-hidden="true"></canvas>
+
+    <main class="fichas-main">
+
+        <!-- CABEÇALHO DA PÁGINA -->
+        <section class="fichas-topo">
+            <div>
+                <span class="fichas-etiqueta">BANCO DE DADOS TEMPORÁRIO // SESSÃO ATUAL</span>
+                <h1>Fichas Registradas</h1>
+                <p>Edite os valores ou marque as caixas diretamente na folha e baixe o PDF interativo de 2 páginas.</p>
+            </div>
+
+            <div class="fichas-topo__acoes">
+                <a href="criar_fichas.html" class="botao-hud-secundario">+ NOVA FICHA</a>
+                <button type="button" id="btn-gerar-demo" class="botao-hud-secundario">
+                    CARREGAR EXEMPLO
+                </button>
+            </div>
+        </section>
+
+        <!-- LISTA DE FICHAS SALVAS NA SESSÃO -->
+        <section class="fichas-lista-sessao" id="fichas-lista-sessao" aria-label="Fichas salvas na sessão">
+            <!-- Preenchido via fichas.js -->
+        </section>
+
+        <!-- ESTADO VAZIO -->
+        <section class="fichas-vazio oculto" id="fichas-vazio">
+            <div class="fichas-vazio__icone">✳</div>
+            <h2>Nenhuma ficha salva nesta sessão</h2>
+            <p>Conclua um personagem no módulo <strong>Criar Fichas</strong> ou carregue um modelo de exemplo para testar a exportação em PDF editável.</p>
+            <div class="fichas-vazio__botoes">
+                <a href="criar_fichas.html" class="tier-botao-selecionar" style="--tier-cor: #b9ff35;">
+                    IR PARA CRIAR FICHAS
+                </a>
+                <button type="button" id="btn-gerar-demo-vazio" class="botao-hud-secundario">
+                    TESTAR COM FICHA DE EXEMPLO
+                </button>
+            </div>
+        </section>
+
+        <!-- BARRA DE CONTROLE DO DOSSIÊ SELECIONADO -->
+        <section class="ficha-acoes-barra oculto" id="ficha-acoes-barra">
+            <div class="ficha-acoes-barra__info">
+                <span class="ficha-acoes-barra__tag">PDF INTERATIVO (ACROFORM) // PRONTO PARA DOWNLOAD</span>
+                <strong id="ficha-ativa-titulo">—</strong>
+                <small>Os campos de texto e caixas de seleção continuam editáveis tanto aqui quanto dentro do arquivo .PDF baixado.</small>
+            </div>
+
+            <div class="ficha-acoes-barra__botoes">
+                <button type="button" id="btn-exportar-pdf" class="tier-botao-selecionar" style="--tier-cor: #b9ff35;">
+                    ⬇ BAIXAR PDF EDITÁVEL (2 PÁGINAS)
+                </button>
+                <button type="button" id="btn-excluir-ficha" class="botao-hud-perigo">
+                    REMOVER DA SESSÃO
+                </button>
+            </div>
+        </section>
+
+        <!-- PRÉ-VISUALIZAÇÃO INTERATIVA DA FICHA -->
+        <section class="folha-ficha-wrapper oculto" id="folha-ficha-wrapper" aria-label="Pré-visualização editável da ficha">
+            <div id="folha-ficha-oficial" class="folha-ficha-oficial">
+                <!-- Renderizado dinamicamente pelo fichas.js -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- VOLTAR AO TOPO -->
+    <a class="voltar-topo" href="#" aria-label="Voltar ao topo">↑</a>
+
+    <!-- RASTRO DO MOUSE -->
+    <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
+
+    <script src="gerenciador-ficha.js"></script>
+    <script src="script.js"></script>
+    <script src="fichas.js"></script>
 </body>
+
 </html>
