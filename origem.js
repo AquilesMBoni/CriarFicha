@@ -82,41 +82,40 @@
             imagemEspecie: 'img/racas/Pyronita.png'
         },
         {
-            id: 'cocoricoide',
-            planeta: 'Não definido',
-            especie: 'Cocoricóide',
-            especieCurta: 'COCORICÓIDE',
-            codigo: 'SISTEMA NÃO CATALOGADO',
-            setor: 'SETOR NÃO CATALOGADO // DADOS INCOMPLETOS',
-            cor: '#c2d66b',
-            classeEsfera: 'indefinido',
-            simbolo: '?',
+            id: 'kinet',
+            planeta: 'Kinet',
+            especie: 'Kinecelerano (Kineceleran)',
+            especieCurta: 'KINECELERANO',
+            codigo: 'SISTEMA KINET',
+            setor: 'SETOR KINET // ZONA DE TEMPESTADES ELÉTRICAS',
+            cor: '#00e5ff',
+            classeEsfera: 'kinet',
+            simbolo: '⚡',
             x: 0.85,
             y: 0.72,
-            descricaoEspecie: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-            descricaoPlaneta: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-            imagemPlaneta: null,
-            modelo3D: null,
-            imagemEspecie: null
+            descricaoEspecie: 'Os Kineceleranos são seres humanoides extremamente velozes, conhecidos por sua capacidade extraordinária de locomoção e reflexos aprimorados. Possuem uma estrutura corporal adaptada para alcançar altas velocidades, incluindo rodas naturais nos pés que permitem deslizar pelo terreno. Sua agilidade e rapidez fazem deles especialistas em deslocamento e perseguição.',
+            descricaoPlaneta: 'Kinet é um planeta marcado por condições climáticas severas e tempestades elétricas. Para enfrentar seu ambiente hostil, os jovens Kineceleranos participam de uma tradição conhecida como Running of the Gauntlet, na qual precisam atravessar terrenos perigosos em alta velocidade para recuperar os planadores utilizados nos pés.',
+            imagemPlaneta: 'img/planetas/kinet.png',
+            modelo3D: 'modelos_3d/Kinet.glb',
+            imagemEspecie: 'img/racas/Kinecelerano.png'
         },
         {
-            id: 'classificado',
-            planeta: 'CLASSIFICADO',
-            especie: 'CLASSIFICADO',
-            especieCurta: 'ACESSO RESTRITO',
-            codigo: 'SISTEMA CLASSIFICADO',
-            setor: 'SETOR RESTRITO // NÍVEL DE ACESSO INSUFICIENTE',
-            cor: '#e879f9',
-            classeEsfera: 'classificado',
-            simbolo: '×',
+            id: 'galvan-prime',
+            planeta: 'Galvan Prime',
+            especie: 'Galvaniano (Galvan)',
+            especieCurta: 'GALVANIANO',
+            codigo: 'SISTEMA GALVAN',
+            setor: 'SETOR GALVAN // POLO CIENTÍFICO GALÁCTICO',
+            cor: '#7ce850',
+            classeEsfera: 'galvan-prime',
+            simbolo: '◈',
             x: 0.51,
             y: 0.14,
-            secreto: true,
-            descricaoEspecie: 'ACESSO RESTRITO. Os dados desta espécie ainda não estão disponíveis.',
-            descricaoPlaneta: 'LOCALIZAÇÃO DESCONHECIDA. Informações classificadas.',
-            imagemPlaneta: null,
-            modelo3D: null,
-            imagemEspecie: null
+            descricaoEspecie: 'Os Galvanianos são seres humanoides de pequeno porte, conhecidos por sua inteligência extraordinária e capacidade intelectual. Possuem grande facilidade para compreender, desenvolver e manipular tecnologias complexas. Sua capacidade de raciocínio os torna uma das espécies mais brilhantes do universo.',
+            descricaoPlaneta: 'Galvan Prime é conhecido por abrigar algumas das mentes mais brilhantes da galáxia. O planeta também possui um banco de DNA contendo informações genéticas de diversas espécies alienígenas, tornando-se um importante centro de pesquisa genética e conhecimento científico do universo.',
+            imagemPlaneta: 'img/planetas/galvan_prime.png',
+            modelo3D: 'modelos_3d/Galvan.glb',
+            imagemEspecie: 'img/racas/Galvaniano.png'
         }
     ];
 
@@ -172,8 +171,8 @@
         kylmyys: 'FORMA BASE // NECROFRIGIANO',
         khoros: 'FORMA BASE // TETRAMANDO',
         pyros: 'FORMA BASE // PYRONITA',
-        cocoricoide: 'REGISTRO PROVISÓRIO // ESPÉCIE SEM CLASSIFICAÇÃO OFICIAL',
-        classificado: 'ACESSO RESTRITO // IDENTIDADE BLOQUEADA'
+        kinet: 'FORMA BASE // KINECELERANO',
+        'galvan-prime': 'FORMA BASE // GALVANIANO'
     };
 
     const iconesEspecie = {
@@ -181,8 +180,8 @@
         kylmyys: '❄',
         khoros: '✦',
         pyros: '✹',
-        cocoricoide: '?',
-        classificado: '×'
+        kinet: '⚡',
+        'galvan-prime': '◈'
     };
 
     function escaparHTML(valor) {
