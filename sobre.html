@@ -10,6 +10,15 @@
 
     <link rel="icon" type="image/png" href="img/icone.png">
     <link rel="stylesheet" href="estilo.css">
+
+    <script type="importmap">
+    {
+        "imports": {
+        "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 
 <body class="body-sobre">
@@ -17,37 +26,20 @@
     <!-- MENU (idêntico ao da Home) -->
     <header class="header">
 
-        <a class="marca" href="index.html">
-            <img src="img/icone.png" alt="">
-            <span>BEN 10 BEYOND</span>
-        </a>
-
-        <nav class="menu-basico" aria-label="Menu principal">
-            <a href="index.html">HOME</a>
-            <a href="criar_fichas.html">CRIAR FICHAS</a>
-            <a href="fichas.html">FICHAS</a>
-            <a href="sobre.html" aria-current="page">SOBRE</a>
-        </nav>
-
-        <div class="omnitrix-placeholder"
-             aria-label="Espaço reservado para o menu 3D do Omnitrix">
-
-            <span class="omnitrix-placeholder__simbolo">✳</span>
-            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
-
+        <div id="omnitrix-menu"
+            class="omnitrix-menu"
+            aria-label="Menu interativo 3D do Omnitrix">
         </div>
+
 
     </header>
 
 
     <main class="sobre-main">
 
-<!-- SEÇÃO 1 -->
+        <!-- SEÇÃO 1 -->
         <section class="sobre-secao">
 
-            <div class="sobre-cabecalho">
-                <h1>Sobre</h1>
-            </div>
 
             <div class="sobre-conteudo">
 
@@ -114,7 +106,7 @@
 
 
     <!-- Script principal (bolhas do mouse) -->
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 
 
 </body>

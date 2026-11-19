@@ -97,34 +97,212 @@ a {
     color: var(--verde-claro);
 }
 
-.omnitrix-placeholder {
-    width: 72px;
-    height: 72px;
-    flex: 0 0 72px;
+/* =========================
+   MENU 3D INTERATIVO (OMNITRIX)
+========================= */
 
+/* Estado Ativo: Centralizado no topo, sem borda ou caixa ao redor */
+.omnitrix-menu.ativo {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(450px, 94vw);
+    height: min(600px, 90vh);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    cursor: default;
+}
+
+/* Impede que a área transparente do header bloqueie cliques nos módulos */
+header {
+    pointer-events: none;
+}
+
+header.header-oculto {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.omnitrix-menu {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    flex: 0 0 190px;
+    margin-inline: auto;
+    z-index: 60;
+    cursor: pointer;
+    pointer-events: auto; /* Reativa o clique apenas no relógio */
+    user-select: none;
+    transition:
+        transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease;
+}
+
+/* -160% garante que ele saia 100% da tela em qualquer altura */
+.omnitrix-menu.oculto-modulo {
+    transform: translateY(-160%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.omnitrix-menu canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+/* Botão fechar (✕) discreto */
+.omnitrix-fechar {
+    position: absolute;
+    top: 14px;
+    right: 24px;
+    z-index: 5;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(185, 255, 53, 0.55);
+    border-radius: 50%;
+    background: rgba(5, 8, 5, 0.75);
+    color: var(--verde-claro);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.omnitrix-menu.ativo .omnitrix-fechar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.omnitrix-fechar:hover {
+    background: var(--verde-claro);
+    color: var(--preto);
+    transform: scale(1.1);
+}
+
+/* Projeção do Holograma acima do núcleo (sem encostar no relógio) */
+.omnitrix-holograma {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: bottom center;
+    width: 92%;
+    height: 225px;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    transition:
+        transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.3s ease;
+}
 
-    border: 2px solid rgba(185, 255, 53, .7);
+.omnitrix-menu.ativo .omnitrix-holograma.visivel {
+    transform: translateX(-50%) scaleY(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Cone de luz verde saindo do mostrador */
+.omnitrix-feixe {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to top,
+        rgba(185, 255, 53, 0.45) 0%,
+        rgba(138, 203, 56, 0.14) 58%,
+        transparent 100%
+    );
+    clip-path: polygon(36% 100%, 64% 100%, 96% 0%, 4% 0%);
+    filter: blur(2px);
+    pointer-events: none;
+}
+
+.omnitrix-hud {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.omnitrix-seta {
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-
+    border: 1.5px solid var(--verde-claro);
+    background: rgba(5, 8, 5, 0.85);
     color: var(--verde-claro);
-    background: rgba(0, 0, 0, .55);
-
-    box-shadow: 0 0 18px rgba(110, 255, 25, .22);
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(185, 255, 53, 0.35);
+    transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.omnitrix-placeholder__simbolo {
-    font-size: 28px;
-    line-height: 1;
+.omnitrix-seta:hover {
+    background: var(--verde-claro);
+    color: var(--preto);
+    transform: scale(1.1);
 }
 
-.omnitrix-placeholder__texto {
-    font-size: 8px;
-    letter-spacing: .12em;
+.omnitrix-card-link {
+    min-width: 185px;
+    padding: 14px 20px;
+    border: 2px solid var(--verde-claro);
+    border-radius: 14px 14px 14px 0;
+    background: rgba(7, 16, 6, 0.92);
+    box-shadow:
+        0 0 24px rgba(185, 255, 53, 0.5),
+        inset 0 0 12px rgba(185, 255, 53, 0.22);
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 19px;
+    letter-spacing: 0.06em;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.omnitrix-card-link:hover {
+    background: rgba(23, 107, 11, 0.65);
+    transform: scale(1.06);
+    box-shadow: 0 0 34px rgba(185, 255, 53, 0.8);
+}
+
+.omnitrix-dica {
+    position: relative;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(5, 8, 5, 0.65);
+    color: rgba(228, 239, 217, 0.9);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .omnitrix-menu {
+        width: 96px;
+        height: 96px;
+        flex-basis: 96px;
+    }
 }
 
 
@@ -503,18 +681,6 @@ a {
     padding-bottom: 110px;
 }
 
-.sobre-cabecalho {
-    text-align: center;
-    margin-bottom: 4.5vh;
-}
-
-.sobre-cabecalho h1 {
-    color: var(--verde-claro);
-    font-family: var(--fonte-titulo);
-    font-size: clamp(46px, 6vw, 84px);
-    letter-spacing: .03em;
-    text-shadow: 0 0 28px rgba(185, 255, 53, .18);
-}
 
 /* Conteúdo fixo que acompanha a rolagem */
 .sobre-conteudo {

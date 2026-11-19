@@ -15,6 +15,15 @@
      <!-- Bibliotecas client-side para PDF editável (AcroForm) + fontes personalizadas -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+
+    <script type="importmap">
+    {
+        "imports": {
+        "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 </head>
 
@@ -22,21 +31,9 @@
 
     <!-- MENU PRINCIPAL -->
     <header class="header">
-        <a class="marca" href="index.html">
-            <img src="img/icone.png" alt="">
-            <span>BEN 10 BEYOND</span>
-        </a>
-
-        <nav class="menu-basico" aria-label="Menu principal">
-            <a href="index.html">HOME</a>
-            <a href="criar_fichas.html">CRIAR FICHAS</a>
-            <a href="fichas.html" aria-current="page">FICHAS</a>
-            <a href="sobre.html">SOBRE</a>
-        </nav>
-
-        <div class="omnitrix-placeholder" aria-label="Espaço reservado para o menu 3D do Omnitrix">
-            <span class="omnitrix-placeholder__simbolo">✳</span>
-            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
+        <div id="omnitrix-menu"
+            class="omnitrix-menu"
+            aria-label="Menu interativo 3D do Omnitrix">
         </div>
     </header>
 
@@ -115,7 +112,7 @@
     <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
 
     <script src="gerenciador-ficha.js"></script>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
     <script src="fichas.js"></script>
 </body>
 

@@ -1,3 +1,9 @@
+// =========================================================
+// IMPORTS DO THREE.JS
+// =========================================================
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 
 /* =========================
    VÍDEO: ÁUDIO E ROLAGEM
@@ -709,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     [[largura * 0.82, altura], [largura * 0.82, cy + 120], [cx + 120, cy], [cx, cy]]
                 ];
                 entradas.forEach((rota, idx) => desenharTrilha(rota, 1.0, idx * 0.22, 4.8));
-            }   else {
+            } else {
                 /* Trilhas de energia direcionadas a cada um dos 4 cartões sem cruzar o centro */
                 cartoes.forEach((cartao, idx) => {
                     const rect = cartao.getBoundingClientRect();
@@ -793,6 +799,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (animandoAbertura) return;
             animandoAbertura = true;
 
+            modoFocoCentral = true;
+            cabecalhoCriar.classList.add('oculto');
+            gradeCartoes.style.opacity = '0';
+            window.definirVisibilidadeMenuOmnitrix?.(false); // <-- Esconde o Omnitrix ao entrar no módulo
+
             const etapa = cartao.dataset.etapa;
             const titulo = cartao.querySelector('h2')?.textContent || etapa;
             const rectInicial = cartao.getBoundingClientRect();
@@ -843,14 +854,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 abaStatus.textContent = `MÓDULO ATIVO // ${titulo.toUpperCase()}`;
                 abaExpandida.classList.add('ativa');
-                abaStatus.textContent = `MÓDULO ATIVO // ${titulo.toUpperCase()}`;
-                abaExpandida.classList.add('ativa');
                 abaExpandida.setAttribute('aria-hidden', 'false');
 
                 if (window.FichaSessao) {
                     window.FichaSessao.atualizarHudPax(etapa);
                 }
-                abaExpandida.setAttribute('aria-hidden', 'false');
 
                 clone.remove();
                 animandoAbertura = false;
@@ -874,6 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
         abaExpandida.setAttribute('aria-hidden', 'true');
         cabecalhoCriar.classList.remove('oculto');
         gradeCartoes.classList.remove('oculto');
+        window.definirVisibilidadeMenuOmnitrix?.(true); // <-- Traz o Omnitrix de volta ao sair
         cartoes.forEach(c => {
             c.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
         });
@@ -1133,3 +1142,370 @@ if (tierPalco && tierItens.length > 0) {
         tierPalco.classList.add('painel-aberto');
     }
 }
+
+/* =========================
+   MENU 3D INTERATIVO DO OMNITRIX
+========================= */
+(function iniciarMenuOmnitrix() {
+    const container = document.getElementById('omnitrix-menu');
+    if (!container) return;
+
+    // Páginas conectadas diretamente aos arquivos do seu projeto
+    const PAGINAS = [
+        { titulo: 'HOME', url: 'index.html' },
+        { titulo: 'CRIAR FICHAS', url: 'criar_fichas.html' },
+        { titulo: 'FICHAS', url: 'fichas.html' },
+        { titulo: 'SOBRE', url: 'sobre.html' }
+    ];
+
+    // Identifica a página atual para iniciar o seletor nela
+    const caminhoAtual = window.location.pathname.split('/').pop() || 'index.html';
+    let indiceAtual = Math.max(0, PAGINAS.findIndex(p => p.url === caminhoAtual));
+
+    // Monta o HTML interno do holograma e do canvas
+    container.innerHTML = `
+        <button type="button" class="omnitrix-fechar" aria-label="Fechar menu">✕</button>
+        <div class="omnitrix-holograma" id="omni-holograma">
+            <div class="omnitrix-feixe"></div>
+            <div class="omnitrix-hud">
+                <button type="button" class="omnitrix-seta" id="omni-prev" aria-label="Anterior">◀</button>
+                <button type="button" class="omnitrix-card-link" id="omni-card">${PAGINAS[indiceAtual].titulo}</button>
+                <button type="button" class="omnitrix-seta" id="omni-next" aria-label="Próximo">▶</button>
+            </div>
+            <span class="omnitrix-dica">Role ou use as setas • Clique para abrir</span>
+        </div>
+        <canvas id="omni-canvas"></canvas>
+    `;
+
+    const canvas = container.querySelector('#omni-canvas');
+    const hologramaEl = container.querySelector('#omni-holograma');
+    const cardLinkEl = container.querySelector('#omni-card');
+    const btnFechar = container.querySelector('.omnitrix-fechar');
+
+    // Estados: 'REPOUSO' | 'HOVER' | 'ATIVO' | 'FECHANDO'
+    let estado = 'REPOUSO';
+    let menuOculto = false;
+
+    window.definirVisibilidadeMenuOmnitrix = (visivel) => {
+        menuOculto = !visivel;
+        if (!visivel) {
+            if (estado === 'ATIVO') fecharOmnitrix();
+            container.classList.add('oculto-modulo');
+        } else {
+            container.classList.remove('oculto-modulo');
+        }
+    };
+
+    // Alvos de animação suave
+    const ROT_FRENTE_X = Math.PI / 2;
+    const alvoRotacaoCorpo = new THREE.Euler(ROT_FRENTE_X, 0, 0);
+    const alvoPosicaoCorpo = new THREE.Vector3(0, 0, 0);
+
+    let alvoElevacaoNucleo = 0; // Sobe Mostrador + Rotator + Tecnologico juntos
+    let alvoGiroRotator = 0;    // Gira APENAS o Rotator ao trocar de link
+    let alvoBrilhoVerde = 0.7;
+    let alvoCameraZ = 4.5;
+
+    // Configuração Three.js
+    const cena = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    camera.position.set(0, 0, alvoCameraZ);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+
+    // Iluminação
+    cena.add(new THREE.AmbientLight(0xffffff, 1.3));
+
+    const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.2);
+    luzPrincipal.position.set(3, 5, 4);
+    cena.add(luzPrincipal);
+
+    const luzVerde = new THREE.PointLight(0xb9ff35, 1.5, 6);
+    luzVerde.position.set(0, 0.6, 1.5);
+    cena.add(luzVerde);
+
+    const pivoOmnitrix = new THREE.Group();
+    pivoOmnitrix.rotation.x = ROT_FRENTE_X;
+    cena.add(pivoOmnitrix);
+
+    // Referências às 5 partes separadas no Blender
+    let objBase = null;
+    let objPinos = null;
+    let objMostrador = null;
+    let objRotator = null;
+    let objTecnologico = null;
+
+    const pecasQueSobem = []; // Mostrador + Rotator + Tecnologico
+    const materiaisVerdes = [];
+
+    // Carrega o modelo da pasta modelos_3d
+    const loader = new GLTFLoader();
+    loader.load('modelos_3d/omnitrix.glb', (gltf) => {
+        const modelo = gltf.scene;
+
+        // Normaliza tamanho e centraliza
+        const caixa = new THREE.Box3().setFromObject(modelo);
+        const tamanho = caixa.getSize(new THREE.Vector3());
+        const centro = caixa.getCenter(new THREE.Vector3());
+        const maiorEixo = Math.max(tamanho.x, tamanho.y, tamanho.z);
+        const escala = 2.75 / maiorEixo;
+
+        modelo.scale.setScalar(escala);
+        modelo.position.sub(centro.multiplyScalar(escala));
+
+        // Captura os 5 grupos/objetos pelo nome
+        modelo.traverse((child) => {
+            const nome = child.name.toLowerCase();
+            if (!objBase && nome.includes('base')) objBase = child;
+            else if (!objPinos && nome.includes('pinos')) objPinos = child;
+            else if (!objMostrador && nome.includes('mostrador')) objMostrador = child;
+            else if (!objRotator && nome.includes('rotator')) objRotator = child;
+            else if (!objTecnologico && nome.includes('tecnologico')) objTecnologico = child;
+
+            if (child.isMesh && child.material) {
+                child.material.emissive = new THREE.Color(0x8eff29);
+                child.material.emissiveIntensity = alvoBrilhoVerde;
+                materiaisVerdes.push(child.material);
+            }
+        });
+
+        pivoOmnitrix.add(modelo);
+
+        // Coloca temporariamente na posição aberta (mostrador apontando para cima)
+        // para calcular os eixos exatos de subida e giro
+        pivoOmnitrix.rotation.set(0, 0, 0);
+        pivoOmnitrix.updateMatrixWorld(true);
+
+        const cimaMundial = new THREE.Vector3(0, 1, 0);
+
+        // Calcula o deslocamento vertical exato para Mostrador, Rotator e Tecnologico
+        [objMostrador, objRotator, objTecnologico].forEach((peca) => {
+            if (!peca) return;
+            const posMundoInicial = peca.parent.localToWorld(peca.position.clone());
+            const posMundoSubida = posMundoInicial.clone().add(new THREE.Vector3(0, 0.30, 0));
+            const posLocalSubida = peca.parent.worldToLocal(posMundoSubida);
+
+            peca.userData.posInicial = peca.position.clone();
+            peca.userData.deltaSubida = posLocalSubida.sub(peca.position);
+            pecasQueSobem.push(peca);
+        });
+
+        // Calcula o eixo vertical exato para girar APENAS o Rotator
+        if (objRotator) {
+            const quatPaiRotator = objRotator.parent.getWorldQuaternion(new THREE.Quaternion());
+            objRotator.userData.eixoGiro = cimaMundial
+                .clone()
+                .applyQuaternion(quatPaiRotator.invert())
+                .normalize();
+            objRotator.userData.quatInicial = objRotator.quaternion.clone();
+        }
+
+        // Retorna o pivô para a posição frontal inicial (Passo 1)
+        pivoOmnitrix.rotation.set(ROT_FRENTE_X, 0, 0);
+        pivoOmnitrix.updateMatrixWorld(true);
+    });
+
+    // Ajusta o canvas automaticamente quando o contêiner expande ou encolhe
+    const observadorTamanho = new ResizeObserver(() => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (w === 0 || h === 0) return;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h, false);
+    });
+    observadorTamanho.observe(container);
+
+    // --- PASSO 2: INCLINAR PARA O LADO DO MOUSE ---
+    window.addEventListener('pointermove', (e) => {
+
+        if (menuOculto || estado === 'ATIVO' || estado === 'FECHANDO') return;
+
+        const rect = container.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / 260;
+        const dy = (e.clientY - cy) / 260;
+        const distancia = Math.hypot(dx, dy);
+
+        if (distancia < 1.35) {
+            estado = 'HOVER';
+            const clampX = THREE.MathUtils.clamp(dx, -1, 1);
+            const clampY = THREE.MathUtils.clamp(dy, -1, 1);
+            alvoRotacaoCorpo.y = clampX * 0.55;
+            alvoRotacaoCorpo.x = ROT_FRENTE_X + clampY * 0.45;
+        } else if (estado === 'HOVER') {
+            estado = 'REPOUSO';
+            alvoRotacaoCorpo.set(ROT_FRENTE_X, 0, 0);
+        }
+    }, { passive: true });
+
+    // --- PASSO 3: CLICAR PARA GIRAR (IMAGEM 3), SUBIR NÚCLEO E ABRIR HOLOGRAMA ---
+    canvas.addEventListener('click', () => {
+        if (estado === 'REPOUSO' || estado === 'HOVER') {
+            ativarOmnitrix();
+        } else if (estado === 'ATIVO') {
+            trocarPagina(1);
+        }
+    });
+
+    function ativarOmnitrix() {
+        estado = 'ATIVO';
+        container.classList.add('ativo');
+
+        // Afasta a câmera suavemente para enquadrar a pulseira completa
+        alvoCameraZ = 7.2;
+        alvoRotacaoCorpo.set(0, 0, 0);
+        alvoPosicaoCorpo.set(0, -1.20, 0);
+
+        // Sobe Mostrador + Rotator + Tecnologico juntos
+        alvoElevacaoNucleo = 0.28;
+        alvoBrilhoVerde = 1.4;
+
+        setTimeout(() => {
+            if (estado === 'ATIVO') {
+                hologramaEl.classList.add('visivel');
+            }
+        }, 260);
+    }
+
+    function fecharOmnitrix(aoTerminar = null) {
+        estado = 'FECHANDO';
+        hologramaEl.classList.remove('visivel');
+
+        // Abaixa as 3 peças de volta para a Base
+        alvoElevacaoNucleo = 0;
+        alvoBrilhoVerde = aoTerminar ? 4.2 : 0.7;
+        if (aoTerminar) luzVerde.intensity = 6;
+
+        setTimeout(() => {
+            alvoCameraZ = 4.5;
+            alvoRotacaoCorpo.set(ROT_FRENTE_X, 0, 0);
+            alvoPosicaoCorpo.set(0, 0, 0);
+            alvoBrilhoVerde = 0.7;
+            container.classList.remove('ativo');
+        }, 220);
+
+        setTimeout(() => {
+            if (aoTerminar) {
+                aoTerminar();
+            } else {
+                estado = 'REPOUSO';
+            }
+        }, 560);
+    }
+
+    // --- PASSO 4: GIRAR APENAS O ROTATOR AO TROCAR DE PÁGINA ---
+    function trocarPagina(direcao) {
+        if (estado !== 'ATIVO') return;
+
+        indiceAtual = (indiceAtual + direcao + PAGINAS.length) % PAGINAS.length;
+        alvoGiroRotator += direcao * (Math.PI / 2); // 90° no Rotator
+
+        cardLinkEl.style.transform = 'scale(0.84)';
+        setTimeout(() => {
+            cardLinkEl.textContent = PAGINAS[indiceAtual].titulo;
+            cardLinkEl.style.transform = 'scale(1)';
+        }, 100);
+    }
+
+    container.querySelector('#omni-prev').addEventListener('click', (e) => {
+        e.stopPropagation();
+        trocarPagina(-1);
+    });
+
+    container.querySelector('#omni-next').addEventListener('click', (e) => {
+        e.stopPropagation();
+        trocarPagina(1);
+    });
+
+    container.addEventListener('wheel', (e) => {
+        if (estado === 'ATIVO') {
+            e.preventDefault();
+            trocarPagina(e.deltaY > 0 ? 1 : -1);
+        }
+    }, { passive: false });
+
+    // Clique no link do holograma: fecha o Omnitrix e navega para a página
+    cardLinkEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (estado !== 'ATIVO') return;
+        const destino = PAGINAS[indiceAtual].url;
+        fecharOmnitrix(() => {
+            window.location.href = destino;
+        });
+    });
+
+    // Fechar pelo botão ✕, clique fora ou tecla ESC
+    btnFechar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (estado === 'ATIVO') fecharOmnitrix();
+    });
+
+    document.addEventListener('pointerdown', (e) => {
+        if (estado === 'ATIVO' && !container.contains(e.target)) {
+            fecharOmnitrix();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && estado === 'ATIVO') {
+            fecharOmnitrix();
+        }
+    });
+
+    // --- LOOP DE ANIMAÇÃO ---
+    const relogio = new THREE.Clock();
+    let fatorElevacaoAtual = 0; // Vai de 0 (fechado) a 1 (aberto)
+    let giroRotatorAtual = 0;
+
+    function animarOmnitrix() {
+        requestAnimationFrame(animarOmnitrix);
+        const t = relogio.getElapsedTime();
+
+        // Suaviza zoom da câmera, posição e rotação do relógio inteiro
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, alvoCameraZ, 0.12);
+        pivoOmnitrix.rotation.x = THREE.MathUtils.lerp(pivoOmnitrix.rotation.x, alvoRotacaoCorpo.x, 0.12);
+        pivoOmnitrix.rotation.y = THREE.MathUtils.lerp(pivoOmnitrix.rotation.y, alvoRotacaoCorpo.y, 0.12);
+        pivoOmnitrix.rotation.z = THREE.MathUtils.lerp(pivoOmnitrix.rotation.z, alvoRotacaoCorpo.z, 0.12);
+        pivoOmnitrix.position.lerp(alvoPosicaoCorpo, 0.12);
+
+        // 1. Sobe Mostrador + Rotator + Tecnologico juntos (0 = fechado, 1 = elevado)
+        const fatorAlvo = alvoElevacaoNucleo > 0 ? 1 : 0;
+        fatorElevacaoAtual = THREE.MathUtils.lerp(fatorElevacaoAtual, fatorAlvo, 0.14);
+
+        pecasQueSobem.forEach((peca) => {
+            peca.position.copy(peca.userData.posInicial)
+                .addScaledVector(peca.userData.deltaSubida, fatorElevacaoAtual);
+        });
+
+        // 2. Gira SOMENTE o Rotator no eixo correto ao alternar as páginas
+        if (objRotator && objRotator.userData.eixoGiro) {
+            giroRotatorAtual = THREE.MathUtils.lerp(giroRotatorAtual, alvoGiroRotator, 0.15);
+            const qGiro = new THREE.Quaternion().setFromAxisAngle(
+                objRotator.userData.eixoGiro,
+                giroRotatorAtual
+            );
+            objRotator.quaternion.copy(objRotator.userData.quatInicial).multiply(qGiro);
+        }
+
+        // 3. Passo 1: Efeito "respirando" no modo Repouso
+        let brilhoAlvo = alvoBrilhoVerde;
+        if (estado === 'REPOUSO' || estado === 'HOVER') {
+            const respiracao = (Math.sin(t * 2.5) + 1) * 0.5;
+            brilhoAlvo = 0.35 + respiracao * 0.85;
+            luzVerde.intensity = 0.9 + respiracao * 1.3;
+        }
+
+        materiaisVerdes.forEach((mat) => {
+            mat.emissiveIntensity = THREE.MathUtils.lerp(mat.emissiveIntensity, brilhoAlvo, 0.12);
+        });
+
+        renderer.render(cena, camera);
+    }
+
+    animarOmnitrix();
+})();

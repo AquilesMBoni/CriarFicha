@@ -15,6 +15,14 @@
     <script type="module"
         src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js">
     </script>
+    <script type="importmap">
+    {
+        "imports": {
+        "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 
 <body class="body-home">
@@ -22,25 +30,13 @@
     <!-- MENU -->
     <header class="header">
 
-        <a class="marca" href="index.html">
-            <img src="/img/icone.png" alt="">
-            <span>BEN 10 BEYOND</span>
-        </a>
-
-        <nav class="menu-basico" aria-label="Menu principal">
-            <a href="index.html" aria-current="page">HOME</a>
-            <a href="criar_fichas.html">CRIAR FICHAS</a>
-            <a href="fichas.html">FICHAS</a>
-            <a href="sobre.html">SOBRE</a>
-        </nav>
-
-        <div class="omnitrix-placeholder"
-             aria-label="Espaço reservado para o menu 3D do Omnitrix">
-
-            <span class="omnitrix-placeholder__simbolo">✳</span>
-            <span class="omnitrix-placeholder__texto">OMNITRIX</span>
-
+        
+        <div id="omnitrix-menu"
+            class="omnitrix-menu"
+            aria-label="Menu interativo 3D do Omnitrix">
         </div>
+
+
 
     </header>
 
@@ -174,7 +170,7 @@
     <canvas id="canvas-bolhas" aria-hidden="true"></canvas>
 
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 
 </body>
 </html>
