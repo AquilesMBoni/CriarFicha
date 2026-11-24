@@ -47,6 +47,23 @@ Todos os direitos relacionados à franquia Ben 10, incluindo personagens, espéc
 
 A Man of Action é reconhecida como criadora da franquia, a Warner Bros. Discovery é responsável pelo licenciamento da propriedade intelectual e a D20 Culture é responsável pelo desenvolvimento e publicação do RPG oficial em colaboração com a Man of Action.
 
+
+### 3D Model Attribution
+
+"Alien Force Omnitrix"
+by Just Another Josh
+
+Source: https://skfb.ly/pxJMw
+
+Licensed under Creative Commons
+Attribution 4.0 International (CC BY 4.0).
+
+License: https://creativecommons.org/licenses/by/4.0/
+
+Modifications: The model may be adapted for
+integration into the CriarFicha website,
+including animation, materials and visual effects.
+
 Este projeto é uma iniciativa de fã, criada exclusivamente para entretenimento pessoal e diversão entre amigos.
 
 Nenhum conteúdo deste projeto deve ser interpretado como material oficial ou substituto dos produtos e materiais licenciados de Ben 10 Beyond.
