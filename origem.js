@@ -195,31 +195,31 @@
     }
 
     function obterFicha() {
-            if (window.fichaBen10 && typeof window.fichaBen10 === 'object') {
-                return window.fichaBen10;
-            }
-
-            try {
-                const salva = JSON.parse(sessionStorage.getItem('fichaBen10'));
-                if (salva && typeof salva === 'object') {
-                    window.fichaBen10 = salva;
-                    return salva;
-                }
-            } catch (erro) {
-                console.warn('Não foi possível recuperar a ficha temporária:', erro);
-            }
-
-            window.fichaBen10 = {
-                tier: null,
-                origem: null,
-                arquetipo: null,
-                atributos: {},
-                conhecimentos: [],
-                detalhes: {}
-            };
-
+        if (window.fichaBen10 && typeof window.fichaBen10 === 'object') {
             return window.fichaBen10;
         }
+
+        try {
+            const salva = JSON.parse(sessionStorage.getItem('fichaBen10'));
+            if (salva && typeof salva === 'object') {
+                window.fichaBen10 = salva;
+                return salva;
+            }
+        } catch (erro) {
+            console.warn('Não foi possível recuperar a ficha temporária:', erro);
+        }
+
+        window.fichaBen10 = {
+            tier: null,
+            origem: null,
+            arquetipo: null,
+            atributos: {},
+            conhecimentos: [],
+            detalhes: {}
+        };
+
+        return window.fichaBen10;
+    }
 
     function iniciarModuloOrigem() {
         const origemAba = $('.aba-conteudo[data-conteudo="origem"]');
@@ -842,8 +842,17 @@
         elementos.botaoZoomOut?.addEventListener('click', () => aplicarZoom(estado.zoom / 1.18));
 
         /* -----------------------------------------------------
-           ABERTURA DO DOSSIÊ
+           ABERTURA DO DOSSIÊ E RENDERIZAÇÃO DO PLANETA 3D
         ----------------------------------------------------- */
+        function renderizarEsferaProvisoria(planeta) {
+            if (!elementos.palcoPlaneta) return;
+            const esfera = document.createElement('div');
+            esfera.className = `planeta-esfera-provisoria planeta-esfera-provisoria--${planeta.classeEsfera || 'terra'}`;
+            esfera.style.setProperty('--planeta-cor', planeta.cor || '#b9ff35');
+            esfera.setAttribute('aria-label', `Representação visual de ${planeta.planeta}`);
+            elementos.palcoPlaneta.replaceChildren(esfera);
+        }
+
         function renderizarPlaneta(planeta) {
             const container = $('#origem-container');
             if (container) container.style.setProperty('--planeta-destaque', planeta.cor);
@@ -856,27 +865,40 @@
             }
             if (elementos.descricaoEspecie) elementos.descricaoEspecie.textContent = planeta.descricaoEspecie;
 
+            let promessaModelo3D = Promise.resolve();
+
             if (elementos.palcoPlaneta) {
                 elementos.palcoPlaneta.innerHTML = '';
 
                 if (planeta.modelo3D) {
-                    const visualizador = document.createElement('model-viewer');
-                    visualizador.setAttribute('src', planeta.modelo3D);
-                    visualizador.setAttribute('alt', `Modelo 3D de ${planeta.planeta}`);
-                    visualizador.setAttribute('camera-controls', '');
-                    visualizador.setAttribute('auto-rotate', '');
-                    visualizador.setAttribute('shadow-intensity', '1');
-                    elementos.palcoPlaneta.appendChild(visualizador);
+                    promessaModelo3D = new Promise((resolve) => {
+                        let finalizado = false;
+                        const concluir = () => {
+                            if (finalizado) return;
+                            finalizado = true;
+                            resolve();
+                        };
+
+                        const visualizador = document.createElement('model-viewer');
+                        visualizador.setAttribute('src', planeta.modelo3D);
+                        visualizador.setAttribute('alt', `Modelo 3D de ${planeta.planeta}`);
+                        visualizador.setAttribute('camera-controls', '');
+                        visualizador.setAttribute('auto-rotate', '');
+                        visualizador.setAttribute('shadow-intensity', '1');
+
+                        visualizador.addEventListener('load', concluir, { once: true });
+                        visualizador.addEventListener('error', () => {
+                            renderizarEsferaProvisoria(planeta);
+                            concluir();
+                        }, { once: true });
+
+                        // Segurança caso o .glb demore demais em conexão lenta
+                        setTimeout(concluir, 4200);
+
+                        elementos.palcoPlaneta.appendChild(visualizador);
+                    });
                 } else {
-                    const esfera = document.createElement('div');
-                    esfera.className = `planeta-esfera-provisoria planeta-esfera--${planeta.classeEsfera}`;
-                    esfera.setAttribute('role', 'img');
-                    esfera.setAttribute('aria-label', `Representação provisória de ${planeta.planeta}`);
-                    elementos.palcoPlaneta.appendChild(esfera);
-                    const selo = document.createElement('span');
-                    selo.className = 'planeta-glb-badge';
-                    selo.textContent = 'MODELO VISUAL PROVISÓRIO';
-                    elementos.palcoPlaneta.appendChild(selo);
+                    renderizarEsferaProvisoria(planeta);
                 }
             }
 
@@ -904,6 +926,8 @@
             atualizarTextoArquetipo();
             renderizarAtributosPendentes();
             renderizarCaminhos();
+
+            return promessaModelo3D;
         }
 
         function renderizarHolograma(planeta) {
@@ -922,36 +946,62 @@
             const planeta = dadosPlanetas.find(item => item.id === idPlaneta);
             if (!planeta) return;
 
-            estado.planetaSelecionado = planeta;
-            camadaPlanetas.querySelectorAll('.planeta-marcador').forEach(botao => {
-                const selecionado = botao.dataset.planeta === planeta.id;
-                botao.classList.toggle('selecionado', selecionado);
-                botao.setAttribute('aria-pressed', String(selecionado));
-            });
+            const montarTelaDossie = () => {
+                estado.planetaSelecionado = planeta;
+                camadaPlanetas.querySelectorAll('.planeta-marcador').forEach(botao => {
+                    const selecionado = botao.dataset.planeta === planeta.id;
+                    botao.classList.toggle('selecionado', selecionado);
+                    botao.setAttribute('aria-pressed', String(selecionado));
+                });
 
-            if (coordenadas) {
-                coordenadas.textContent = `SALTO HIPERESPACIAL // ${planeta.codigo}`;
-            }
+                if (coordenadas) {
+                    coordenadas.textContent = `SALTO HIPERESPACIAL // ${planeta.codigo}`;
+                }
 
-            renderizarPlaneta(planeta);
-            galaxiaTela.classList.add('oculto');
-            planetaTela.classList.remove('oculto');
-            planetaTela.classList.remove('entrada-hiperespaco');
-            void planetaTela.offsetWidth;
-            planetaTela.classList.add('entrada-hiperespaco');
-            sincronizarVisibilidade();
+                const promessa3D = renderizarPlaneta(planeta);
 
-            if (elementos.feedback) {
-                elementos.feedback.textContent = 'Sistema selecionado. Revise o arquétipo e confirme para registrar na ficha.';
-            }
-            if (elementos.botaoConfirmar) {
-                elementos.botaoConfirmar.disabled = false;
-                const origemSalva = obterFicha().origem;
-                const mesmaOrigem = origemSalva?.id === planeta.id;
-                elementos.botaoConfirmar.textContent = mesmaOrigem
-                    ? '✓ ORIGEM JÁ REGISTRADA // CONFIRMAR NOVAMENTE'
-                    : 'CONFIRMAR ORIGEM & ARQUÉTIPO NA FICHA';
-                elementos.botaoConfirmar.classList.toggle('ja-selecionado', mesmaOrigem);
+                galaxiaTela.classList.add('oculto');
+                planetaTela.classList.remove('oculto');
+                planetaTela.classList.remove('entrada-hiperespaco');
+                void planetaTela.offsetWidth;
+                planetaTela.classList.add('entrada-hiperespaco');
+                sincronizarVisibilidade();
+
+                if (elementos.feedback) {
+                    elementos.feedback.textContent = 'Sistema selecionado. Revise o arquétipo e confirme para registrar na ficha.';
+                }
+                if (elementos.botaoConfirmar) {
+                    elementos.botaoConfirmar.disabled = false;
+                    const origemSalva = obterFicha().origem;
+                    const mesmaOrigem = origemSalva?.id === planeta.id;
+                    elementos.botaoConfirmar.textContent = mesmaOrigem
+                        ? '✓ ORIGEM JÁ REGISTRADA // CONFIRMAR NOVAMENTE'
+                        : 'CONFIRMAR ORIGEM & ARQUÉTIPO NA FICHA';
+                    elementos.botaoConfirmar.classList.toggle('ja-selecionado', mesmaOrigem);
+                }
+
+                return promessa3D;
+            };
+
+            if (window.ViagemEspacial) {
+                window.ViagemEspacial.iniciar(
+                    () => {
+                        const promessa3D = montarTelaDossie();
+                        return promessa3D ? [promessa3D] : [];
+                    },
+                    null,
+                    {
+                        setor: planeta.setor || `SISTEMA ${planeta.planeta.toUpperCase()}`,
+                        tituloInicial: `SALTANDO PARA ${planeta.planeta.toUpperCase()}...`,
+                        detalheInicial: 'TRAÇANDO ROTA ORBITAL',
+                        tituloMeio: `ORBITANDO ${planeta.planeta.toUpperCase()}...`,
+                        detalheMeio: 'CARREGANDO MODELO 3D E ESPÉCIE',
+                        assets: [planeta.imagemPlaneta, planeta.imagemEspecie].filter(Boolean),
+                        tempoMinimoMs: 650
+                    }
+                );
+            } else {
+                montarTelaDossie();
             }
         }
 
@@ -1072,30 +1122,27 @@
         /* -----------------------------------------------------
            MODAL E EFEITO DE INCLINAÇÃO DO CARTÃO DA ESPÉCIE
         ----------------------------------------------------- */
-
         function abrirModalEspecie(conteudoOuEvento, legendaTexto) {
-            const modal = document.getElementById("especie-modal-fullscreen");
-            const palco = document.getElementById("especie-modal-palco");
-            const legenda = document.getElementById("especie-modal-legenda");
+            const modal = document.getElementById('especie-modal-fullscreen');
+            const palco = document.getElementById('especie-modal-palco');
+            const legenda = document.getElementById('especie-modal-legenda');
 
             if (!modal || !palco) return;
 
-            // Move o modal para fora de containers com transform/backdrop-filter
             if (modal.parentElement !== document.body) {
                 document.body.appendChild(modal);
             }
 
-            let htmlFinal = "";
-            let legendaFinal = legendaTexto || "";
+            let htmlFinal = '';
+            let legendaFinal = legendaTexto || '';
 
-            // Se foi chamado via evento de clique (PointerEvent / MouseEvent) ou sem string
-            if (typeof conteudoOuEvento === "string") {
+            if (typeof conteudoOuEvento === 'string') {
                 htmlFinal = conteudoOuEvento;
             } else {
-                const cardConteudo = document.querySelector(".especie-imagem-conteudo");
-                const tituloEspecie = document.querySelector(".especie-cabecalho h2");
+                const cardConteudo = document.querySelector('.especie-imagem-conteudo');
+                const tituloEspecie = document.querySelector('.especie-cabecalho h2');
 
-                htmlFinal = cardConteudo ? cardConteudo.innerHTML : "";
+                htmlFinal = cardConteudo ? cardConteudo.innerHTML : '';
                 if (!legendaFinal && tituloEspecie) {
                     legendaFinal = tituloEspecie.textContent.trim();
                 }
@@ -1104,16 +1151,16 @@
             palco.innerHTML = htmlFinal;
             if (legenda) legenda.textContent = legendaFinal;
 
-            modal.classList.remove("oculto");
-            document.body.style.overflow = "hidden";
+            modal.classList.remove('oculto');
+            document.body.style.overflow = 'hidden';
         }
 
         function fecharModalEspecie() {
-            const modal = document.getElementById("especie-modal-fullscreen");
+            const modal = document.getElementById('especie-modal-fullscreen');
             if (!modal) return;
 
-            modal.classList.add("oculto");
-            document.body.style.overflow = ""; // Restaura o scroll
+            modal.classList.add('oculto');
+            document.body.style.overflow = '';
         }
 
         elementos.cartaoEspecie?.addEventListener('click', abrirModalEspecie);
@@ -1171,56 +1218,56 @@
         }
 
         function confirmarOrigem() {
-                    if (!estado.planetaSelecionado) {
-                        if (elementos.feedback) elementos.feedback.textContent = 'Selecione um sistema na galáxia antes de confirmar.';
-                        return;
-                    }
+            if (!estado.planetaSelecionado) {
+                if (elementos.feedback) elementos.feedback.textContent = 'Selecione um sistema na galáxia antes de confirmar.';
+                return;
+            }
 
-                    const planeta = estado.planetaSelecionado;
-                    const ficha = obterFicha();
-                    const arquetipo = elementos.seletorArquetipo?.value || 'O Combatente';
+            const planeta = estado.planetaSelecionado;
+            const ficha = obterFicha();
+            const arquetipo = elementos.seletorArquetipo?.value || 'O Combatente';
 
-                    ficha.origem = {
-                        id: planeta.id,
-                        planeta: planeta.planeta,
-                        especie: planeta.especie,
-                        setor: planeta.setor,
-                        codigo: planeta.codigo
+            ficha.origem = {
+                id: planeta.id,
+                planeta: planeta.planeta,
+                especie: planeta.especie,
+                setor: planeta.setor,
+                codigo: planeta.codigo
+            };
+            ficha.arquetipo = arquetipo;
+
+            if (!ficha.atributos || typeof ficha.atributos !== 'object') {
+                ficha.atributos = {};
+            }
+
+            try {
+                sessionStorage.setItem('fichaBen10', JSON.stringify(ficha));
+
+                if (window.FichaSessao) {
+                    const rascunho = window.FichaSessao.obterRascunho();
+                    rascunho.origem = {
+                        planetaId: planeta.id,
+                        planetaNome: planeta.planeta,
+                        especieNome: planeta.especie,
+                        arquetipo: arquetipo,
+                        caminhoEvolutivo: caminhosEvolutivos[estado.caminhoAtivo]?.titulo || null
                     };
-                    ficha.arquetipo = arquetipo;
-
-                    if (!ficha.atributos || typeof ficha.atributos !== 'object') {
-                        ficha.atributos = {};
-                    }
-
-                    try {
-                        sessionStorage.setItem('fichaBen10', JSON.stringify(ficha));
-
-                        if (window.FichaSessao) {
-                            const rascunho = window.FichaSessao.obterRascunho();
-                            rascunho.origem = {
-                                planetaId: planeta.id,
-                                planetaNome: planeta.planeta,
-                                especieNome: planeta.especie,
-                                arquetipo: arquetipo,
-                                caminhoEvolutivo: caminhosEvolutivos[estado.caminhoAtivo]?.titulo || null
-                            };
-                            window.FichaSessao.salvarRascunho(rascunho);
-                        }
-                    } catch (erro) {
-                        console.error('Não foi possível salvar a origem na sessão:', erro);
-                        return;
-                    }
-
-                    atualizarResumoCartaoOrigem();
-                    if (elementos.feedback) {
-                        elementos.feedback.textContent = `${planeta.especie} — origem e arquétipo salvos na ficha.`;
-                    }
-                    if (elementos.botaoConfirmar) {
-                        elementos.botaoConfirmar.textContent = '✓ ORIGEM E ARQUÉTIPO SALVOS NA FICHA';
-                        elementos.botaoConfirmar.classList.add('ja-selecionado');
-                    }
+                    window.FichaSessao.salvarRascunho(rascunho);
                 }
+            } catch (erro) {
+                console.error('Não foi possível salvar a origem na sessão:', erro);
+                return;
+            }
+
+            atualizarResumoCartaoOrigem();
+            if (elementos.feedback) {
+                elementos.feedback.textContent = `${planeta.especie} — origem e arquétipo salvos na ficha.`;
+            }
+            if (elementos.botaoConfirmar) {
+                elementos.botaoConfirmar.textContent = '✓ ORIGEM E ARQUÉTIPO SALVOS NA FICHA';
+                elementos.botaoConfirmar.classList.add('ja-selecionado');
+            }
+        }
 
         elementos.botaoConfirmar?.addEventListener('click', confirmarOrigem);
 

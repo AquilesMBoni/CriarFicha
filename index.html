@@ -27,6 +27,14 @@
 
 <body class="body-home">
 
+    <!-- FLASH DE TRANSIÇÃO DO OMNITRIX -->
+    <div id="omnitrix-flash" class="omnitrix-flash" aria-hidden="true"></div>
+    <script>
+        if (sessionStorage.getItem('omnitrixFlash') === '1') {
+            document.getElementById('omnitrix-flash').classList.add('ativo');
+        }
+    </script>
+
     <!-- MENU -->
     <header class="header">
 
@@ -43,37 +51,56 @@
 
     <main>
 
-        <!-- HERO VIDEO -->
-        <section class="video-hero" aria-label="Abertura de Ben 10">
+        <!-- HERO PARALLAX: BEN 10 BEYOND -->
+        <section class="parallax-hero" id="parallax-hero" aria-label="Abertura Ben 10 Beyond">
 
-            <video
-                class="video-hero__video"
-                id="video-abertura"
-                autoplay
-                muted
-                loop
-                playsinline>
+            <img src="img/parallax/espaco.png"
+                 alt=""
+                 id="parallax-espaco"
+                 class="parallax-camada parallax-espaco"
+                 aria-hidden="true">
 
-                <source src="/vid/abertura.mp4" type="video/mp4">
+            <img src="img/parallax/horizonte_base.png"
+                 alt=""
+                 id="parallax-horizonte"
+                 class="parallax-camada parallax-horizonte"
+                 aria-hidden="true">
 
-                Seu navegador não suporta vídeo HTML5.
+            <h2 id="parallax-titulo" class="parallax-titulo">BEN 10 BEYOND</h2>
 
-            </video>
+            <canvas id="canvas-bolhas-titulo"
+                    class="parallax-bolhas-titulo"
+                    aria-hidden="true">
+            </canvas>
 
-            <div class="video-hero__indicacao">
+            <img src="img/parallax/nave.png"
+                 alt="Nave espacial decolando da base"
+                 id="parallax-nave"
+                 class="parallax-camada parallax-nave">
+
+            <img src="img/parallax/chao_base.png"
+                alt=""
+                id="parallax-chao"
+                class="parallax-camada parallax-chao"
+                aria-hidden="true">
+            </div>
+
+            <div class="parallax-hero__indicacao">
                 <span>ROLE PARA EXPLORAR</span>
-                <span class="video-hero__seta">↓</span>
+                <span class="parallax-hero__seta">↓</span>
             </div>
 
         </section>
 
 
         <!-- HERO 1: BEN 10 BEYOND -->
-        <section class="hero-beyond">
+        <section class="hero-beyond" id="hero-beyond">
+
+        <canvas class="canvas-bolhas-secao" aria-hidden="true"></canvas>
 
             <div class="hero-beyond__conteudo">
 
-                <h1>Ben 10 Beyond</h1>
+                <h1>Sua Lenda</h1>
 
                 <p class="hero-beyond__descricao">
 
@@ -133,10 +160,13 @@
 
 
         <!-- HERO 2: MAN OF ACTION -->
-        <section class="man_of_action">
+        <section class="man_of_action" id="man-of-action">
 
             <!-- Canvas exclusivo das bolhas do fundo -->
             <canvas id="bolhas-fundo" aria-hidden="true"></canvas>
+
+            <!-- Canvas das bolhas dos títulos -->
+            <canvas class="canvas-bolhas-secao" aria-hidden="true"></canvas>
 
             <!-- Conteúdo da direita -->
             <div class="man_conteudo">

@@ -98,6 +98,47 @@ a {
 }
 
 /* =========================
+   FLASH VERDE DO OMNITRIX (TROCA DE PÁGINA)
+========================= */
+.omnitrix-flash {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99999;
+    pointer-events: none;
+
+    background: radial-gradient(
+        circle at 50% 115px,
+        #f4ffd9 0%,
+        #b9ff35 26%,
+        #55d600 62%,
+        #176b0b 100%
+    );
+
+    opacity: 0;
+    clip-path: circle(0% at 50% 115px);
+    transition:
+        clip-path 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.55s ease;
+    will-change: clip-path, opacity;
+}
+
+/* Estado ativo: cobrindo a tela durante a troca/carregamento */
+.omnitrix-flash.ativo {
+    opacity: 1;
+    clip-path: circle(150% at 50% 115px);
+    pointer-events: auto;
+}
+
+/* Estado de saída: dissipa suavemente quando a página carrega */
+.omnitrix-flash.saindo {
+    opacity: 0;
+    clip-path: circle(150% at 50% 115px);
+    pointer-events: none;
+}
+
+/* =========================
    MENU 3D INTERATIVO (OMNITRIX)
 ========================= */
 
@@ -307,47 +348,165 @@ header.header-oculto {
 
 
 /* =========================
-   HERO VIDEO (escala 110%)
+   HERO PARALLAX (ESTILO MOON LIGHT)
 ========================= */
 
-.video-hero {
+.parallax-hero {
     position: relative;
     width: 100%;
-    height: min(100vh, 960px);
-    min-height: 520px;
+    height: 100vh;
+    min-height: 580px;
     overflow: hidden;
-    background: #000;
+    background: #02050d;
 }
 
-.video-hero__video {
-    display: block;
+.parallax-camada {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+    will-change: transform;
+}
+
+/* Camada 1: Fundo espacial */
+.parallax-espaco {
+    inset: -6% 0 auto 0;
     width: 100%;
-    height: 100%;
+    height: 112%;
     object-fit: cover;
     object-position: center;
-    opacity: 1;
+    z-index: 1;
 }
 
-.video-hero::after {
-    content: "";
+/* Camada 2: Anel oposto da base no horizonte */
+.parallax-horizonte {
+    left: 50%;
+    bottom: 10%;
+    transform: translateX(-50%);
+    width: 108%;
+    max-width: none;
+    height: auto;
+    z-index: 2;
+}
+
+/* Camada 3: Título verde centralizado com entrada por bolhas */
+.parallax-titulo {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    transform: translate3d(-50%, 0, 0);
+    z-index: 6;
+
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(44px, 6.4vw, 98px);
+    line-height: 0.96;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    will-change: transform;
+
+    -webkit-text-stroke: 2px #071205;
+    paint-order: stroke fill;
+    text-shadow:
+        0 5px 0 #071205,
+        0 10px 26px rgba(0, 0, 0, 0.95),
+        0 0 28px rgba(185, 255, 53, 0.65),
+        0 0 54px rgba(138, 203, 56, 0.4);
+}
+
+.titulo-letra {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(16px) scale(0.15);
+    filter: blur(6px);
+    will-change: transform, opacity, filter;
+    transition:
+        transform 0.55s cubic-bezier(0.22, 1.5, 0.36, 1),
+        opacity 0.32s ease-out,
+        filter 0.38s ease-out;
+}
+
+.titulo-letra--espaco {
+    width: 0.32em;
+}
+
+.titulo-letra.visivel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+/* Canvas das bolhas de materialização do título */
+.parallax-bolhas-titulo {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 4;
     pointer-events: none;
+}
 
+/* Camada 4: Nave sólida em primeiro plano */
+.parallax-nave {
+    top: 8%;
+    right: 3vw;
+    width: clamp(230px, 31vw, 490px);
+    height: auto;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.75));
+    z-index: 4;
+}
+
+/* Camada 5: Píer/plataforma saliente em primeiro plano */
+.parallax-chao {
+    left: 50%;
+    bottom: -14%;
+    transform: translateX(-50%);
+    width: 106%;
+    max-width: none;
+    height: auto;
+    filter: drop-shadow(0 -10px 28px rgba(0, 0, 0, 0.85));
+    z-index: 5;
+}
+
+/* Camada 5: Chão da base opaco na base da tela (oculta o título na rolagem) */
+.parallax-chao-wrap {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 29vh;
+    min-height: 165px;
+    overflow: hidden;
+    z-index: 5;
+    pointer-events: none;
+    border-top: 1px solid rgba(125, 249, 255, 0.35);
+    box-shadow: 0 -14px 36px rgba(0, 0, 0, 0.78);
+}
+
+/* Degradê inferior para transição suave com a seção Hero Beyond */
+.parallax-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 110px;
+    z-index: 6;
+    pointer-events: none;
     background: linear-gradient(
         180deg,
-        rgba(0,0,0,.25),
-        transparent 35%,
-        rgba(0,0,0,.45)
+        transparent 0%,
+        rgba(5, 8, 5, 0.72) 62%,
+        var(--preto) 100%
     );
 }
 
-.video-hero__indicacao {
+.parallax-hero__indicacao {
     position: absolute;
-    z-index: 2;
+    z-index: 7;
 
     left: 50%;
-    bottom: 32px;
+    bottom: 28px;
     transform: translateX(-50%);
 
     display: flex;
@@ -361,7 +520,7 @@ header.header-oculto {
     text-shadow: 0 2px 8px #000;
 }
 
-.video-hero__seta {
+.parallax-hero__seta {
     font-size: 28px;
     animation: seta-descer 1.4s ease-in-out infinite;
 }
@@ -375,7 +534,6 @@ header.header-oculto {
         transform: translateY(8px);
     }
 }
-
 
 /* =========================
    HERO BEN 10 BEYOND (escala 110%)
@@ -410,8 +568,45 @@ header.header-oculto {
 }
 
 .hero-beyond__conteudo {
+    position: relative;
+    z-index: 2;
     width: min(54%, 720px);
     margin-left: 6%;
+}
+
+
+/* Canvas das bolhas nas seções Hero Beyond e Man of Action */
+.canvas-bolhas-secao {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* Agrupamento por palavra para evitar quebra no meio da palavra em textos longos */
+.titulo-palavra {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.titulo-letra {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(16px) scale(0.15);
+    filter: blur(6px);
+    will-change: transform, opacity, filter;
+    transition:
+        transform 0.55s cubic-bezier(0.22, 1.5, 0.36, 1),
+        opacity 0.32s ease-out,
+        filter 0.38s ease-out;
+}
+
+.titulo-letra.visivel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
 }
 
 .hero-beyond h1 {
@@ -1564,6 +1759,7 @@ header.header-oculto {
 }
 
 
+
 /* =========================
    RESPONSIVIDADE
 ========================= */
@@ -1668,9 +1864,28 @@ header.header-oculto {
         font-size: 19px;
     }
 
-    .video-hero {
-        height: 75vh;
-        min-height: 420px;
+    .parallax-hero {
+        height: 82vh;
+        min-height: 460px;
+    }
+
+    .parallax-titulo {
+        left: 50%;
+        top: 38%;
+        transform: translateX(-50%);
+        font-size: clamp(32px, 9.5vw, 48px);
+        text-align: center;
+    }
+
+    .parallax-nave {
+        top: 13%;
+        right: 4vw;
+        width: 54vw;
+    }
+
+    .parallax-chao-wrap {
+        height: 24vh;
+        min-height: 130px;
     }
 
     .hero-beyond {
@@ -1921,4 +2136,113 @@ header.header-oculto {
     .detalhes-pesquisa {
         max-width: 100%;
     }
+}
+
+/* =========================
+   VIAGEM ESPACIAL (CARREGAMENTO ORIGEM)
+========================= */
+.viagem-espacial {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 99990;
+    background: radial-gradient(circle at center, #06141a 0%, #020508 65%, #010304 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity;
+}
+
+.viagem-espacial.ativa {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.viagem-espacial.chegando {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#canvas-viagem-espacial {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.viagem-espacial__hud {
+    position: relative;
+    z-index: 2;
+    width: min(460px, 88vw);
+    padding: 26px 30px;
+    border: 1.5px solid rgba(185, 255, 53, 0.55);
+    border-radius: 22px 22px 22px 0;
+    background: rgba(4, 10, 8, 0.82);
+    backdrop-filter: blur(6px);
+    box-shadow:
+        0 0 40px rgba(0, 229, 255, 0.2),
+        0 0 24px rgba(185, 255, 53, 0.22),
+        inset 0 0 18px rgba(185, 255, 53, 0.08);
+    text-align: center;
+}
+
+.viagem-espacial__setor {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid rgba(0, 229, 255, 0.5);
+    border-radius: 999px;
+    color: #00e5ff;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.16em;
+    margin-bottom: 12px;
+}
+
+.viagem-espacial__hud h2 {
+    color: var(--verde-claro);
+    font-family: var(--fonte-titulo);
+    font-size: clamp(24px, 3vw, 34px);
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 18px rgba(185, 255, 53, 0.55);
+    margin-bottom: 18px;
+}
+
+.viagem-espacial__barra {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(185, 255, 53, 0.35);
+    overflow: hidden;
+}
+
+.viagem-espacial__barra-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #00e5ff, var(--verde-claro));
+    box-shadow: 0 0 14px var(--verde-claro);
+    transition: width 0.18s ease-out;
+}
+
+.viagem-espacial__rodape {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #cde3c1;
+    font-size: 11.5px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+
+#viagem-progresso-texto {
+    color: var(--verde-claro);
+    font-size: 13px;
 }

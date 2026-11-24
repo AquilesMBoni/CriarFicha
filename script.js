@@ -6,69 +6,332 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 
 /* =========================
-   VÍDEO: ÁUDIO E ROLAGEM
+   HERO PARALLAX (ESTILO MOON LIGHT)
 ========================= */
 
-const video = document.querySelector('#video-abertura');
+const secaoParallax = document.querySelector('#parallax-hero');
 
-if (video) {
+if (secaoParallax) {
+    const camadaEspaco = document.querySelector('#parallax-espaco');
+    const camadaHorizonte = document.querySelector('#parallax-horizonte');
+    const camadaTitulo = document.querySelector('#parallax-titulo');
+    const camadaNave = document.querySelector('#parallax-nave');
+    const camadaChao = document.querySelector('#parallax-chao');
 
-    video.muted = true;
-    video.volume = 0;
+    const reducaoMovimentoParallax = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+    ).matches;
 
-    let audioAtivado = false;
+    let tickingParallax = false;
 
-    function atualizarVideoPelaRolagem() {
+    function atualizarParallax() {
+        tickingParallax = false;
+        if (reducaoMovimentoParallax) return;
 
-        const limite = 600;
+        const scrollY = window.scrollY;
+        const alturaHero = secaoParallax.offsetHeight || window.innerHeight;
 
-        const progresso = Math.min(
-            Math.max(window.scrollY / limite, 0),
-            1
-        );
+        if (scrollY > alturaHero * 1.2) return;
 
-        const intensidade = 1 - progresso;
+        // 1. Espaço acompanha lentamente para dar profundidade
+        if (camadaEspaco) {
+            camadaEspaco.style.transform = `translate3d(0, ${scrollY * 0.25}px, 0)`;
+        }
 
-        video.style.opacity = intensidade;
+        // 2. Horizonte orbital desloca em ritmo intermediário
+        if (camadaHorizonte) {
+            camadaHorizonte.style.transform = `translate3d(-50%, ${scrollY * 0.36}px, 0)`;
+        }
 
-        if (audioAtivado && !video.muted) {
-            video.volume = intensidade;
+        // 3. Título desce mais rápido e mergulha atrás do chão da base
+        if (camadaTitulo) {
+            camadaTitulo.style.transform = `translate3d(-50%, ${scrollY * 0.78}px, 0)`;
+        }
+
+        // 4. Nave acelera na diagonal (cima + esquerda) na direção dos propulsores
+        if (camadaNave) {
+            const escala = Math.max(0.78, 1 - scrollY * 0.00028);
+            camadaNave.style.transform =
+                `translate3d(${-scrollY * 0.52}px, ${-scrollY * 0.48}px, 0) scale(${escala})`;
+        }
+
+        // 5. Píer saliente permanece firme em primeiro plano
+        if (camadaChao) {
+            camadaChao.style.transform = `translate3d(-50%, ${scrollY * 0.08}px, 0)`;
         }
     }
 
-    function ativarAudio() {
+        /* =========================
+        EFEITO DE BOLHAS NOS TÍTULOS (HOME)
+        ========================= */
+        (function iniciarBolhasTitulosHome() {
+        const reducaoMovimento = window.matchMedia(
+            '(prefers-reduced-motion: reduce)'
+        ).matches;
 
-        if (audioAtivado) return;
+        if (reducaoMovimento) return;
 
-        audioAtivado = true;
-        video.muted = false;
+        class BolhaMaterializacao {
+            constructor(x, y, escalaTamanho = 1) {
+                const angulo = Math.random() * Math.PI * 2;
+                const impulso = (Math.random() * 2.4 + 0.6) * escalaTamanho;
 
-        const limite = 600;
+                this.x = x + (Math.random() - 0.5) * 24;
+                this.y = y + (Math.random() - 0.5) * 24;
+                this.vx = Math.cos(angulo) * impulso;
+                this.vy = Math.sin(angulo) * impulso - 0.85;
 
-        const progresso = Math.min(
-            Math.max(window.scrollY / limite, 0),
-            1
-        );
+                this.raio = (Math.random() * 8.5 + 3.8) * escalaTamanho;
+                this.crescimento = (Math.random() * 0.22 + 0.08) * escalaTamanho;
+                this.opacidade = 0.95;
+                this.decai = Math.random() * 0.02 + 0.017;
 
-        video.volume = 1 - progresso;
+                const sorteio = Math.random();
+                this.estilo = sorteio < 0.55 ? 'neon' : (sorteio < 0.85 ? 'escura' : 'clara');
+            }
 
-        window.removeEventListener('pointerdown', ativarAudio);
-        window.removeEventListener('keydown', ativarAudio);
+            atualizar() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vx *= 0.96;
+                this.vy -= 0.03;
+                this.raio += this.crescimento;
+                this.opacidade -= this.decai;
+            }
+
+            desenhar(ctx) {
+                if (this.opacidade <= 0) return;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.raio, 0, Math.PI * 2);
+
+                if (this.estilo === 'neon') {
+                    ctx.fillStyle = `rgba(185, 255, 53, ${this.opacidade * 0.85})`;
+                    ctx.strokeStyle = `rgba(235, 255, 190, ${this.opacidade})`;
+                } else if (this.estilo === 'escura') {
+                    ctx.fillStyle = `rgba(7, 18, 5, ${this.opacidade * 0.9})`;
+                    ctx.strokeStyle = `rgba(138, 203, 56, ${this.opacidade})`;
+                } else {
+                    ctx.fillStyle = `rgba(57, 255, 20, ${this.opacidade * 0.5})`;
+                    ctx.strokeStyle = `rgba(185, 255, 53, ${this.opacidade})`;
+                }
+
+                ctx.shadowColor = '#b9ff35';
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        function criarControladorCanvas(secao, canvas) {
+            const ctx = canvas.getContext('2d');
+            const bolhas = [];
+            let animando = false;
+
+            function redimensionar() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                const rect = secao.getBoundingClientRect();
+                canvas.width = Math.floor(rect.width * dpr);
+                canvas.height = Math.floor(rect.height * dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+
+            redimensionar();
+            window.addEventListener('resize', redimensionar);
+
+            function loop() {
+                const rect = secao.getBoundingClientRect();
+                ctx.clearRect(0, 0, rect.width, rect.height);
+
+                for (let i = bolhas.length - 1; i >= 0; i--) {
+                    const b = bolhas[i];
+                    b.atualizar();
+                    b.desenhar(ctx);
+                    if (b.opacidade <= 0) {
+                        bolhas.splice(i, 1);
+                    }
+                }
+
+                if (bolhas.length > 0) {
+                    requestAnimationFrame(loop);
+                } else {
+                    animando = false;
+                }
+            }
+
+            function emitirNoElemento(span, quantidade = 14, escalaTamanho = 1) {
+                const secaoRect = secao.getBoundingClientRect();
+                const letraRect = span.getBoundingClientRect();
+
+                const cx = letraRect.left - secaoRect.left + letraRect.width / 2;
+                const cy = letraRect.top - secaoRect.top + letraRect.height / 2;
+
+                for (let i = 0; i < quantidade; i++) {
+                    bolhas.push(new BolhaMaterializacao(cx, cy, escalaTamanho));
+                }
+
+                if (!animando) {
+                    animando = true;
+                    requestAnimationFrame(loop);
+                }
+            }
+
+            return { emitirNoElemento };
+        }
+
+        function prepararLetras(elemento) {
+            if (!elemento) return [];
+
+            const textoLimpo = elemento.textContent.replace(/\s+/g, ' ').trim();
+            const palavras = textoLimpo.split(' ');
+            const spansLetras = [];
+
+            elemento.innerHTML = '';
+
+            palavras.forEach((palavra, idxPalavra) => {
+                const spanPalavra = document.createElement('span');
+                spanPalavra.className = 'titulo-palavra';
+
+                for (const char of palavra) {
+                    const spanLetra = document.createElement('span');
+                    spanLetra.className = 'titulo-letra';
+                    spanLetra.textContent = char;
+                    spanPalavra.appendChild(spanLetra);
+                    spansLetras.push(spanLetra);
+                }
+
+                elemento.appendChild(spanPalavra);
+
+                if (idxPalavra < palavras.length - 1) {
+                    elemento.appendChild(document.createTextNode(' '));
+                }
+            });
+
+            return spansLetras;
+        }
+
+        function animarSequencia(controlador, spansLetras, opcoes = {}) {
+            const {
+                atrasoInicial = 120,
+                intervalo = 75,
+                bolhasPorLetra = 14,
+                passoBolha = 1,
+                escalaBolha = 1
+            } = opcoes;
+
+            spansLetras.forEach((span, indice) => {
+                setTimeout(() => {
+                    if (indice % passoBolha === 0) {
+                        controlador.emitirNoElemento(span, bolhasPorLetra, escalaBolha);
+                    }
+                    span.classList.add('visivel');
+                }, atrasoInicial + indice * intervalo);
+            });
+
+            return atrasoInicial + spansLetras.length * intervalo;
+        }
+
+        /* 1. TÍTULO DO PARALLAX (DISPARA AO ABRIR O SITE) */
+        const secaoParallax = document.querySelector('#parallax-hero');
+        const tituloParallax = document.querySelector('#parallax-titulo');
+        const canvasParallax = document.querySelector('#canvas-bolhas-titulo');
+
+        if (secaoParallax && tituloParallax && canvasParallax) {
+            const ctrlParallax = criarControladorCanvas(secaoParallax, canvasParallax);
+            const letrasParallax = prepararLetras(tituloParallax);
+
+            animarSequencia(ctrlParallax, letrasParallax, {
+                atrasoInicial: 260,
+                intervalo: 80,
+                bolhasPorLetra: 16,
+                escalaBolha: 1
+            });
+        }
+
+        /* 2. SEÇÃO HERO BEYOND (DISPARA AO ROLAR ATÉ ELA) */
+        const secaoBeyond = document.querySelector('.hero-beyond');
+        const tituloBeyond = secaoBeyond?.querySelector('h1');
+        const canvasBeyond = secaoBeyond?.querySelector('.canvas-bolhas-secao');
+        let letrasBeyond = [];
+        let ctrlBeyond = null;
+
+        if (secaoBeyond && tituloBeyond && canvasBeyond) {
+            ctrlBeyond = criarControladorCanvas(secaoBeyond, canvasBeyond);
+            letrasBeyond = prepararLetras(tituloBeyond);
+        }
+
+        /* 3. SEÇÃO MAN OF ACTION (DISPARA AO ROLAR ATÉ ELA) */
+        const secaoMan = document.querySelector('.man_of_action');
+        const tituloManH2 = secaoMan?.querySelector('.man_conteudo h2');
+        const tituloManH3 = secaoMan?.querySelector('.man_conteudo h3');
+        const canvasMan = secaoMan?.querySelector('.canvas-bolhas-secao');
+        let letrasManH2 = [];
+        let letrasManH3 = [];
+        let ctrlMan = null;
+
+        if (secaoMan && tituloManH2 && tituloManH3 && canvasMan) {
+            ctrlMan = criarControladorCanvas(secaoMan, canvasMan);
+            letrasManH2 = prepararLetras(tituloManH2);
+            letrasManH3 = prepararLetras(tituloManH3);
+        }
+
+        const observadorSecoes = new IntersectionObserver((entradas, obs) => {
+            entradas.forEach((entrada) => {
+                if (!entrada.isIntersecting) return;
+
+                if (entrada.target === secaoBeyond && ctrlBeyond) {
+                    animarSequencia(ctrlBeyond, letrasBeyond, {
+                        atrasoInicial: 140,
+                        intervalo: 75,
+                        bolhasPorLetra: 15,
+                        escalaBolha: 1.05
+                    });
+                    obs.unobserve(secaoBeyond);
+                }
+
+                if (entrada.target === secaoMan && ctrlMan) {
+                    // Citação longa: onda rápida de ~1,3s com bolhas proporcionais
+                    const duracaoH2 = animarSequencia(ctrlMan, letrasManH2, {
+                        atrasoInicial: 120,
+                        intervalo: 10,
+                        bolhasPorLetra: 6,
+                        passoBolha: 2,
+                        escalaBolha: 0.72
+                    });
+
+                    // Assinatura "Man of Action" surge logo após a citação
+                    animarSequencia(ctrlMan, letrasManH3, {
+                        atrasoInicial: duracaoH2 + 120,
+                        intervalo: 65,
+                        bolhasPorLetra: 14,
+                        passoBolha: 1,
+                        escalaBolha: 0.95
+                    });
+
+                    obs.unobserve(secaoMan);
+                }
+            });
+        }, { threshold: 0.28 });
+
+        if (secaoBeyond) observadorSecoes.observe(secaoBeyond);
+        if (secaoMan) observadorSecoes.observe(secaoMan);
+        })();
+
+    function solicitarAtualizacaoParallax() {
+        if (!tickingParallax) {
+            requestAnimationFrame(atualizarParallax);
+            tickingParallax = true;
+        }
     }
 
-    window.addEventListener('pointerdown', ativarAudio, { once: true });
-    window.addEventListener('keydown', ativarAudio, { once: true });
-
-    window.addEventListener(
-        'scroll',
-        atualizarVideoPelaRolagem,
-        { passive: true }
-    );
-
-    window.addEventListener('resize', atualizarVideoPelaRolagem);
-
-    atualizarVideoPelaRolagem();
+    window.addEventListener('scroll', solicitarAtualizacaoParallax, { passive: true });
+    window.addEventListener('resize', solicitarAtualizacaoParallax);
+    atualizarParallax();
 }
+
 
 
 /* =========================
@@ -477,6 +740,233 @@ atualizarFadeSobre();
    CIRCUITOS 45°, TILT 3D E EXPANSÃO
 ========================= */
 
+/* =========================================================
+   VIAGEM ESPACIAL + PRÉ-CARREGAMENTO DE PLANETAS E ESPÉCIES
+========================================================= */
+window.ViagemEspacial = (function criarControladorViagemEspacial() {
+    const ASSETS_ORIGEM = [
+        'img/planetas/terra.png',
+        'img/planetas/kylmyys.png',
+        'img/planetas/khoros.png',
+        'img/planetas/pyros.png',
+        'img/planetas/kinet.png',
+        'img/planetas/galvan_prime.png',
+        'img/racas/Humano.png',
+        'img/racas/Necrofrigiano.png',
+        'img/racas/Tetramando.png',
+        'img/racas/Pyronita.png',
+        'img/racas/Kinecelerano.png',
+        'img/racas/Galvaniano.png'
+    ];
+
+    const cacheImagens = new Map();
+
+    function preCarregarImagem(src) {
+        if (!src) return Promise.resolve();
+        if (cacheImagens.has(src)) return cacheImagens.get(src);
+
+        const promessa = new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(src);
+            img.onerror = () => resolve(src); // Não trava se algum arquivo ainda não existir
+            img.src = src;
+        });
+
+        cacheImagens.set(src, promessa);
+        return promessa;
+    }
+
+    // Inicia cache silencioso no GitHub Pages assim que o Hub terminar de abrir
+    window.addEventListener('load', () => {
+        if (!document.getElementById('viagem-espacial-loader')) return;
+        setTimeout(() => {
+            ASSETS_ORIGEM.forEach((src) => preCarregarImagem(src));
+        }, 600);
+    }, { once: true });
+
+    function iniciar(aoRevelarModulo, aoFinalizarTudo, opcoes = {}) {
+        const {
+            setor = 'DOBRA ESPACIAL // MAPA GALÁCTICO',
+            tituloInicial = 'INICIANDO SALTO...',
+            detalheInicial = 'SINCRONIZANDO SISTEMAS ESTELARES',
+            tituloMeio = 'ATRAVESSANDO SETOR...',
+            detalheMeio = 'CARREGANDO PLANETAS E ESPÉCIES',
+            assets = ASSETS_ORIGEM,
+            tempoMinimoMs = 950
+        } = opcoes;
+
+        const overlay = document.getElementById('viagem-espacial-loader');
+        const canvas = document.getElementById('canvas-viagem-espacial');
+        const setorEl = overlay?.querySelector('.viagem-espacial__setor');
+        const tituloEl = document.getElementById('viagem-espacial-titulo');
+        const detalheEl = document.getElementById('viagem-espacial-detalhe');
+        const barraEl = document.getElementById('viagem-progresso-barra');
+        const pctEl = document.getElementById('viagem-progresso-texto');
+
+        if (!overlay || !canvas) {
+            if (aoRevelarModulo) aoRevelarModulo();
+            if (aoFinalizarTudo) aoFinalizarTudo();
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        let largura = window.innerWidth;
+        let altura = window.innerHeight;
+        let cx = largura / 2;
+        let cy = altura / 2;
+
+        function redimensionar() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            largura = window.innerWidth;
+            altura = window.innerHeight;
+            cx = largura / 2;
+            cy = altura / 2;
+            canvas.width = Math.floor(largura * dpr);
+            canvas.height = Math.floor(altura * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+        redimensionar();
+        window.addEventListener('resize', redimensionar);
+
+        const estrelas = Array.from({ length: 180 }, () => ({
+            x: (Math.random() - 0.5) * largura * 1.6,
+            y: (Math.random() - 0.5) * altura * 1.6,
+            z: Math.random() * largura,
+            pz: 0,
+            cor: Math.random() < 0.35 ? '#b9ff35' : (Math.random() < 0.65 ? '#00e5ff' : '#ffffff')
+        }));
+        estrelas.forEach((e) => { e.pz = e.z; });
+
+        let rodando = true;
+        let velocidade = 18;
+        let velocidadeAlvo = 48;
+
+        function animarEstrelas() {
+            if (!rodando) return;
+
+            velocidade += (velocidadeAlvo - velocidade) * 0.08;
+
+            ctx.fillStyle = 'rgba(2, 6, 10, 0.34)';
+            ctx.fillRect(0, 0, largura, altura);
+
+            for (let i = 0; i < estrelas.length; i++) {
+                const s = estrelas[i];
+                s.pz = s.z;
+                s.z -= velocidade;
+
+                if (s.z <= 1) {
+                    s.x = (Math.random() - 0.5) * largura * 1.6;
+                    s.y = (Math.random() - 0.5) * altura * 1.6;
+                    s.z = largura;
+                    s.pz = s.z;
+                }
+
+                const sx = cx + (s.x / s.z) * cx;
+                const sy = cy + (s.y / s.z) * cy;
+                const px = cx + (s.x / s.pz) * cx;
+                const py = cy + (s.y / s.pz) * cy;
+
+                const espessura = Math.max(1, (1 - s.z / largura) * 3.2);
+
+                ctx.beginPath();
+                ctx.moveTo(px, py);
+                ctx.lineTo(sx, sy);
+                ctx.strokeStyle = s.cor;
+                ctx.lineWidth = espessura;
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(animarEstrelas);
+        }
+
+        // Atualiza textos do HUD para o destino atual (Mapa Galáctico ou Planeta específico)
+        overlay.classList.remove('chegando');
+        overlay.classList.add('ativa');
+        overlay.setAttribute('aria-hidden', 'false');
+        if (setorEl) setorEl.textContent = setor;
+        if (tituloEl) tituloEl.textContent = tituloInicial;
+        if (detalheEl) detalheEl.textContent = detalheInicial;
+        if (barraEl) barraEl.style.width = '8%';
+        if (pctEl) pctEl.textContent = '8%';
+
+        requestAnimationFrame(animarEstrelas);
+
+        setTimeout(() => {
+            // Permite que aoRevelarModulo retorne promessas extras (ex.: carregamento do .glb 3D)
+            const retornoModulo = aoRevelarModulo ? aoRevelarModulo() : null;
+            const promessasExtras = Array.isArray(retornoModulo)
+                ? retornoModulo
+                : (retornoModulo ? [retornoModulo] : []);
+
+            const listaTarefas = [
+                ...assets.map((src) => preCarregarImagem(src)),
+                ...promessasExtras
+            ];
+
+            const total = Math.max(1, listaTarefas.length);
+            let concluidos = 0;
+            let encerrado = false;
+
+            function atualizarBarra() {
+                const pct = Math.min(100, Math.max(12, Math.round((concluidos / total) * 100)));
+                if (barraEl) barraEl.style.width = `${pct}%`;
+                if (pctEl) pctEl.textContent = `${pct}%`;
+
+                if (pct >= 50 && tituloEl) {
+                    tituloEl.textContent = tituloMeio;
+                    if (detalheEl) detalheEl.textContent = detalheMeio;
+                }
+            }
+
+            if (listaTarefas.length === 0) {
+                atualizarBarra();
+            } else {
+                listaTarefas.forEach((tarefa) => {
+                    Promise.resolve(tarefa).then(() => {
+                        concluidos++;
+                        atualizarBarra();
+                    });
+                });
+            }
+
+            const concluirViagem = () => {
+                if (encerrado) return;
+                encerrado = true;
+
+                if (barraEl) barraEl.style.width = '100%';
+                if (pctEl) pctEl.textContent = '100%';
+                if (tituloEl) tituloEl.textContent = 'ENTRANDO EM ÓRBITA';
+                if (detalheEl) detalheEl.textContent = 'SISTEMAS PRONTOS';
+
+                velocidadeAlvo = 88;
+
+                setTimeout(() => {
+                    overlay.classList.remove('ativa');
+                    overlay.classList.add('chegando');
+                    overlay.setAttribute('aria-hidden', 'true');
+
+                    setTimeout(() => {
+                        rodando = false;
+                        overlay.classList.remove('chegando');
+                        window.removeEventListener('resize', redimensionar);
+                        if (aoFinalizarTudo) aoFinalizarTudo();
+                    }, 460);
+                }, 240);
+            };
+
+            const tempoMinimo = new Promise((res) => setTimeout(res, tempoMinimoMs));
+            const limiteMaximo = setTimeout(concluirViagem, 5000);
+
+            Promise.all([Promise.all(listaTarefas), tempoMinimo]).then(() => {
+                clearTimeout(limiteMaximo);
+                concluirViagem();
+            });
+        }, 220);
+    }
+
+    return { iniciar, preCarregarImagem };
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     const canvasTech = document.getElementById('canvas-tech');
     const gradeCartoes = document.getElementById('cartoes-grade');
@@ -799,52 +1289,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (animandoAbertura) return;
             animandoAbertura = true;
 
-            modoFocoCentral = true;
-            cabecalhoCriar.classList.add('oculto');
-            gradeCartoes.style.opacity = '0';
-            window.definirVisibilidadeMenuOmnitrix?.(false); // <-- Esconde o Omnitrix ao entrar no módulo
-
             const etapa = cartao.dataset.etapa;
             const titulo = cartao.querySelector('h2')?.textContent || etapa;
-            const rectInicial = cartao.getBoundingClientRect();
-
-            const clone = cartao.cloneNode(true);
-            clone.classList.add('cartao-clone-voando');
-            clone.style.top = `${rectInicial.top}px`;
-            clone.style.left = `${rectInicial.left}px`;
-            clone.style.width = `${rectInicial.width}px`;
-            clone.style.height = `${rectInicial.height}px`;
-            clone.style.transform = 'none';
-            document.body.appendChild(clone);
 
             modoFocoCentral = true;
             cabecalhoCriar.classList.add('oculto');
             gradeCartoes.style.opacity = '0';
+            window.definirVisibilidadeMenuOmnitrix?.(false);
 
-            /* Passo 1: Move o banner para o centro da tela */
-            requestAnimationFrame(() => {
-                const centroW = Math.min(460, window.innerWidth * 0.88);
-                const centroH = 340;
-                clone.style.top = `${(window.innerHeight - centroH) / 2}px`;
-                clone.style.left = `${(window.innerWidth - centroW) / 2}px`;
-                clone.style.width = `${centroW}px`;
-                clone.style.height = `${centroH}px`;
-                clone.style.borderColor = '#b9ff35';
-                clone.style.boxShadow = '0 0 60px rgba(185, 255, 53, 0.65)';
-            });
-
-            /* Passo 2: Expande na aba interna */
-            setTimeout(() => {
-                const alvoW = Math.min(1380, window.innerWidth * 0.89);
-                const alvoH = window.innerHeight * 0.75;
-                clone.style.top = `${Math.max(105, (window.innerHeight - alvoH) / 2)}px`;
-                clone.style.left = `${(window.innerWidth - alvoW) / 2}px`;
-                clone.style.width = `${alvoW}px`;
-                clone.style.height = `${alvoH}px`;
-            }, 340);
-
-            /* Passo 3: Revela o conteúdo interativo do módulo */
-            setTimeout(() => {
+            const revelarConteudoModulo = () => {
                 gradeCartoes.classList.add('oculto');
                 gradeCartoes.style.opacity = '1';
 
@@ -859,7 +1312,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.FichaSessao) {
                     window.FichaSessao.atualizarHudPax(etapa);
                 }
+            };
 
+            /* Salto hiperespacial dedicado ao módulo Origem e Arquétipo */
+            if (etapa === 'origem' && window.ViagemEspacial) {
+                window.ViagemEspacial.iniciar(
+                    revelarConteudoModulo,
+                    () => {
+                        animandoAbertura = false;
+                    }
+                );
+                return;
+            }
+
+            /* Animação padrão de expansão para os demais módulos */
+            const rectInicial = cartao.getBoundingClientRect();
+            const clone = cartao.cloneNode(true);
+            clone.classList.add('cartao-clone-voando');
+            clone.style.top = `${rectInicial.top}px`;
+            clone.style.left = `${rectInicial.left}px`;
+            clone.style.width = `${rectInicial.width}px`;
+            clone.style.height = `${rectInicial.height}px`;
+            clone.style.transform = 'none';
+            document.body.appendChild(clone);
+
+            requestAnimationFrame(() => {
+                const centroW = Math.min(460, window.innerWidth * 0.88);
+                const centroH = 340;
+                clone.style.top = `${(window.innerHeight - centroH) / 2}px`;
+                clone.style.left = `${(window.innerWidth - centroW) / 2}px`;
+                clone.style.width = `${centroW}px`;
+                clone.style.height = `${centroH}px`;
+                clone.style.borderColor = '#b9ff35';
+                clone.style.boxShadow = '0 0 60px rgba(185, 255, 53, 0.65)';
+            });
+
+            setTimeout(() => {
+                const alvoW = Math.min(1380, window.innerWidth * 0.89);
+                const alvoH = window.innerHeight * 0.75;
+                clone.style.top = `${Math.max(105, (window.innerHeight - alvoH) / 2)}px`;
+                clone.style.left = `${(window.innerWidth - alvoW) / 2}px`;
+                clone.style.width = `${alvoW}px`;
+                clone.style.height = `${alvoH}px`;
+            }, 340);
+
+            setTimeout(() => {
+                revelarConteudoModulo();
                 clone.remove();
                 animandoAbertura = false;
             }, 720);
@@ -1372,14 +1870,80 @@ if (tierPalco && tierItens.length > 0) {
         }, 260);
     }
 
+    // Garante que o elemento do flash exista mesmo se alguma página ainda não tiver a div no HTML
+    let flashEl = document.getElementById('omnitrix-flash');
+    if (!flashEl) {
+        flashEl = document.createElement('div');
+        flashEl.id = 'omnitrix-flash';
+        flashEl.className = 'omnitrix-flash';
+        flashEl.setAttribute('aria-hidden', 'true');
+        document.body.prepend(flashEl);
+    }
+
+    function dispararFlashOmnitrix(aoCobrirTela) {
+        sessionStorage.setItem('omnitrixFlash', '1');
+        flashEl.classList.remove('saindo');
+        // Força reflow para garantir que a expansão radial inicie do zero
+        void flashEl.offsetWidth;
+        flashEl.classList.add('ativo');
+
+        setTimeout(() => {
+            if (aoCobrirTela) aoCobrirTela();
+        }, 320);
+    }
+
+    function dissiparFlashOmnitrix() {
+        if (sessionStorage.getItem('omnitrixFlash') !== '1' && !flashEl.classList.contains('ativo')) {
+            return;
+        }
+        sessionStorage.removeItem('omnitrixFlash');
+        flashEl.classList.remove('ativo');
+        flashEl.classList.add('saindo');
+
+        setTimeout(() => {
+            flashEl.classList.remove('saindo');
+        }, 580);
+    }
+
+    // Dissipa o flash assim que a nova página carregar (com limite máximo de 1.5s para nunca travar)
+    if (sessionStorage.getItem('omnitrixFlash') === '1') {
+        const timeoutSeguranca = setTimeout(dissiparFlashOmnitrix, 1500);
+
+        const concluirEntrada = () => {
+            clearTimeout(timeoutSeguranca);
+            setTimeout(dissiparFlashOmnitrix, 180);
+        };
+
+        if (document.readyState === 'complete') {
+            concluirEntrada();
+        } else {
+            window.addEventListener('load', concluirEntrada, { once: true });
+        }
+    }
+
+    // Limpa o flash caso o usuário use o botão "Voltar" do navegador
+    window.addEventListener('pageshow', () => {
+        if (sessionStorage.getItem('omnitrixFlash') !== '1') {
+            flashEl.classList.remove('ativo', 'saindo');
+        }
+    });
+
     function fecharOmnitrix(aoTerminar = null) {
         estado = 'FECHANDO';
         hologramaEl.classList.remove('visivel');
 
         // Abaixa as 3 peças de volta para a Base
         alvoElevacaoNucleo = 0;
-        alvoBrilhoVerde = aoTerminar ? 4.2 : 0.7;
-        if (aoTerminar) luzVerde.intensity = 6;
+        alvoBrilhoVerde = aoTerminar ? 5.5 : 0.7;
+        if (aoTerminar) luzVerde.intensity = 8;
+
+        if (aoTerminar) {
+            // Assim que o núcleo encosta na base, dispara o flash verde e navega
+            setTimeout(() => {
+                dispararFlashOmnitrix(aoTerminar);
+            }, 170);
+            return;
+        }
 
         setTimeout(() => {
             alvoCameraZ = 4.5;
@@ -1390,11 +1954,7 @@ if (tierPalco && tierItens.length > 0) {
         }, 220);
 
         setTimeout(() => {
-            if (aoTerminar) {
-                aoTerminar();
-            } else {
-                estado = 'REPOUSO';
-            }
+            estado = 'REPOUSO';
         }, 560);
     }
 

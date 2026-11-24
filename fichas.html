@@ -29,6 +29,14 @@
 
 <body class="body-criar body-fichas">
 
+    <!-- FLASH DE TRANSIÇÃO DO OMNITRIX -->
+    <div id="omnitrix-flash" class="omnitrix-flash" aria-hidden="true"></div>
+    <script>
+        if (sessionStorage.getItem('omnitrixFlash') === '1') {
+            document.getElementById('omnitrix-flash').classList.add('ativo');
+        }
+    </script>
+
     <!-- MENU PRINCIPAL -->
     <header class="header">
         <div id="omnitrix-menu"

@@ -29,6 +29,34 @@
 
 <body class="body-criar">
 
+    <!-- FLASH DE TRANSIÇÃO DO OMNITRIX -->
+    <div id="omnitrix-flash" class="omnitrix-flash" aria-hidden="true"></div>
+    <script>
+        if (sessionStorage.getItem('omnitrixFlash') === '1') {
+            document.getElementById('omnitrix-flash').classList.add('ativo');
+        }
+    </script>
+
+    <!-- TRANSIÇÃO DE VIAGEM ESPACIAL (ORIGEM E ARQUÉTIPO) -->
+    <div id="viagem-espacial-loader" class="viagem-espacial" aria-hidden="true">
+        <canvas id="canvas-viagem-espacial"></canvas>
+
+        <div class="viagem-espacial__hud">
+            <span class="viagem-espacial__setor">DOBRA ESPACIAL // MAPA GALÁCTICO</span>
+            <h2 id="viagem-espacial-titulo">INICIANDO SALTO...</h2>
+
+            <div class="viagem-espacial__barra">
+                <div id="viagem-progresso-barra" class="viagem-espacial__barra-fill"></div>
+            </div>
+
+            <div class="viagem-espacial__rodape">
+                <span id="viagem-espacial-detalhe">SINCRONIZANDO SISTEMAS ESTELARES</span>
+                <span id="viagem-progresso-texto">0%</span>
+            </div>
+        </div>
+    </div>
+
+
     <!-- MENU (idêntico ao restante do site) -->
     <header class="header">
 
